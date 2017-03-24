@@ -42,7 +42,7 @@ class OauthRequestHandler implements IOauthRequestHandler
      * Initialises an instance of OauthRequestHandler.
      *
      * @param Credentials $credentials
-     * @param type $baseUrl
+     * @param string      $baseUrl
      */
     public function __construct(Credentials $credentials, $baseUrl)
     {
@@ -54,8 +54,8 @@ class OauthRequestHandler implements IOauthRequestHandler
      * Creates an instance of OauthRequestHandler using the settings provided.
      *
      *
-     * @param Credentials The Bynder oauth credentials.
-     * @param $baseUrl Api base url used for all requests.
+     * @param Credentials $credentials The Bynder oauth credentials.
+     * @param string      $baseUrl     Api base url used for all requests.
      *
      * @return OauthRequestHandler An instance of the request handler properly configured.
      */

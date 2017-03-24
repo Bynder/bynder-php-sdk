@@ -26,8 +26,8 @@ interface IOauthRequestHandler
      * @param string $uri API call endpoint.
      * @param array $query Optional dictionary of params which will be added to the request.
      *
-     * @return Promise
-     * @throws Exception
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \Exception
      */
     public function sendRequestAsync($type, $uri, $query = null);
 }
