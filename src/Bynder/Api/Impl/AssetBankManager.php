@@ -150,7 +150,7 @@ class AssetBankManager implements IAssetBankManager
      */
     public function modifyMedia($mediaId, array $data)
     {
-        return $this->requestHandler->sendRequestAsync('POST', 'api/v4/media/' . $mediaId . '/', $data);
+        return $this->requestHandler->sendRequestAsync('POST', 'api/v4/media/' . $mediaId . '/', ['form_params' => $data]);
     }
 
 
