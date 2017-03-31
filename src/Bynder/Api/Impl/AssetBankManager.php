@@ -136,4 +136,22 @@ class AssetBankManager implements IAssetBankManager
         return $this->requestHandler->sendRequestAsync('DELETE', 'api/v4/media/' . $mediaId . '/');
     }
 
+    /**
+     * Modifies existing assets fields
+     * @link http://docs.bynder.apiary.io/#reference/assets/specific-asset-operations/modify-asset
+     *
+     * @param string $mediaId
+     * @param array $data File information to be set
+     *      array(
+     *         'name' => 'Image Name',
+     *         'description' => 'Image description'
+     *      );
+     * @return \GuzzleHttp\Promise\Promise
+     */
+    public function modifyMedia($mediaId, array $data)
+    {
+        return $this->requestHandler->sendRequestAsync('POST', 'api/v4/media/' . $mediaId . '/', $data);
+    }
+
+
 }
