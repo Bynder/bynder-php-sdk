@@ -49,7 +49,7 @@ class AssetBankManager implements IAssetBankManager
      */
     public function getBrands()
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/brands');
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/brands/');
     }
 
     /**
@@ -60,7 +60,7 @@ class AssetBankManager implements IAssetBankManager
      */
     public function getMediaList($query = null)
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/media',
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/media/',
             array(
                 'query' => $query
             )
@@ -91,7 +91,7 @@ class AssetBankManager implements IAssetBankManager
      */
     public function getMetaproperties()
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties');
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/');
     }
 
     /**
@@ -101,7 +101,7 @@ class AssetBankManager implements IAssetBankManager
      */
     public function getTags()
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/tags');
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/tags/');
     }
 
     /**
