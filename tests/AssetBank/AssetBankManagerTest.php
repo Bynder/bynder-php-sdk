@@ -21,7 +21,7 @@ class AssetBankManagerTest extends TestCase
 
         $stub->expects($this->once())
             ->method('sendRequestAsync')
-            ->with('GET', 'api/v4/brands')
+            ->with('GET', 'api/v4/brands/')
             ->willReturn(array());
 
         $assetBankManager = new AssetBankManager($stub);
@@ -44,7 +44,7 @@ class AssetBankManagerTest extends TestCase
             ->getMock();
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/media')
+            ->with('GET', 'api/v4/media/')
             ->willReturn($returnedMedia);
 
         $assetBankManager = new AssetBankManager($stub);
@@ -60,7 +60,7 @@ class AssetBankManagerTest extends TestCase
             'type' => 'image'
         );
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/media', array('query' => $query))
+            ->with('GET', 'api/v4/media/', array('query' => $query))
             ->willReturn($returnedMedia);
 
         $assetBankManager = new AssetBankManager($stub);
@@ -116,7 +116,7 @@ class AssetBankManagerTest extends TestCase
             ->getMock();
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/metaproperties')
+            ->with('GET', 'api/v4/metaproperties/')
             ->willReturn($returnedMedia);
 
         $assetBankManager = new AssetBankManager($stub);
@@ -139,7 +139,7 @@ class AssetBankManagerTest extends TestCase
             ->getMock();
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/tags')
+            ->with('GET', 'api/v4/tags/')
             ->willReturn($returnedMedia);
 
         $assetBankManager = new AssetBankManager($stub);
@@ -171,4 +171,32 @@ class AssetBankManagerTest extends TestCase
         self::assertNotNull($categoryList);
         self::assertEquals($categoryList, $returnedMedia);
     }
+
+    /**
+     * Test if we call modifyMedia it will use the correct params for the request and returns successfully.
+     * HINT: it is rather skeleton, to use it properly this test requires much more complex mock with configured asset
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::modifyMedia()
+     */
+    public function testModifyMedia()
+    {
+        $return = array();
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mediaId = 1111;
+        $formData = ['name' => 'test'];
+
+        $stub->method('sendRequestAsync')
+            ->with('POST', 'api/v4/media/'.$mediaId.'/', ['form_params' => $formData])
+            ->willReturn($return);
+
+        $assetBankManager = new AssetBankManager($stub);
+        $modifyMediaReturn = $assetBankManager->modifyMedia($mediaId, $formData);
+
+        self::assertNotNull($modifyMediaReturn);
+        self::assertEquals($modifyMediaReturn, $return);
+    }
+
 }
