@@ -11,6 +11,14 @@ The PHP SDK requires the following in order to fully work:
 
 Composer should handle all the dependencies automatically.
 
+## Composer package
+
+The Bynder PHP SDK is published as a composer package in [packagist](https://packagist.org) and can be found here:
+
+```
+https://packagist.org/packages/bynder/bynder-php-sdk
+```
+
 ## Installation
 
 This SDK depends on a few libraries in order to work, installing it with Composer should take care of everything automatically. 

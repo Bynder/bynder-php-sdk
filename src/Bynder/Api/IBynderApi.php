@@ -69,4 +69,27 @@ interface IBynderApi
      */
     public function userLogout();
 
+    /**
+     * Retrieve all users or specific ones by ID.
+     *
+     * @param $userId
+     * @param $query
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function getUser($userId, $query);
+
+    /**
+     * Retrieve current user.
+     *
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function getCurrentUser();
+
+    /**
+     * Retrieve all security profiles or specific ones by ID.
+     *
+     * @param $profileId
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function getSecurityProfile($profileId);
 }
