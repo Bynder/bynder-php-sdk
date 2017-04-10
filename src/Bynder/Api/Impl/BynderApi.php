@@ -176,6 +176,43 @@ class BynderApi implements IBynderApi
     }
 
     /**
+     * Retrieve all users or specific ones by ID.
+     *
+     * @param $userId
+     * @param $query
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function getUser($userId = '', $query = null)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', "api/v4/users/$userId",
+            array(
+                'query' => $query
+            )
+        );
+    }
+
+    /**
+     * Retrieve current user.
+     *
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function getCurrentUser()
+    {
+        return $this->requestHandler->sendRequestAsync('GET', "api/v4/currentUser/");
+    }
+
+    /**
+     * Retrieve all security profiles or specific ones by ID.
+     *
+     * @param $profileId
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function getSecurityProfile($profileId = '')
+    {
+        return $this->requestHandler->sendRequestAsync('GET', "api/v4/profiles/$profileId");
+    }
+
+    /**
      * Checks if the settings array passed is valid.
      *
      * @param $settings
