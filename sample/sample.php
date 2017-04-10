@@ -61,6 +61,13 @@ try {
         $token = $bynderApi->getAccessToken()->wait();
     }
 
+    $currentUser = $bynderApi->getCurrentUser()->wait();
+    $user = $bynderApi->getUser('userId')->wait();
+
+    if(isset($currentUser['profileId'])) {
+        $roles = $bynderApi->getSecurityProfile($currentUser['profileId'])->wait();
+    }
+
     $assetBankManager = $bynderApi->getAssetBankManager();
 
     // Get Brands. Returns a Promise.
