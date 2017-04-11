@@ -49,7 +49,7 @@ class AssetBankManager implements IAssetBankManager
      */
     public function getBrands()
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/brands');
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/brands/');
     }
 
     /**
@@ -60,7 +60,7 @@ class AssetBankManager implements IAssetBankManager
      */
     public function getMediaList($query = null)
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/media',
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/media/',
             array(
                 'query' => $query
             )
@@ -91,7 +91,7 @@ class AssetBankManager implements IAssetBankManager
      */
     public function getMetaproperties()
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties');
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/');
     }
 
     /**
@@ -101,7 +101,7 @@ class AssetBankManager implements IAssetBankManager
      */
     public function getTags()
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/tags');
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/tags/');
     }
 
     /**
@@ -135,5 +135,23 @@ class AssetBankManager implements IAssetBankManager
     {
         return $this->requestHandler->sendRequestAsync('DELETE', 'api/v4/media/' . $mediaId . '/');
     }
+
+    /**
+     * Modifies existing assets fields
+     * @link http://docs.bynder.apiary.io/#reference/assets/specific-asset-operations/modify-asset
+     *
+     * @param string $mediaId
+     * @param array $data File information to be set
+     *      array(
+     *         'name' => 'Image Name',
+     *         'description' => 'Image description'
+     *      );
+     * @return \GuzzleHttp\Promise\Promise
+     */
+    public function modifyMedia($mediaId, array $data)
+    {
+        return $this->requestHandler->sendRequestAsync('POST', 'api/v4/media/' . $mediaId . '/', ['form_params' => $data]);
+    }
+
 
 }
