@@ -37,7 +37,7 @@ require_once('vendor/autoload.php');
 
 ## How to use it
 
-This is a simple example on how to retrieve data from the Bynder asset bank. For a more detailed example of implementation refer to the [sample code](https://github.com/Bynder/bynder-php-sdk/blob/develop/sample/sample.php).
+This is a simple example on how to retrieve data from the Bynder asset bank. For a more detailed example of implementation refer to the [sample code](https://github.com/Bynder/bynder-php-sdk/blob/master/sample/sample.php).
 
 Before executing any request to the Bynder API we need to instantiate the **BynderApi** class, the following example shows how to use the **BynderApiFactory** to construct a **BynderApi** instance:
 ```php
