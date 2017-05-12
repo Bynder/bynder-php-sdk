@@ -9,6 +9,8 @@
 // src/Bynder/Api/IBynderApi.php
 namespace Bynder\Api;
 
+use Bynder\Api\Impl\AssetBankManager;
+
 /**
  * Interface to communicate with Bynder API and get instance of AssetBankManager.
  */
