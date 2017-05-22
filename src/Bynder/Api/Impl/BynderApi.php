@@ -14,6 +14,10 @@ namespace Bynder\Api\Impl;
 use Bynder\Api\IBynderApi;
 use Bynder\Api\Impl\Oauth\Credentials;
 use Bynder\Api\Impl\Oauth\OauthRequestHandler;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Subscriber\Oauth\Oauth1;
 use InvalidArgumentException;
 
 /**
@@ -58,13 +62,39 @@ class BynderApi implements IBynderApi
     public static function create($settings)
     {
         if (isset($settings) && ($settings = self::validateSettings($settings))) {
+
             $credentials = new Credentials(
                 $settings['consumerKey'],
                 $settings['consumerSecret'],
                 $settings['token'],
                 $settings['tokenSecret']
             );
-            $requestHandler = OauthRequestHandler::create($credentials, $settings['baseUrl']);
+
+            $stack = HandlerStack::create(new CurlHandler());
+            $stack->push(
+                new Oauth1([
+                    'consumer_key' => $credentials->getConsumerKey(),
+                    'consumer_secret' => $credentials->getConsumerSecret(),
+                    'token' => $credentials->getToken(),
+                    'token_secret' => $credentials->getTokenSecret(),
+                    'request_method' => Oauth1::REQUEST_METHOD_HEADER,
+                    'signature_method' => Oauth1::SIGNATURE_METHOD_HMAC
+                ])
+            );
+
+            $requestOptions = [
+                'base_uri' => $settings['baseUrl'],
+                'handler' => $stack,
+                'auth' => 'oauth',
+            ];
+
+            // Configures request Client (adding proxy, etc.)
+            if (isset($settings['requestOptions']) && is_array($settings['requestOptions'])) {
+                $requestOptions += $settings['requestOptions'];
+            }
+
+            $requestClient = new Client($requestOptions);
+            $requestHandler = OauthRequestHandler::create($credentials, $settings['baseUrl'], $requestClient);
             return new BynderApi($settings['baseUrl'], $requestHandler);
         } else {
             throw new InvalidArgumentException("Settings passed for BynderApi service creation are not valid.");

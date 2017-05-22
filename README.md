@@ -51,6 +51,19 @@ Before executing any request to the Bynder API we need to instantiate the **Bynd
             )
     );
 ```
+
+The SDK allows the use of [Guzzle request options](http://docs.guzzlephp.org/en/latest/request-options.html), such as 'proxy' or 'headers', in order to accomodate for specific server requirements. To do so, all we need to do is send an extra **settings** parameter with 'requestOptions' as key and the desired options when creating the **BynderApi** object.:
+```php
+    $requestOptions = ['proxy' => 'http://MY-PROXY.URL:PORT_NUM'];
+    $bynderApi = BynderApiFactory::create(
+        array(
+            ...
+            'requestOptions' => $requestOptions
+        )
+    );
+
+```
+
 After getting the **BynderApi** service configured successfully we need to get an instance of the **AssetBankManager** in order to do any of the API calls relative to the Bynder Asset Bank module:
 
 ```php

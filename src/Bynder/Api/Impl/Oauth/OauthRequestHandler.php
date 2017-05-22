@@ -42,7 +42,7 @@ class OauthRequestHandler implements IOauthRequestHandler
      * Initialises an instance of OauthRequestHandler.
      *
      * @param Credentials $credentials
-     * @param string      $baseUrl
+     * @param string $baseUrl
      */
     public function __construct(Credentials $credentials, $baseUrl)
     {
@@ -55,15 +55,16 @@ class OauthRequestHandler implements IOauthRequestHandler
      *
      *
      * @param Credentials $credentials The Bynder oauth credentials.
-     * @param string      $baseUrl     Api base url used for all requests.
+     * @param string $baseUrl Api base url used for all requests.
+     * @param Client $client Optional client passed for handler creation.
      *
      * @return OauthRequestHandler An instance of the request handler properly configured.
      */
-    public static function create(Credentials $credentials, $baseUrl)
+    public static function create(Credentials $credentials, $baseUrl, Client $client = null)
     {
 
         $newOauthHandler = new OauthRequestHandler($credentials, $baseUrl);
-        $newOauthHandler->initOauthRequestClient();
+        $newOauthHandler->initOauthRequestClient($client);
 
         return $newOauthHandler;
     }
@@ -115,11 +116,10 @@ class OauthRequestHandler implements IOauthRequestHandler
                     'signature_method' => Oauth1::SIGNATURE_METHOD_HMAC
                 ])
             );
-
             $this->oauthRequestClient = new Client([
                 'base_uri' => $this->baseUrl,
                 'handler' => $stack,
-                'auth' => 'oauth',
+                'auth' => 'oauth'
             ]);
         } else {
             $this->oauthRequestClient = $client;
