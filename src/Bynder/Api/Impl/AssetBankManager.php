@@ -87,21 +87,31 @@ class AssetBankManager implements IAssetBankManager
      * Retrieves a dictionary of all metaproperties available, keyed by the
      * metaproperty name.
      *
+     * @param array $query
      * @see IAssetBankManager::getMetaproperties() for more information.
      */
-    public function getMetaproperties()
+    public function getMetaproperties($query = null)
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/');
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/',
+            array(
+                'query' => $query
+            )
+        );
     }
 
     /**
      * Retrieves a list of all tags available.
      *
+     * @param array $query
      * @see IAssetBankManager::getTags() for more information.
      */
-    public function getTags()
+    public function getTags($query = null)
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/tags/');
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/tags/',
+            array(
+                'query' => $query
+            )
+        );
     }
 
     /**

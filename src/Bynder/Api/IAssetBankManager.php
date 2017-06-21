@@ -28,7 +28,7 @@ interface IAssetBankManager
      * not complete, for example media items for media returned are not present.
      * For that client needs to call getMediaInfo.
      *
-     * @param array $query Associative array of Parameters to filter the results.
+     * @param array $query Associative array of parameters to filter the results.
      * @return Promise with list of media items.
      *
      * @throws GuzzleHttp\Exception\RequestException When request fails.
@@ -51,20 +51,22 @@ interface IAssetBankManager
      * Gets a dictionary of the metaproperties. The key of the dictionary
      * returned is the name of the metaproperty.
      *
+     * @param array $query Associative array of parameters to filter the results.
      * @return Promise Dictionary of all the metaproperties.
      *
      * @throws GuzzleHttp\Exception\RequestException When request fails.
      */
-    public function getMetaproperties();
+    public function getMetaproperties($query);
 
     /**
      * Gets a list of all tags available.
      *
+     * @param array $query Associative array of parameters to filter the results.
      * @return Promise List of all tags.
      *
      * @throws GuzzleHttp\Exception\RequestException When request fails.
      */
-    public function getTags();
+    public function getTags($query);
 
     /**
      * Gets a list of all categories available.

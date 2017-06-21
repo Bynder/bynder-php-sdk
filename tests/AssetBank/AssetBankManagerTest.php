@@ -124,6 +124,23 @@ class AssetBankManagerTest extends TestCase
 
         self::assertNotNull($metaproperties);
         self::assertEquals($metaproperties, $returnedMedia);
+
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/metaproperties/', array(
+                'query' => array('count' => 1)
+                )
+            )
+            ->willReturn(array('query'));
+
+        $assetBankManager = new AssetBankManager($stub);
+        $metaproperties = $assetBankManager->getMetaproperties(array('count' => 1));
+
+        self::assertNotNull($metaproperties);
+        self::assertEquals($metaproperties, array('query'));
     }
 
     /**
@@ -147,6 +164,23 @@ class AssetBankManagerTest extends TestCase
 
         self::assertNotNull($tagList);
         self::assertEquals($tagList, $returnedMedia);
+
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/tags/', array(
+                'query' => array('limit' => 10)
+                )
+            )
+            ->willReturn(array('query'));
+
+        $assetBankManager = new AssetBankManager($stub);
+        $tagList = $assetBankManager->getTags(array('limit' => 10));
+
+        self::assertNotNull($tagList);
+        self::assertEquals($tagList, array('query'));
     }
 
     /**
