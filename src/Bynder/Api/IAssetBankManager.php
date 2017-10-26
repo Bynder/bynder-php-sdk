@@ -101,4 +101,14 @@ interface IAssetBankManager
      */
     public function deleteMedia($mediaId);
 
+    /**
+     * Returns existing custom derivatives for current account.
+     * @link http://docs.bynder.apiary.io/#reference/account/derivative-operations/retrieve-derivatives
+     *
+     * @return Promise List of all categories.
+     *
+     * @throws GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function  getDerivatives();
+
 }

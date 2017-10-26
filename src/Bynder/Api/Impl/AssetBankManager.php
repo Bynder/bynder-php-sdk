@@ -140,6 +140,8 @@ class AssetBankManager implements IAssetBankManager
      *
      * @param string $mediaId
      * @see IAssetBankManager::deleteMedia() for more information.
+     *
+     * @return \GuzzleHttp\Promise\Promise
      */
     public function deleteMedia($mediaId)
     {
@@ -163,5 +165,14 @@ class AssetBankManager implements IAssetBankManager
         return $this->requestHandler->sendRequestAsync('POST', 'api/v4/media/' . $mediaId . '/', ['form_params' => $data]);
     }
 
+    /**
+     * Returns existing custom derivatives for current account.
+     *
+     * @see IAssetBankManager::getDerivatives() for more information.
+     */
+    public function  getDerivatives()
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/account/derivatives/');
+    }
 
 }

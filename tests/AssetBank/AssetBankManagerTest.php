@@ -233,4 +233,27 @@ class AssetBankManagerTest extends TestCase
         self::assertEquals($modifyMediaReturn, $return);
     }
 
+
+    /**
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getDerivatives()
+     */
+    public function testGetDerivatives()
+    {
+        $returnedMedia = array();
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/account/derivatives/')
+            ->willReturn($returnedMedia);
+
+        $assetBankManager = new AssetBankManager($stub);
+        $derivativesList = $assetBankManager->getDerivatives();
+
+        self::assertNotNull($derivativesList);
+        self::assertEquals($derivativesList, $returnedMedia);
+    }
+
 }
