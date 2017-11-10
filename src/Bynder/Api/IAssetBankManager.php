@@ -48,8 +48,8 @@ interface IAssetBankManager
     public function getMediaInfo($mediaId, $versions);
 
     /**
-     * Gets a dictionary of the metaproperties. The key of the dictionary
-     * returned is the name of the metaproperty.
+     * Gets a dictionary of the meta properties. The key of the dictionary
+     * returned is the name of the meta property.
      *
      * @param array $query Associative array of parameters to filter the results.
      * @return Promise Dictionary of all the metaproperties.
@@ -57,6 +57,57 @@ interface IAssetBankManager
      * @throws GuzzleHttp\Exception\RequestException When request fails.
      */
     public function getMetaproperties($query);
+
+    /**
+     * Gets a specific meta property
+     *
+     * @param string $propertyId Meta property id
+     * @return Promise with the meta property.
+     *
+     * @throws GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function getMetaproperty($propertyId);
+
+    /**
+     * Gets all dependencies for meta property
+     *
+     * @param string $propertyId Meta property id
+     * @return Promise with the meta property.
+     *
+     * @throws GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function getMetapropertyDependencies($propertyId);
+
+    /**
+     * Gets a list of all meta property option dependencies (globally)
+     *
+     * @return Promise with all meta property options dependencies.
+     *
+     * @throws GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function getMetapropetryGlobalOptionDependencies();
+
+    /**
+     * Gets a list of all meta property option dependencies for a specific property
+     *
+     * @param string $propertyId Meta property id
+     * @return Promise with all meta property options dependencies.
+     *
+     * @throws GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function getMetapropertyOptionDependencies($propertyId);
+
+    /**
+     * Gets a list of all meta property option dependencies for a specific option
+     *
+     * @param string $propertyId Meta property id
+     * @param string $optionId Option id
+     * @param array $query Associative array of parameters to filter the results.
+     * @return Promise with all meta property options dependencies.
+     *
+     * @throws GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function getMetapropertySpecificOptionDependencies($propertyId, $optionId, $query);
 
     /**
      * Gets a list of all tags available.
@@ -109,6 +160,41 @@ interface IAssetBankManager
      *
      * @throws GuzzleHttp\Exception\RequestException When request fails.
      */
-    public function  getDerivatives();
+    public function getDerivatives();
 
+    /**
+     * Gets the download location for a specific asset
+     *
+     * @param string $mediaId The Bynder media identifier (Asset id).
+     * @param string $type Type of files to download. Note that when multiple additional files are
+     *                     available only the download url of the latest one will be returned.
+     *                     E.g. additional, original. Default = original
+     * @return Promise with the download location for a specific asset.
+     *
+     * @throws GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function getMediaDownloadLocation($mediaId, $type = 'original');
+
+    /**
+     * Gets the download location for a specific asset with a specific version
+     *
+     * @param string $mediaId The Bynder media identifier (Asset id).
+     * @param int $version Asset version to download.
+     * @return Promise with the download location for a specific asset.
+     *
+     * @throws GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function getMediaDownloadLocationByVersion($mediaId, $version);
+
+    /**
+     * Gets the download location for a specific asset item
+     *
+     * @param string $mediaId The Bynder media identifier (Asset id).
+     * @param string $itemId The id of the specific asset item you’d like to download.
+     * @param boolean $hash Indicates whether or not to treat the itemId as a hashed item id.
+     * @return Promise with the download location for a specific asset.
+     *
+     * @throws GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function getMediaDownloadLocationForAssetItem($mediaId, $itemId, $hash = false);
 }

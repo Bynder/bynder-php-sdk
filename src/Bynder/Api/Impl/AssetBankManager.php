@@ -11,9 +11,11 @@
 // src/Bynder/Api/Impl/AssetBankManager.php
 namespace Bynder\Api\Impl;
 
+use Bynder\Api\GuzzleHttp;
 use Bynder\Api\IAssetBankManager;
 use Bynder\Api\Impl\Oauth\IOauthRequestHandler;
 use Bynder\Api\Impl\Upload\FileUploader;
+use Bynder\Api\Promise;
 
 /**
  * Implementation of IAssetBankManager, providing operations available on the Bynder Asset Bank via API.
@@ -100,6 +102,81 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
+     * Gets a specific meta property
+     *
+     * @param string $propertyId Metap roperty id
+     * @return \GuzzleHttp\Promise\Promise with the meta property.
+     */
+    public function getMetaproperty($propertyId)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/' . $propertyId . '/');
+    }
+
+    /**
+     * Gets all dependencies for meta property
+     *
+     * @param string $propertyId Metap roperty id
+     * @return \GuzzleHttp\Promise\Promise with the meta property.
+     */
+    public function getMetapropertyDependencies($propertyId)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/' . $propertyId . '/dependencies/');
+    }
+
+    /**
+     * Gets a list of meta property options
+     *
+     * @param array $query Associative array of parameters to filter the results.
+     * @return \GuzzleHttp\Promise\Promise with all requested meta property options.
+     */
+    public function getMetapropertyOptions($query)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/options/',
+            array(
+                'query' => $query
+            )
+        );
+    }
+
+    /**
+     * Gets a list of all meta property option dependencies (globally)
+     *
+     * @return \GuzzleHttp\Promise\Promise with all meta property options dependencies.
+     */
+    public function getMetapropetryGlobalOptionDependencies()
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/options/dependencies/');
+    }
+
+    /**
+     * Gets a list of all meta property option dependencies for a specific property
+     *
+     * @param string $propertyId Meta property id
+     * @return \GuzzleHttp\Promise\Promise with all meta property options dependencies.
+     */
+    public function getMetapropertyOptionDependencies($propertyId)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/' . $propertyId . 'options/dependencies/');
+    }
+
+    /**
+     * Gets a list of all meta property option dependencies for a specific option
+     *
+     * @param string $propertyId Meta property id
+     * @param string $optionId Option id
+     * @param array $query Associative array of parameters to filter the results.
+     * @return \GuzzleHttp\Promise\Promise with all meta property options dependencies.
+     */
+    public function getMetapropertySpecificOptionDependencies($propertyId, $optionId, $query)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/' . $propertyId . '/options/' . $optionId . '/dependencies/',
+            array(
+                'query' => $query
+            )
+        );
+    }
+
+    /**
      * Retrieves a list of all tags available.
      *
      * @param array $query
@@ -175,4 +252,54 @@ class AssetBankManager implements IAssetBankManager
         return $this->requestHandler->sendRequestAsync('GET', 'api/v4/account/derivatives/');
     }
 
+    /**
+     * Gets the download location for a specific asset
+     *
+     * @param string $mediaId The Bynder media identifier (Asset id).
+     * @param string $type Type of files to download. Note that when multiple additional files are
+     *                     available only the download url of the latest one will be returned.
+     *                     E.g. additional, original. Default = original
+     * @return \GuzzleHttp\Promise\Promise
+     */
+    public function getMediaDownloadLocation($mediaId, $type = 'original')
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/media/' . $mediaId . '/',
+            array(
+                'query' => array(
+                    'type' => $type
+                )
+            )
+        );
+    }
+
+    /**
+     * Gets the download location for a specific asset with a specific version
+     *
+     * @param string $mediaId The Bynder media identifier (Asset id).
+     * @param int $version Asset version to download.
+     * @return \GuzzleHttp\Promise\Promise with the download location for a specific asset.
+     */
+    public function getMediaDownloadLocationByVersion($mediaId, $version)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/media/' . $mediaId . '/' . $version . '/download/');
+    }
+
+    /**
+     * Gets the download location for a specific asset item
+     *
+     * @param string $mediaId The Bynder media identifier (Asset id).
+     * @param string $itemId The id of the specific asset item you’d like to download.
+     * @param boolean $hash Indicates whether or not to treat the itemId as a hashed item id.
+     * @return \GuzzleHttp\Promise\Promise with the download location for a specific asset.
+     */
+    public function getMediaDownloadLocationForAssetItem($mediaId, $itemId, $hash = false)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/media/' . $mediaId . '/download/' . $itemId . '/',
+            array(
+                'query' => array(
+                    'hash' => $hash
+                )
+            )
+        );
+    }
 }

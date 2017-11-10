@@ -256,4 +256,237 @@ class AssetBankManagerTest extends TestCase
         self::assertEquals($derivativesList, $returnedMedia);
     }
 
+    /**
+     * Test if we call getMediaDownloadLocation it will use the correct params for the request and returns successfully.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getMediaDownloadLocation()
+     */
+    public function testGetMediaDownloadLocation()
+    {
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mediaId = 1111;
+        $type = 'original';
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/media/' . $mediaId . '/', array(
+                    'query' => array(
+                        'type' => $type
+                    )
+                )
+            )
+            ->willReturn(array('query'));
+
+        $assetBankManager = new AssetBankManager($stub);
+        $mediaLocation = $assetBankManager->getMediaDownloadLocation($mediaId);
+
+        self::assertNotNull($mediaLocation);
+        self::assertEquals($mediaLocation, array('query'));
+    }
+
+    /**
+     * Test if we call getMediaDownloadLocationByVersion it will use the correct params for the request and returns successfully.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getMediaDownloadLocation()
+     */
+    public function testGetMediaDownloadLocationByVersion()
+    {
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mediaId = 1111;
+        $version = 3;
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/media/' . $mediaId . '/' . $version . '/download/')
+            ->willReturn(array());
+
+        $assetBankManager = new AssetBankManager($stub);
+        $mediaLocation = $assetBankManager->getMediaDownloadLocationByVersion($mediaId, $version);
+
+        self::assertNotNull($mediaLocation);
+        self::assertEquals($mediaLocation, array());
+    }
+
+    /**
+     * Test if we call getMediaDownloadLocationForAssetItem it will use the correct params for the request and returns successfully.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getMediaDownloadLocation()
+     */
+    public function testGetMediaDownloadLocationForAssetItem()
+    {
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $mediaId = 1111;
+        $itemId = 2222;
+        $hash = false;
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/media/' . $mediaId . '/download/' . $itemId . '/', array(
+                    'query' => array(
+                        'hash' => $hash
+                    )
+                )
+            )
+            ->willReturn(array('query'));
+
+        $assetBankManager = new AssetBankManager($stub);
+        $mediaLocation = $assetBankManager->getMediaDownloadLocationForAssetItem($mediaId, $itemId);
+
+        self::assertNotNull($mediaLocation);
+        self::assertEquals($mediaLocation, array('query'));
+    }
+
+    /**
+     * Test if we call getMetaproperty it will use the correct params for the request and returns successfully.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getMetaproperty()
+     */
+    public function testGetMetapropery()
+    {
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $propertyId = '00000000-0000-0000-0000000000000000';
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/')
+            ->willReturn(array());
+
+        $assetBankManager = new AssetBankManager($stub);
+        $mediaLocation = $assetBankManager->getMetaproperty($propertyId);
+
+        self::assertNotNull($mediaLocation);
+        self::assertEquals($mediaLocation, array());
+    }
+
+    /**
+     * Test if we call getMetapropertyDependencies it will use the correct params for the request and returns successfully.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getMetapropertyDependencies()
+     */
+    public function testGetMetapropertyDependencies()
+    {
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $propertyId = '00000000-0000-0000-0000000000000000';
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/dependencies/')
+            ->willReturn(array());
+
+        $assetBankManager = new AssetBankManager($stub);
+        $mediaLocation = $assetBankManager->getMetapropertyDependencies($propertyId);
+
+        self::assertNotNull($mediaLocation);
+        self::assertEquals($mediaLocation, array());
+    }
+
+    /**
+     * Test if we call getMetapropertyOptions it will use the correct params for the request and returns successfully.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getMetapropertyOptions()
+     */
+    public function testGetMetapropertyOptions()
+    {
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $optionId = '00000000-0000-0000-0000000000000000';
+        $query = array('ids' => $optionId);
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/metaproperties/options/', array(
+                    'query' => $query
+                ))
+            ->willReturn(array('query'));
+
+        $assetBankManager = new AssetBankManager($stub);
+        $result = $assetBankManager->getMetapropertyOptions($query);
+
+        self::assertNotNull($result);
+        self::assertEquals($result, array('query'));
+    }
+
+    /**
+     * Test if we call getMetapropetryGlobalOptionDependencies it will use the correct params for the request and returns successfully.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getMetapropetryGlobalOptionDependencies()
+     */
+    public function testGetMetapropetryGlobalOptionDependencies()
+    {
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/metaproperties/options/dependencies/')
+            ->willReturn(array());
+
+        $assetBankManager = new AssetBankManager($stub);
+        $result = $assetBankManager->getMetapropetryGlobalOptionDependencies();
+
+        self::assertNotNull($result);
+        self::assertEquals($result, array());
+    }
+
+    /**
+     * Test if we call getMetapropertyOptionDependencies it will use the correct params for the request and returns successfully.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getMetapropertyOptionDependencies()
+     */
+    public function testGetMetapropertyOptionDependencies()
+    {
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $propertyId = '00000000-0000-0000-0000000000000000';
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/metaproperties/' . $propertyId . 'options/dependencies/')
+            ->willReturn(array());
+
+        $assetBankManager = new AssetBankManager($stub);
+        $result = $assetBankManager->getMetapropertyOptionDependencies($propertyId);
+
+        self::assertNotNull($result);
+        self::assertEquals($result, array());
+    }
+
+    /**
+     * Test if we call getMetapropertySpecificOptionDependencies it will use the correct params for the request and returns successfully.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getMetapropertySpecificOptionDependencies()
+     */
+    public function testGetMetapropertySpecificOptionDependencies()
+    {
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $propertyId = '00000000-0000-0000-0000000000000000';
+        $optionId = '00000000-0000-0000-0000000000000000';
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/options/' . $optionId . '/dependencies/', array(
+                'query' => array('includeGroupedResults' => false)
+            ))
+            ->willReturn(array());
+
+        $assetBankManager = new AssetBankManager($stub);
+        $result = $assetBankManager->getMetapropertySpecificOptionDependencies($propertyId, $optionId, array('includeGroupedResults' => false));
+
+        self::assertNotNull($result);
+        self::assertEquals($result, array());
+    }
 }
