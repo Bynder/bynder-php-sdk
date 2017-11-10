@@ -10,6 +10,7 @@
 namespace Bynder\Api;
 
 use Bynder\Api\Impl\AssetBankManager;
+use Bynder\Api\Impl\Oauth\OauthRequestHandler;
 
 /**
  * Interface to communicate with Bynder API and get instance of AssetBankManager.
@@ -94,4 +95,11 @@ interface IBynderApi
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function getSecurityProfile($profileId);
+
+    /**
+     * Returns the configured request handler
+     *
+     * @return OauthRequestHandler
+     */
+    public function getRequestHandler();
 }
