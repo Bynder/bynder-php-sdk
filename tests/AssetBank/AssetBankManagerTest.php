@@ -271,7 +271,7 @@ class AssetBankManagerTest extends TestCase
         $type = 'original';
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/media/' . $mediaId . '/', array(
+            ->with('GET', 'api/v4/media/' . $mediaId . '/download/', array(
                     'query' => array(
                         'type' => $type
                     )

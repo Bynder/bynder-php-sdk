@@ -263,7 +263,7 @@ class AssetBankManager implements IAssetBankManager
      */
     public function getMediaDownloadLocation($mediaId, $type = 'original')
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/media/' . $mediaId . '/',
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/media/' . $mediaId . '/download/',
             array(
                 'query' => array(
                     'type' => $type
