@@ -11,11 +11,9 @@
 // src/Bynder/Api/Impl/AssetBankManager.php
 namespace Bynder\Api\Impl;
 
-use Bynder\Api\GuzzleHttp;
 use Bynder\Api\IAssetBankManager;
 use Bynder\Api\Impl\Oauth\IOauthRequestHandler;
 use Bynder\Api\Impl\Upload\FileUploader;
-use Bynder\Api\Promise;
 
 /**
  * Implementation of IAssetBankManager, providing operations available on the Bynder Asset Bank via API.
@@ -59,6 +57,7 @@ class AssetBankManager implements IAssetBankManager
      *
      * @param array $query
      * @see IAssetBankManager::getMediaList() for more information.
+     * @return \GuzzleHttp\Promise\Promise
      */
     public function getMediaList($query = null)
     {
@@ -75,6 +74,7 @@ class AssetBankManager implements IAssetBankManager
      * @param string $mediaId
      * @param array $query
      * @see IAssetBankManager::getMediaInfo() for more information.
+     * @return \GuzzleHttp\Promise\Promise
      */
     public function getMediaInfo($mediaId, $query = null)
     {
@@ -91,6 +91,7 @@ class AssetBankManager implements IAssetBankManager
      *
      * @param array $query
      * @see IAssetBankManager::getMetaproperties() for more information.
+     * @return \GuzzleHttp\Promise\Promise
      */
     public function getMetaproperties($query = null)
     {
@@ -104,7 +105,7 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Gets a specific meta property
      *
-     * @param string $propertyId Metap roperty id
+     * @param string $propertyId Meta property id
      * @return \GuzzleHttp\Promise\Promise with the meta property.
      */
     public function getMetaproperty($propertyId)
@@ -115,7 +116,7 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Gets all dependencies for meta property
      *
-     * @param string $propertyId Metap roperty id
+     * @param string $propertyId Meta property id
      * @return \GuzzleHttp\Promise\Promise with the meta property.
      */
     public function getMetapropertyDependencies($propertyId)
@@ -156,7 +157,7 @@ class AssetBankManager implements IAssetBankManager
      */
     public function getMetapropertyOptionDependencies($propertyId)
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/' . $propertyId . 'options/dependencies/');
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/' . $propertyId . '/options/dependencies/');
     }
 
     /**
@@ -181,6 +182,7 @@ class AssetBankManager implements IAssetBankManager
      *
      * @param array $query
      * @see IAssetBankManager::getTags() for more information.
+     * @return \GuzzleHttp\Promise\Promise
      */
     public function getTags($query = null)
     {
@@ -206,6 +208,7 @@ class AssetBankManager implements IAssetBankManager
      *
      * @param array $data File data and information for upload.
      * @see IAssetBankManager::uploadFileAsync() for more information.
+     * @return \GuzzleHttp\Promise\Promise
      */
     public function uploadFileAsync($data)
     {

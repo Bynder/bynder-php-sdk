@@ -453,7 +453,7 @@ class AssetBankManagerTest extends TestCase
         $propertyId = '00000000-0000-0000-0000000000000000';
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/metaproperties/' . $propertyId . 'options/dependencies/')
+            ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/options/dependencies/')
             ->willReturn(array());
 
         $assetBankManager = new AssetBankManager($stub);
