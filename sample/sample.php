@@ -114,6 +114,53 @@ try {
     $filePromise = $assetBankManager->uploadFileAsync($data);
     $fileInfo = $filePromise->wait();
     var_dump($fileInfo);
+
+    $integrationId = "BYNDER_INTEGRATION_ID";
+    $usageCreatePromise = $assetBankManager->createUsage(
+        [
+            'integration_id' => $integrationId,
+            'asset_id' => $mediaId,
+            'timestamp' =>  date(DateTime::ISO8601),
+            'uri' => '/posts/1',
+            'additional' => 'Testing usage tracking'
+        ]
+    );
+    $usageCreated = $usageCreatePromise->wait();
+    var_dump($usageCreated);
+
+    $usageCreatePromise = $assetBankManager->createUsage(
+        [
+            'integration_id' => $integrationId,
+            'asset_id' => $mediaId,
+            'timestamp' => date(DateTime::ISO8601),
+            'uri' => '/posts/2',
+            'additional' => 'Testing usage tracking'
+        ]
+    );
+    $usageCreated = $usageCreatePromise->wait();
+    var_dump($usageCreated);
+
+    $retrieveUsages = $assetBankManager->getUsage(
+        [
+            'asset_id' => $mediaId
+        ]
+    )->wait();
+    var_dump($retrieveUsages);
+
+    $deleteUSages = $assetBankManager->deleteUSage(
+        [
+            'integration_id' => $integrationId,
+            'asset_id' => $mediaId,
+            'uri' => '/posts/2'
+        ]
+    )->wait();
+
+    $retrieveUsages = $assetBankManager->getUsage(
+        [
+            'asset_id' => $mediaId
+        ]
+    )->wait();
+    var_dump($retrieveUsages);
 } catch (Exception $e) {
     echo $e->getMessage() . "\n";
 }

@@ -57,13 +57,12 @@ class AssetBankManager implements IAssetBankManager
      *
      * @param array $query
      * @see IAssetBankManager::getMediaList() for more information.
+     * @return \GuzzleHttp\Promise\Promise
      */
     public function getMediaList($query = null)
     {
         return $this->requestHandler->sendRequestAsync('GET', 'api/v4/media/',
-            array(
-                'query' => $query
-            )
+            ['query' => $query]
         );
     }
 
@@ -73,13 +72,12 @@ class AssetBankManager implements IAssetBankManager
      * @param string $mediaId
      * @param array $query
      * @see IAssetBankManager::getMediaInfo() for more information.
+     * @return \GuzzleHttp\Promise\Promise
      */
     public function getMediaInfo($mediaId, $query = null)
     {
         return $this->requestHandler->sendRequestAsync('GET', 'api/v4/media/' . $mediaId . '/',
-            array(
-                'query' => $query
-            )
+            ['query' => $query]
         );
     }
 
@@ -89,13 +87,86 @@ class AssetBankManager implements IAssetBankManager
      *
      * @param array $query
      * @see IAssetBankManager::getMetaproperties() for more information.
+     * @return \GuzzleHttp\Promise\Promise
      */
     public function getMetaproperties($query = null)
     {
         return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/',
-            array(
-                'query' => $query
-            )
+            ['query' => $query]
+        );
+    }
+
+    /**
+     * Gets a specific meta property
+     *
+     * @param string $propertyId Meta property id
+     * @return \GuzzleHttp\Promise\Promise with the meta property.
+     */
+    public function getMetaproperty($propertyId)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/' . $propertyId . '/');
+    }
+
+    /**
+     * Gets all dependencies for meta property
+     *
+     * @param string $propertyId Meta property id
+     * @return \GuzzleHttp\Promise\Promise with the meta property.
+     */
+    public function getMetapropertyDependencies($propertyId)
+    {
+        return $this->requestHandler->sendRequestAsync('GET',
+            'api/v4/metaproperties/' . $propertyId . '/dependencies/');
+    }
+
+    /**
+     * Gets a list of meta property options
+     *
+     * @param array $query Associative array of parameters to filter the results.
+     * @return \GuzzleHttp\Promise\Promise with all requested meta property options.
+     */
+    public function getMetapropertyOptions($query)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/options/',
+            ['query' => $query]
+        );
+    }
+
+    /**
+     * Gets a list of all meta property option dependencies (globally)
+     *
+     * @return \GuzzleHttp\Promise\Promise with all meta property options dependencies.
+     */
+    public function getMetapropetryGlobalOptionDependencies()
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/options/dependencies/');
+    }
+
+    /**
+     * Gets a list of all meta property option dependencies for a specific property
+     *
+     * @param string $propertyId Meta property id
+     * @return \GuzzleHttp\Promise\Promise with all meta property options dependencies.
+     */
+    public function getMetapropertyOptionDependencies($propertyId)
+    {
+        return $this->requestHandler->sendRequestAsync('GET',
+            'api/v4/metaproperties/' . $propertyId . '/options/dependencies/');
+    }
+
+    /**
+     * Gets a list of all meta property option dependencies for a specific option
+     *
+     * @param string $propertyId Meta property id
+     * @param string $optionId Option id
+     * @param array $query Associative array of parameters to filter the results.
+     * @return \GuzzleHttp\Promise\Promise with all meta property options dependencies.
+     */
+    public function getMetapropertySpecificOptionDependencies($propertyId, $optionId, $query)
+    {
+        return $this->requestHandler->sendRequestAsync('GET',
+            'api/v4/metaproperties/' . $propertyId . '/options/' . $optionId . '/dependencies/',
+            ['query' => $query]
         );
     }
 
@@ -104,13 +175,12 @@ class AssetBankManager implements IAssetBankManager
      *
      * @param array $query
      * @see IAssetBankManager::getTags() for more information.
+     * @return \GuzzleHttp\Promise\Promise
      */
     public function getTags($query = null)
     {
         return $this->requestHandler->sendRequestAsync('GET', 'api/v4/tags/',
-            array(
-                'query' => $query
-            )
+            ['query' => $query]
         );
     }
 
@@ -129,6 +199,7 @@ class AssetBankManager implements IAssetBankManager
      *
      * @param array $data File data and information for upload.
      * @see IAssetBankManager::uploadFileAsync() for more information.
+     * @return \GuzzleHttp\Promise\Promise
      */
     public function uploadFileAsync($data)
     {
@@ -153,16 +224,16 @@ class AssetBankManager implements IAssetBankManager
      * @link http://docs.bynder.apiary.io/#reference/assets/specific-asset-operations/modify-asset
      *
      * @param string $mediaId
-     * @param array $data File information to be set
-     *      array(
-     *         'name' => 'Image Name',
-     *         'description' => 'Image description'
-     *      );
+     * @param array $data File information to be set.
+     * @see IAssetBankManager::modifyMedia() for more information.
+     *
      * @return \GuzzleHttp\Promise\Promise
      */
     public function modifyMedia($mediaId, array $data)
     {
-        return $this->requestHandler->sendRequestAsync('POST', 'api/v4/media/' . $mediaId . '/', ['form_params' => $data]);
+        return $this->requestHandler->sendRequestAsync('POST', 'api/v4/media/' . $mediaId . '/',
+            ['form_params' => $data]
+        );
     }
 
     /**
@@ -170,9 +241,103 @@ class AssetBankManager implements IAssetBankManager
      *
      * @see IAssetBankManager::getDerivatives() for more information.
      */
-    public function  getDerivatives()
+    public function getDerivatives()
     {
         return $this->requestHandler->sendRequestAsync('GET', 'api/v4/account/derivatives/');
     }
 
+    /**
+     * Gets the download location for a specific asset
+     *
+     * @param string $mediaId The Bynder media identifier (Asset id).
+     * @param string $type Type of files to download. Note that when multiple additional files are
+     *                     available only the download url of the latest one will be returned.
+     *                     E.g. additional, original. Default = original
+     * @return \GuzzleHttp\Promise\Promise
+     */
+    public function getMediaDownloadLocation($mediaId, $type = 'original')
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/media/' . $mediaId . '/download/',
+            [
+                'query' =>
+                    ['type' => $type]
+            ]
+        );
+    }
+
+    /**
+     * Gets the download location for a specific asset with a specific version
+     *
+     * @param string $mediaId The Bynder media identifier (Asset id).
+     * @param int $version Asset version to download.
+     * @return \GuzzleHttp\Promise\Promise with the download location for a specific asset.
+     */
+    public function getMediaDownloadLocationByVersion($mediaId, $version)
+    {
+        return $this->requestHandler->sendRequestAsync('GET',
+            'api/v4/media/' . $mediaId . '/' . $version . '/download/');
+    }
+
+    /**
+     * Gets the download location for a specific asset item
+     *
+     * @param string $mediaId The Bynder media identifier (Asset id).
+     * @param string $itemId The id of the specific asset item you’d like to download.
+     * @param boolean $hash Indicates whether or not to treat the itemId as a hashed item id.
+     * @return \GuzzleHttp\Promise\Promise with the download location for a specific asset.
+     */
+    public function getMediaDownloadLocationForAssetItem($mediaId, $itemId, $hash = false)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/media/' . $mediaId . '/download/' . $itemId . '/',
+            [
+                'query' =>
+                    ['hash' => $hash]
+            ]
+        );
+    }
+
+    /**
+     * Creates a usage record for a media asset.
+     *
+     * @param $query
+     * @return \GuzzleHttp\Promise\Promise Asset usage information.
+     *
+     * @throws \GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function createUsage($query)
+    {
+        return $this->requestHandler->sendRequestAsync('POST', 'api/media/usage',
+            ['form_params' => $query]
+        );
+    }
+
+    /**
+     * Gets all the media assets usage records.
+     *
+     * @param $query
+     * @return \GuzzleHttp\Promise\Promise List of asset usage information.
+     *
+     * @throws \GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function getUsage($query)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/media/usage',
+            ['query' => $query]
+        );
+    }
+
+    /**
+     * Deletes a usage record of a media asset.
+     *
+     * @param $query
+     * @return \GuzzleHttp\Promise\Promise Response of asset usage delete.
+     *
+     * @throws \GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function deleteUSage($query)
+    {
+        return $this->requestHandler->sendRequestAsync('DELETE', 'api/media/usage',
+            ['query' => $query]
+        );
+    }
 }

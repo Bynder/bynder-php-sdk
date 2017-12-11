@@ -94,7 +94,7 @@ class FileUploader
      * After the file is processed, the client sends a “save” call to save the file in Bynder.
      *      Additional information can be provided such as title, tags, metadata and description.
      *
-     * @param $data Array containing the file and media asset information.
+     * @param $data array containing the file and media asset information.
      * @return Promise\Promise file promise.
      */
     public function uploadFile($data)

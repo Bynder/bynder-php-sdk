@@ -4,6 +4,7 @@ namespace Bynder\Test\BynderApi;
 
 use Bynder\Api\BynderApiFactory;
 use Bynder\Api\Impl\BynderApi;
+use Bynder\Api\Impl\Oauth\OauthRequestHandler;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -67,4 +68,12 @@ class BynderApiTest extends TestCase
         self::assertNotNull($assetBankManager);
     }
 
+    /**
+     * @covers  \Bynder\Api\Impl\BynderApi::getRequestHandler()
+     * @depends testCreateApiService
+     */
+    public function testGetRequestHandler(BynderApi $bynderApi)
+    {
+        self::assertInstanceOf(OauthRequestHandler::class, $bynderApi->getRequestHandler());
+    }
 }

@@ -171,6 +171,10 @@ class OauthRequestHandler implements IOauthRequestHandler
                         return $response;
                         break;
                     default:
+                        // If we don't know the response type but it was a successful request, it's probably okay.
+                        if($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+                            return $response;
+                        }
                         throw new Exception("The response type not recognized.");
                 }
             }

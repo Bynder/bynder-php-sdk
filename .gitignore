@@ -8,3 +8,4 @@ site.conf
 *.jpeg
 *.txt
 tests/*/config.json
+.idea

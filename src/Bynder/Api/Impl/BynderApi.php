@@ -259,4 +259,14 @@ class BynderApi implements IBynderApi
         return $settings;
     }
 
+    /**
+     * Returns the configured request handler
+     *
+     * @return OauthRequestHandler
+     */
+    public function getRequestHandler()
+    {
+        return $this->requestHandler;
+    }
+
 }
