@@ -102,4 +102,15 @@ interface IBynderApi
      * @return OauthRequestHandler
      */
     public function getRequestHandler();
+
+    /**
+     * Modify the current user.
+     *
+     * @param string $userId
+     *
+     * @param array $query
+     *
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function modifyUser($userId, $query);
 }

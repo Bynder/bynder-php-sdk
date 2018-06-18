@@ -131,13 +131,13 @@ interface IAssetBankManager
     /**
      * Uploads a file.
      *
-     * @param $data File data and information for upload.
-     *      array(
+     * @param array $data File data and information for upload.
+     *      [
      *         'filePath' => 'image.jpg',
      *         'brandId' => 'brandId',
      *         'name' => 'Image Name',
      *         'description' => 'Image description'
-     *      );
+     *      ];
      * @return \GuzzleHttp\Promise\Promise Uploaded file information.
      *
      * @throws \GuzzleHttp\Exception\RequestException When request fails.
@@ -160,10 +160,10 @@ interface IAssetBankManager
      *
      * @param string $mediaId
      * @param array $data File information to be set
-     *      array(
+     *      [
      *         'name' => 'Image Name',
      *         'description' => 'Image description'
-     *      );
+     *      ];
      * @return \GuzzleHttp\Promise\Promise
      *
      * @throws \GuzzleHttp\Exception\RequestException When request fails.

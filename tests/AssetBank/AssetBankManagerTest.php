@@ -12,10 +12,11 @@ class AssetBankManagerTest extends TestCase
      * Test if we call getBrands it will use the correct params for the request and returns successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getBrands()
+     * @throws \Exception
      */
     public function testGetBrands()
     {
-        $returnedBrands = array();
+        $returnedBrands = [];
         $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
@@ -23,7 +24,7 @@ class AssetBankManagerTest extends TestCase
         $stub->expects($this->once())
             ->method('sendRequestAsync')
             ->with('GET', 'api/v4/brands/')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $assetBankManager = new AssetBankManager($stub);
         $brands = $assetBankManager->getBrands();
@@ -36,10 +37,11 @@ class AssetBankManagerTest extends TestCase
      * Test if we call getMediaList it will use the correct params for the request and returns successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getMediaList()
+     * @throws \Exception
      */
     public function testGetMediaList()
     {
-        $returnedMedia = array();
+        $returnedMedia = [];
         $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
@@ -55,13 +57,13 @@ class AssetBankManagerTest extends TestCase
         self::assertEquals($mediaList, $returnedMedia);
 
         // Test with query params.
-        $query = array(
+        $query = [
             'count' => true,
             'limit' => 2,
             'type' => 'image'
-        );
+        ];
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/media/', array('query' => $query))
+            ->with('GET', 'api/v4/media/', ['query' => $query])
             ->willReturn($returnedMedia);
 
         $assetBankManager = new AssetBankManager($stub);
@@ -75,10 +77,11 @@ class AssetBankManagerTest extends TestCase
      * Test if we call getMediaInfo it will use the correct params for the request and returns successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getMediaInfo()
+     * @throws \Exception
      */
     public function testGetMediaInfo()
     {
-        $returnedMedia = array();
+        $returnedMedia = [];
         $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
@@ -108,10 +111,11 @@ class AssetBankManagerTest extends TestCase
      * Test if we call getMetaproperties it will use the correct params for the request and returns successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getMetaproperties()
+     * @throws \Exception
      */
     public function testGetMetaproperties()
     {
-        $returnedMedia = array();
+        $returnedMedia = [];
         $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
@@ -131,27 +135,28 @@ class AssetBankManagerTest extends TestCase
             ->getMock();
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/metaproperties/', array(
-                'query' => array('count' => 1)
-                )
+            ->with('GET', 'api/v4/metaproperties/', [
+                'query' => ['count' => 1]
+                ]
             )
-            ->willReturn(array('query'));
+            ->willReturn(['query']);
 
         $assetBankManager = new AssetBankManager($stub);
-        $metaproperties = $assetBankManager->getMetaproperties(array('count' => 1));
+        $metaproperties = $assetBankManager->getMetaproperties(['count' => 1]);
 
         self::assertNotNull($metaproperties);
-        self::assertEquals($metaproperties, array('query'));
+        self::assertEquals($metaproperties, ['query']);
     }
 
     /**
      * Test if we call getTags it will use the correct params for the request and returns successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getTags()
+     * @throws \Exception
      */
     public function testGetTags()
     {
-        $returnedMedia = array();
+        $returnedMedia = [];
         $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
@@ -171,27 +176,28 @@ class AssetBankManagerTest extends TestCase
             ->getMock();
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/tags/', array(
-                'query' => array('limit' => 10)
-                )
+            ->with('GET', 'api/v4/tags/', [
+                'query' => ['limit' => 10]
+                ]
             )
-            ->willReturn(array('query'));
+            ->willReturn(['query']);
 
         $assetBankManager = new AssetBankManager($stub);
-        $tagList = $assetBankManager->getTags(array('limit' => 10));
+        $tagList = $assetBankManager->getTags(['limit' => 10]);
 
         self::assertNotNull($tagList);
-        self::assertEquals($tagList, array('query'));
+        self::assertEquals($tagList, ['query']);
     }
 
     /**
      * Test if we call getCategories it will use the correct params for the request and returns successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getTags()
+     * @throws \Exception
      */
     public function testGetCategories()
     {
-        $returnedMedia = array();
+        $returnedMedia = [];
         $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
@@ -212,10 +218,11 @@ class AssetBankManagerTest extends TestCase
      * HINT: it is rather skeleton, to use it properly this test requires much more complex mock with configured asset
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::modifyMedia()
+     * @throws \Exception
      */
     public function testModifyMedia()
     {
-        $return = array();
+        $return = [];
         $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
@@ -234,14 +241,14 @@ class AssetBankManagerTest extends TestCase
         self::assertEquals($modifyMediaReturn, $return);
     }
 
-
     /**
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getDerivatives()
+     * @throws \Exception
      */
     public function testGetDerivatives()
     {
-        $returnedMedia = array();
+        $returnedMedia = [];
         $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
@@ -261,6 +268,7 @@ class AssetBankManagerTest extends TestCase
      * Test if we call getMediaDownloadLocation it will use the correct params for the request and returns successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getMediaDownloadLocation()
+     * @throws \Exception
      */
     public function testGetMediaDownloadLocation()
     {
@@ -272,25 +280,27 @@ class AssetBankManagerTest extends TestCase
         $type = 'original';
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/media/' . $mediaId . '/download/', array(
-                    'query' => array(
+            ->with('GET', 'api/v4/media/' . $mediaId . '/download/', [
+                    'query' => [
                         'type' => $type
-                    )
-                )
+                    ]
+                ]
             )
-            ->willReturn(array('query'));
+            ->willReturn(['query']);
 
         $assetBankManager = new AssetBankManager($stub);
         $mediaLocation = $assetBankManager->getMediaDownloadLocation($mediaId);
 
         self::assertNotNull($mediaLocation);
-        self::assertEquals($mediaLocation, array('query'));
+        self::assertEquals($mediaLocation, ['query']);
     }
 
     /**
-     * Test if we call getMediaDownloadLocationByVersion it will use the correct params for the request and returns successfully.
+     * Test if we call getMediaDownloadLocationByVersion it will use the correct params for the request and returns
+     * successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getMediaDownloadLocation()
+     * @throws \Exception
      */
     public function testGetMediaDownloadLocationByVersion()
     {
@@ -313,9 +323,11 @@ class AssetBankManagerTest extends TestCase
     }
 
     /**
-     * Test if we call getMediaDownloadLocationForAssetItem it will use the correct params for the request and returns successfully.
+     * Test if we call getMediaDownloadLocationForAssetItem it will use the correct params for the request and returns
+     * successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getMediaDownloadLocation()
+     * @throws \Exception
      */
     public function testGetMediaDownloadLocationForAssetItem()
     {
@@ -328,25 +340,26 @@ class AssetBankManagerTest extends TestCase
         $hash = false;
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/media/' . $mediaId . '/download/' . $itemId . '/', array(
-                    'query' => array(
+            ->with('GET', 'api/v4/media/' . $mediaId . '/download/' . $itemId . '/', [
+                    'query' => [
                         'hash' => $hash
-                    )
-                )
+                    ]
+                ]
             )
-            ->willReturn(array('query'));
+            ->willReturn(['query']);
 
         $assetBankManager = new AssetBankManager($stub);
         $mediaLocation = $assetBankManager->getMediaDownloadLocationForAssetItem($mediaId, $itemId);
 
         self::assertNotNull($mediaLocation);
-        self::assertEquals($mediaLocation, array('query'));
+        self::assertEquals($mediaLocation, ['query']);
     }
 
     /**
      * Test if we call getMetaproperty it will use the correct params for the request and returns successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getMetaproperty()
+     * @throws \Exception
      */
     public function testGetMetapropery()
     {
@@ -358,19 +371,21 @@ class AssetBankManagerTest extends TestCase
 
         $stub->method('sendRequestAsync')
             ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $assetBankManager = new AssetBankManager($stub);
         $mediaLocation = $assetBankManager->getMetaproperty($propertyId);
 
         self::assertNotNull($mediaLocation);
-        self::assertEquals($mediaLocation, array());
+        self::assertEquals($mediaLocation, []);
     }
 
     /**
-     * Test if we call getMetapropertyDependencies it will use the correct params for the request and returns successfully.
+     * Test if we call getMetapropertyDependencies it will use the correct params for the request and returns
+     * successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getMetapropertyDependencies()
+     * @throws \Exception
      */
     public function testGetMetapropertyDependencies()
     {
@@ -382,19 +397,20 @@ class AssetBankManagerTest extends TestCase
 
         $stub->method('sendRequestAsync')
             ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/dependencies/')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $assetBankManager = new AssetBankManager($stub);
         $mediaLocation = $assetBankManager->getMetapropertyDependencies($propertyId);
 
         self::assertNotNull($mediaLocation);
-        self::assertEquals($mediaLocation, array());
+        self::assertEquals($mediaLocation, []);
     }
 
     /**
      * Test if we call getMetapropertyOptions it will use the correct params for the request and returns successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getMetapropertyOptions()
+     * @throws \Exception
      */
     public function testGetMetapropertyOptions()
     {
@@ -403,25 +419,27 @@ class AssetBankManagerTest extends TestCase
             ->getMock();
 
         $optionId = '00000000-0000-0000-0000000000000000';
-        $query = array('ids' => $optionId);
+        $query = ['ids' => $optionId];
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/metaproperties/options/', array(
+            ->with('GET', 'api/v4/metaproperties/options/', [
                     'query' => $query
-                ))
-            ->willReturn(array('query'));
+            ])
+            ->willReturn(['query']);
 
         $assetBankManager = new AssetBankManager($stub);
         $result = $assetBankManager->getMetapropertyOptions($query);
 
         self::assertNotNull($result);
-        self::assertEquals($result, array('query'));
+        self::assertEquals($result, ['query']);
     }
 
     /**
-     * Test if we call getMetapropetryGlobalOptionDependencies it will use the correct params for the request and returns successfully.
+     * Test if we call getMetapropetryGlobalOptionDependencies it will use the correct params for the request and
+     * returns successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getMetapropetryGlobalOptionDependencies()
+     * @throws \Exception
      */
     public function testGetMetapropetryGlobalOptionDependencies()
     {
@@ -431,19 +449,21 @@ class AssetBankManagerTest extends TestCase
 
         $stub->method('sendRequestAsync')
             ->with('GET', 'api/v4/metaproperties/options/dependencies/')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $assetBankManager = new AssetBankManager($stub);
         $result = $assetBankManager->getMetapropetryGlobalOptionDependencies();
 
         self::assertNotNull($result);
-        self::assertEquals($result, array());
+        self::assertEquals($result, []);
     }
 
     /**
-     * Test if we call getMetapropertyOptionDependencies it will use the correct params for the request and returns successfully.
+     * Test if we call getMetapropertyOptionDependencies it will use the correct params for the request and returns
+     * successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getMetapropertyOptionDependencies()
+     * @throws \Exception
      */
     public function testGetMetapropertyOptionDependencies()
     {
@@ -455,19 +475,21 @@ class AssetBankManagerTest extends TestCase
 
         $stub->method('sendRequestAsync')
             ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/options/dependencies/')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $assetBankManager = new AssetBankManager($stub);
         $result = $assetBankManager->getMetapropertyOptionDependencies($propertyId);
 
         self::assertNotNull($result);
-        self::assertEquals($result, array());
+        self::assertEquals($result, []);
     }
 
     /**
-     * Test if we call getMetapropertySpecificOptionDependencies it will use the correct params for the request and returns successfully.
+     * Test if we call getMetapropertySpecificOptionDependencies it will use the correct params for the request and
+     * returns successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getMetapropertySpecificOptionDependencies()
+     * @throws \Exception
      */
     public function testGetMetapropertySpecificOptionDependencies()
     {
@@ -479,22 +501,23 @@ class AssetBankManagerTest extends TestCase
         $optionId = '00000000-0000-0000-0000000000000000';
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/options/' . $optionId . '/dependencies/', array(
-                'query' => array('includeGroupedResults' => false)
-            ))
-            ->willReturn(array());
+            ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/options/' . $optionId . '/dependencies/', [
+                'query' => ['includeGroupedResults' => false]
+            ])
+            ->willReturn([]);
 
         $assetBankManager = new AssetBankManager($stub);
-        $result = $assetBankManager->getMetapropertySpecificOptionDependencies($propertyId, $optionId, array('includeGroupedResults' => false));
+        $result = $assetBankManager->getMetapropertySpecificOptionDependencies($propertyId, $optionId, ['includeGroupedResults' => false]);
 
         self::assertNotNull($result);
-        self::assertEquals($result, array());
+        self::assertEquals($result, []);
     }
 
     /**
      * Tests the CreateUsage function.
      *
-     *@covers \Bynder\Api\Impl\AssetBankManager::createUsage()
+     * @covers \Bynder\Api\Impl\AssetBankManager::createUsage()
+     * @throws \Exception
      */
     public function testCreateAssetUSage()
     {
@@ -511,22 +534,23 @@ class AssetBankManagerTest extends TestCase
         ];
 
         $stub->method('sendRequestAsync')
-            ->with('POST', 'api/media/usage', array(
+            ->with('POST', 'api/media/usage', [
                 'form_params' => $queryData
-            ))
-            ->willReturn(array());
+            ])
+            ->willReturn([]);
 
         $assetBankManager = new AssetBankManager($stub);
         $result = $assetBankManager->createUsage($queryData);
 
         self::assertNotNull($result);
-        self::assertEquals($result, array());
+        self::assertEquals($result, []);
     }
 
     /**
      * Tests the GetUsage function.
      *
-     *@covers \Bynder\Api\Impl\AssetBankManager::getUsage()
+     * @covers \Bynder\Api\Impl\AssetBankManager::getUsage()
+     * @throws \Exception
      */
     public function testGetAssetUSage()
     {
@@ -539,22 +563,23 @@ class AssetBankManagerTest extends TestCase
         ];
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/media/usage', array(
+            ->with('GET', 'api/media/usage', [
                 'query' => $queryData
-            ))
-            ->willReturn(array());
+            ])
+            ->willReturn([]);
 
         $assetBankManager = new AssetBankManager($stub);
         $result = $assetBankManager->getUsage($queryData);
 
         self::assertNotNull($result);
-        self::assertEquals($result, array());
+        self::assertEquals($result, []);
     }
 
     /**
      * Tests the DeleteUsage function.
      *
-     *@covers \Bynder\Api\Impl\AssetBankManager::deleteUSage()
+     * @covers \Bynder\Api\Impl\AssetBankManager::deleteUSage()
+     * @throws \Exception
      */
     public function testDeleteAssetUSage()
     {
@@ -569,10 +594,10 @@ class AssetBankManagerTest extends TestCase
         ];
 
         $stub->method('sendRequestAsync')
-            ->with('DELETE', 'api/media/usage', array(
+            ->with('DELETE', 'api/media/usage', [
                 'query' => $queryData
-            ))
-            ->willReturn(array());
+            ])
+            ->willReturn([]);
 
         $assetBankManager = new AssetBankManager($stub);
         $result = $assetBankManager->deleteUSage($queryData);

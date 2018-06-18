@@ -4,7 +4,6 @@ namespace Bynder\Test\AssetBank;
 use Bynder\Api\Impl\Upload\FileUploader;
 use GuzzleHttp\Promise\FulfilledPromise;
 use PHPUnit\Framework\TestCase;
-use GuzzleHttp\Psr7\Response;
 use org\bovigo\vfs\vfsStream;
 
 class FileUploaderTest extends TestCase
@@ -59,6 +58,7 @@ class FileUploaderTest extends TestCase
      *      7. Save
      *
      * @covers \Bynder\Api\Impl\Upload\FileUploader::uploadFile()
+     * @throws \Exception
      */
     public function testCorrectUploadFileSequence()
     {
@@ -139,11 +139,11 @@ class FileUploaderTest extends TestCase
      */
     private static function getInitUploadRequest($filePath)
     {
-        return array(
+        return [
             'POST',
             'api/upload/init',
-            array('form_params' => array('filename' => $filePath))
-        );
+            ['form_params' => ['filename' => $filePath]]
+        ];
     }
 
     /**
@@ -154,10 +154,10 @@ class FileUploaderTest extends TestCase
     private static function getInitUploadResponse()
     {
         return new FulfilledPromise(
-            array(
+            [
                 's3_filename' => 's3_filename',
-                's3file' => array('uploadid' => 'fakeUploadId', 'targetid' => 'fakeTargetid'),
-            )
+                's3file' => ['uploadid' => 'fakeUploadId', 'targetid' => 'fakeTargetid'],
+            ]
         );
     }
 
@@ -168,7 +168,7 @@ class FileUploaderTest extends TestCase
      */
     private static function getUploadEndpointRequest()
     {
-        return array('GET', 'api/upload/endpoint');
+        return ['GET', 'api/upload/endpoint'];
     }
 
     /**
@@ -188,18 +188,18 @@ class FileUploaderTest extends TestCase
      */
     private static function getRegisterChunkRequest()
     {
-        return array(
+        return [
             'POST',
             'api/v4/upload/fakeUploadId/',
-            array(
-                'form_params' => array(
+            [
+                'form_params' => [
                     'id' => 'fakeUploadId',
                     'targetid' => 'fakeTargetid',
                     'filename' => 's3_filename/p1',
                     'chunkNumber' => 1,
-                )
-            )
-        );
+                ]
+            ]
+        ];
     }
 
     /**
@@ -219,18 +219,18 @@ class FileUploaderTest extends TestCase
      */
     private static function getFinaliseRequest()
     {
-        return array(
+        return [
             'POST',
             'api/v4/upload/fakeUploadId/',
-            array(
-                'form_params' => array(
+            [
+                'form_params' => [
                     'id' => 'fakeUploadId',
                     'targetid' => 'fakeTargetid',
                     's3_filename' => 's3_filename/p1',
                     'chunks' => 1,
-                )
-            )
-        );
+                ]
+            ]
+        ];
     }
 
     /**
@@ -240,7 +240,7 @@ class FileUploaderTest extends TestCase
      */
     private static function getFinaliseResponse()
     {
-        return new FulfilledPromise(array('importId' => 'importId'));
+        return new FulfilledPromise(['importId' => 'importId']);
     }
 
     /**
@@ -250,7 +250,7 @@ class FileUploaderTest extends TestCase
      */
     private static function getPollStatusRequest()
     {
-        return array('GET', 'api/v4/upload/poll/', array('query' => array('items' => 'importId'), 'delay' => 0));
+        return ['GET', 'api/v4/upload/poll/', ['query' => ['items' => 'importId'], 'delay' => 0]];
     }
 
     /**
@@ -261,29 +261,29 @@ class FileUploaderTest extends TestCase
     private static function getPollStatusResponse()
     {
         return new FulfilledPromise(
-            array(
+            [
                 'itemsDone' => 'importId',
                 'itemsFailed' => null,
-            ));
+            ]);
     }
 
     /**
      * Builds a valid save media request.
      *
-     * @param $filePath The file to be uploaded
+     * @param string $filePath The file to be uploaded
      * @return array The request params.
      */
     private static function getSaveMediaRequest($filePath)
     {
-        return array(
+        return [
             'POST',
             'api/v4/media/save/',
-            array(
-                'form_params' => array(
+            [
+                'form_params' => [
                     'filePath' => $filePath,
                     'importId' => 'importId'
-                )
-            )
-        );
+                ]
+            ]
+        ];
     }
 }
