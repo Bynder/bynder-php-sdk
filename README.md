@@ -23,10 +23,10 @@ https://packagist.org/packages/bynder/bynder-php-sdk
 
 This SDK depends on a few libraries in order to work, installing it with Composer should take care of everything automatically. 
 
-To install the SDK with [Composer](http://getcomposer.org/). Run the following command on the root of the project:
+To install the SDK with [Composer](http://getcomposer.org/). Run the following command at the root of the project:
 
 ```bash
-composer install
+composer require bynder/bynder-php-sdk
 ```
 
 To use the SDK, we use Composer's [autoload](https://getcomposer.org/doc/00-intro.md#autoloading) in order to include all the files automatically:
@@ -42,24 +42,24 @@ This is a simple example on how to retrieve data from the Bynder asset bank. For
 Before executing any request to the Bynder API we need to instantiate the **BynderApi** class, the following example shows how to use the **BynderApiFactory** to construct a **BynderApi** instance:
 ```php
     $bynderApi = BynderApiFactory::create(
-        array(
-            'consumerKey' => BYNDER_CONSUMER_KEY,
-            'consumerSecret' => BYNDER_CONSUMER_SECRET,
-            'token' => BYNDER_CLIENT_KEY,
-            'tokenSecret' => BYNDER_CLIENT_SECRET,
-            'baseUrl' => BYNDER_URL
-            )
+        [
+          'consumerKey' => BYNDER_CONSUMER_KEY,
+          'consumerSecret' => BYNDER_CONSUMER_SECRET,
+          'token' => BYNDER_CLIENT_KEY,
+          'tokenSecret' => BYNDER_CLIENT_SECRET,
+          'baseUrl' => BYNDER_URL
+        ]
     );
 ```
 
-The SDK allows the use of [Guzzle request options](http://docs.guzzlephp.org/en/latest/request-options.html), such as 'proxy' or 'headers', in order to accomodate for specific server requirements. To do so, all we need to do is send an extra **settings** parameter with 'requestOptions' as key and the desired options when creating the **BynderApi** object.:
+The SDK allows the use of [Guzzle request options](http://docs.guzzlephp.org/en/latest/request-options.html), such as 'proxy' or 'headers', in order to accommodate specific server requirements. To do so, all we need to do is send an extra **settings** parameter with 'requestOptions' as key and the desired options when creating the **BynderApi** object.:
 ```php
     $requestOptions = ['proxy' => 'http://MY-PROXY.URL:PORT_NUM'];
     $bynderApi = BynderApiFactory::create(
-        array(
-            ...
-            'requestOptions' => $requestOptions
-        )
+        [
+           ...
+           'requestOptions' => $requestOptions
+        ]
     );
 
 ```
@@ -78,17 +78,18 @@ This call will return a list with all the Media Items available in the Bynder en
 For instance, if we only wanted to retrieve **2 images** here is what the call would look like:
 ```php
     $mediaList = $assetBankManager->getMediaList(
-        array(
+        [
           'limit' => 2,
-          'type' => 'image')
-        );
+          'type' => 'image'
+        ]
+   );
 ```
 
 All the calls are **Asynchronous**, which means they will return a **Promise** object, making it a bit more flexible in order to adjust to any kind of application. 
-Again, for more a thourough example there is a sample [application use case](https://github.com/Bynder/bynder-php-sdk/blob/develop/sample/sample.php) in this repo.
+Again, for a more thorough example there is a sample [application use case](https://github.com/Bynder/bynder-php-sdk/blob/develop/sample/sample.php) in this repo.
 
 ## Methods Available
-These are the methods currently availble on the **Bynder PHP SDK**, refer to the [Bynder API Docs](http://docs.bynder.apiary.io/)) for more specific details on the calls.
+These are the methods currently available on the **Bynder PHP SDK**, refer to the [Bynder API Docs](http://docs.bynder.apiary.io/)) for more specific details on the calls.
 
 #### BynderApi:
 Gets an instance of the Asset Bank Manager service if already with access tokens set up.
@@ -102,6 +103,7 @@ the Asset Bank calls.
     setAccessTokenCredentials($token, $tokenSecret);
     userLogin($username, $password);
     userLogout();
+    modifyUser($userId, $query);
 ```
 
 

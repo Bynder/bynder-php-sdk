@@ -5,13 +5,19 @@ require_once('vendor/autoload.php');
 use Bynder\Api\BynderApiFactory;
 use Bynder\Api\Impl\BynderApi;
 
-$settings = array(
+define('BYNDER_CONSUMER_KEY', '');
+define('BYNDER_CONSUMER_SECRET', '');
+define('BYNDER_CLIENT_KEY', '');
+define('BYNDER_CLIENT_SECRET', '');
+define('BYNDER_URL', '');
+
+$settings = [
     'consumerKey' => BYNDER_CONSUMER_KEY,
     'consumerSecret' => BYNDER_CONSUMER_SECRET,
     'token' => BYNDER_CLIENT_KEY,
     'tokenSecret' => BYNDER_CLIENT_SECRET,
     'baseUrl' => BYNDER_URL
-);
+];
 
 $haveTokens = true;
 
@@ -31,11 +37,11 @@ try {
         file_put_contents('tokens.txt', json_encode($tokenArray));
         $token = explode('=', $tokenArray[0])[1];
         $tokenSecret = explode('=', $tokenArray[1])[1];
-        $query = array(
+        $query = [
             'oauth_token' => $token,
             // Would be the url pointing to this script for example.
             'callback' => 'CALLBACK URL'
-        );
+        ];
 
         // Authorise the request token and redirect the user to the login page.
         $requestTokens = $bynderApi->authoriseRequestToken($query)->wait();
@@ -48,13 +54,13 @@ try {
         $tokens = json_decode(file_get_contents('tokens.txt'), true);
         $token = explode('=', $tokens[0])[1];
         $tokenSecret = explode('=', $tokens[1])[1];
-        $settings = array(
+        $settings = [
             'consumerKey' => BYNDER_CONSUMER_KEY,
             'consumerSecret' => BYNDER_CONSUMER_SECRET,
             'token' => $token,
             'tokenSecret' => $tokenSecret,
             'baseUrl' => BYNDER_URL
-        );
+        ];
         $bynderApi = BynderApiFactory::create($settings);
 
         // Exchanging the authorised request token for an access token.
@@ -62,7 +68,7 @@ try {
     }
 
     $currentUser = $bynderApi->getCurrentUser()->wait();
-    $user = $bynderApi->getUser('userId')->wait();
+    $user = $bynderApi->getUser($currentUser['id'])->wait();
 
     if(isset($currentUser['profileId'])) {
         $roles = $bynderApi->getSecurityProfile($currentUser['profileId'])->wait();
@@ -78,12 +84,12 @@ try {
 
     // Get Media Items list.
     // Optional filter.
-    $query = array(
+    $query = [
         'count' => true,
         'limit' => 2,
         'type' => 'image',
         'versions' => 1
-    );
+    ];
 
     $mediaListPromise = $assetBankManager->getMediaList($query);
     $mediaList = $mediaListPromise->wait();
@@ -105,12 +111,12 @@ try {
     $tagsList = $tagsListPromise->wait();
     var_dump($tagsList);
 
-    $data = array(
+    $data = [
         'filePath' => 'test.jpg',
         'brandId' => $brandsList[0]['id'],
         'name' => 'Image name',
         'description' => 'Image description'
-    );
+    ];
     $filePromise = $assetBankManager->uploadFileAsync($data);
     $fileInfo = $filePromise->wait();
     var_dump($fileInfo);
