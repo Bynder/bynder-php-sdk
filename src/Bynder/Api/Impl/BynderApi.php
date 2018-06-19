@@ -242,22 +242,6 @@ class BynderApi implements IBynderApi
     }
 
     /**
-     * @param $userId
-     * @param $query
-     *
-     * @return \GuzzleHttp\Promise\PromiseInterface
-     * @throws \Exception
-     */
-    public function modifyUser($userId = '', $query = null)
-    {
-        return $this->requestHandler->sendRequestAsync('POST', "api/v4/users/$userId",
-            [
-                'query' => $query
-            ]
-        );
-    }
-
-    /**
      * Retrieve all security profiles or specific ones by ID.
      *
      * @param $profileId
