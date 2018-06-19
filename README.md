@@ -103,7 +103,6 @@ the Asset Bank calls.
     setAccessTokenCredentials($token, $tokenSecret);
     userLogin($username, $password);
     userLogout();
-    modifyUser($userId, $query);
 ```
 
 
