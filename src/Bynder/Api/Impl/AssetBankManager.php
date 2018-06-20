@@ -216,6 +216,16 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
+     * Retrieves a list of smarfilter information.
+     *
+     * @see IAssetBankManager::getSmartfilters() for more information.
+     */
+    public function getSmartfilters()
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/smartfilters');
+    }
+
+    /**
      * Uploads a file to the Asset Bank.
      *
      * @param array $data File data and information for upload.
@@ -375,7 +385,7 @@ class AssetBankManager implements IAssetBankManager
      * @throws \GuzzleHttp\Exception\RequestException When request fails.
      * @throws \Exception
      */
-    public function deleteUSage($query)
+    public function deleteUsage($query)
     {
         return $this->requestHandler->sendRequestAsync('DELETE', 'api/media/usage',
             ['query' => $query]

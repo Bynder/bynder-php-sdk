@@ -192,7 +192,7 @@ class AssetBankManagerTest extends TestCase
     /**
      * Test if we call getCategories it will use the correct params for the request and returns successfully.
      *
-     * @covers \Bynder\Api\Impl\AssetBankManager::getTags()
+     * @covers \Bynder\Api\Impl\AssetBankManager::getCategories()
      * @throws \Exception
      */
     public function testGetCategories()
@@ -211,6 +211,30 @@ class AssetBankManagerTest extends TestCase
 
         self::assertNotNull($categoryList);
         self::assertEquals($categoryList, $returnedMedia);
+    }
+
+    /**
+     * Test if we call getSmartfilters it will use the correct params for the request and returns successfully.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getSmartfilters()
+     * @throws \Exception
+     */
+    public function testGetSmartFilters()
+    {
+        $returnedMedia = array();
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/smartfilters')
+            ->willReturn($returnedMedia);
+
+        $assetBankManager = new AssetBankManager($stub);
+        $smartFilters= $assetBankManager->getSmartfilters();
+
+        self::assertNotNull($smartFilters);
+        self::assertEquals($smartFilters, $returnedMedia);
     }
 
     /**
@@ -519,7 +543,7 @@ class AssetBankManagerTest extends TestCase
      * @covers \Bynder\Api\Impl\AssetBankManager::createUsage()
      * @throws \Exception
      */
-    public function testCreateAssetUSage()
+    public function testCreateAssetUsage()
     {
         $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
             ->disableOriginalConstructor()
@@ -552,7 +576,7 @@ class AssetBankManagerTest extends TestCase
      * @covers \Bynder\Api\Impl\AssetBankManager::getUsage()
      * @throws \Exception
      */
-    public function testGetAssetUSage()
+    public function testGetAssetUsage()
     {
         $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
             ->disableOriginalConstructor()
@@ -578,10 +602,10 @@ class AssetBankManagerTest extends TestCase
     /**
      * Tests the DeleteUsage function.
      *
-     * @covers \Bynder\Api\Impl\AssetBankManager::deleteUSage()
+     * @covers \Bynder\Api\Impl\AssetBankManager::deleteUsage()
      * @throws \Exception
      */
-    public function testDeleteAssetUSage()
+    public function testDeleteAssetUsage()
     {
         $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
             ->disableOriginalConstructor()
@@ -600,7 +624,7 @@ class AssetBankManagerTest extends TestCase
             ->willReturn([]);
 
         $assetBankManager = new AssetBankManager($stub);
-        $result = $assetBankManager->deleteUSage($queryData);
+        $result = $assetBankManager->deleteUsage($queryData);
 
         self::assertNotNull($result);
         self::assertEquals($result, array());

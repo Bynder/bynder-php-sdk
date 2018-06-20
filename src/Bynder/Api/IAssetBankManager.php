@@ -129,6 +129,15 @@ interface IAssetBankManager
     public function getCategories();
 
     /**
+     * Gets a list of all smartfilters available.
+     *
+     * @return \GuzzleHttp\Promise\Promise List of all smartfilters.
+     *
+     * @throws \GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function getSmartfilters();
+
+    /**
      * Uploads a file.
      *
      * @param array $data File data and information for upload.
@@ -244,5 +253,5 @@ interface IAssetBankManager
      *
      * @throws \GuzzleHttp\Exception\RequestException When request fails.
      */
-    public function deleteUSage($query);
+    public function deleteUsage($query);
 }

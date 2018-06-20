@@ -44,11 +44,9 @@ try {
             'callback' => CALLBACK_URL
         ];
 
-        // Authorise the request token and redirect the user to the login page.
-        $requestTokens = $bynderApi->authoriseRequestToken($query)->wait();
-        $location = $requestTokens->getHeaders()['Location'][0];
-        preg_match("/redirectToken=(.*)/", $location, $output_array);
-        header('Location: ' . BYNDER_URL . 'login/?redirectToken=' . $output_array[1]);
+        // Oauth login url.
+        $loginUrl = BYNDER_URL . '/api/v4/oauth/authorise?' . http_build_query($query);
+        header('Location: ' . $loginUrl);
         exit();
     } // Here we're handling a redirect after a login.
     elseif (!$haveTokens) {
@@ -113,6 +111,11 @@ try {
     $tagsListPromise = $assetBankManager->getTags();
     $tagsList = $tagsListPromise->wait();
     var_dump($tagsList);
+
+    // Get SmartFilters.
+    $smartFilterListPromise = $assetBankManager->getSmartfilters();
+    $smartFilterList = $smartFilterListPromise->wait();
+    var_dump($smartFilterList);
 
     $data = [
         // Will need to create this file for successful test call
