@@ -119,6 +119,7 @@ class BynderApi implements IBynderApi
      * Gets a request token, later used to obtain an access token. This token is only valid for 10 minutes.
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
+     * @throws \Exception
      */
     public function getRequestToken()
     {
@@ -130,16 +131,18 @@ class BynderApi implements IBynderApi
      * redirect the user to this page after login, otherwise the request responds with the request token.
      *
      * @param $query
+     *
      * @return \GuzzleHttp\Promise\PromiseInterface
+     * @throws \Exception
      */
     public function authoriseRequestToken($query)
     {
         return $this->requestHandler->sendRequestAsync('GET', 'api/v4/oauth/authorise/',
-            array(
+            [
                 'query' => $query,
                 'auth' => null,
                 'allow_redirects' => false
-            ));
+            ]);
     }
 
     /**
@@ -147,6 +150,7 @@ class BynderApi implements IBynderApi
      * If successful the request token is immediately expired and the access tokens are set in the credentials.
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
+     * @throws \Exception
      */
     public function getAccessToken()
     {
@@ -177,19 +181,22 @@ class BynderApi implements IBynderApi
      * If successful the retrieves OAUTH access tokens.
      *
      * @deprecated
+     *
      * @param $username
      * @param $password
+     *
      * @return \GuzzleHttp\Promise\PromiseInterface
+     * @throws \Exception
      */
     public function userLogin($username, $password)
     {
         return $this->requestHandler->sendRequestAsync('POST', 'api/v4/users/login/',
-            array(
-                'form_params' => array(
+            [
+                'form_params' => [
                     'username' => $username,
                     'password' => $password
-                )
-            ))->then(
+                ]
+            ])->then(
             function ($result) {
                 $this->requestHandler->setAccessTokenCredentials($result['tokenKey'], $result['tokenSecret']);
                 return $result;
@@ -210,14 +217,16 @@ class BynderApi implements IBynderApi
      *
      * @param $userId
      * @param $query
+     *
      * @return \GuzzleHttp\Promise\PromiseInterface
+     * @throws \Exception
      */
     public function getUser($userId = '', $query = null)
     {
         return $this->requestHandler->sendRequestAsync('GET', "api/v4/users/$userId",
-            array(
+            [
                 'query' => $query
-            )
+            ]
         );
     }
 
@@ -225,6 +234,7 @@ class BynderApi implements IBynderApi
      * Retrieve current user.
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
+     * @throws \Exception
      */
     public function getCurrentUser()
     {
@@ -235,7 +245,9 @@ class BynderApi implements IBynderApi
      * Retrieve all security profiles or specific ones by ID.
      *
      * @param $profileId
+     *
      * @return \GuzzleHttp\Promise\PromiseInterface
+     * @throws \Exception
      */
     public function getSecurityProfile($profileId = '')
     {

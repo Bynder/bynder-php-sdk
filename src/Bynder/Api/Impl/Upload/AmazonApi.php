@@ -39,7 +39,7 @@ class AmazonApi implements IAmazonApi
         $numberOfChunks
     ) {
         $finalKey = sprintf("%s/p%d", $uploadRequestInfo['multipart_params']['key'], $chunkNumber);
-        $formData = array(
+        $formData = [
             self::getFormDataParams('x-amz-credential', $uploadRequestInfo['multipart_params']['x-amz-credential']),
             self::getFormDataParams('X-Amz-Signature', $uploadRequestInfo['multipart_params']['X-Amz-Signature']),
             self::getFormDataParams('x-amz-algorithm', $uploadRequestInfo['multipart_params']['x-amz-algorithm']),
@@ -55,7 +55,7 @@ class AmazonApi implements IAmazonApi
             self::getFormDataParams('chunks', $numberOfChunks),
             self::getFormDataParams('Filename', $finalKey),
             self::getFormDataParams('file', $chunk)
-        );
+        ];
 
         $stack = HandlerStack::create(new CurlHandler());
         $oauthRequestClient = new Client([
@@ -63,7 +63,7 @@ class AmazonApi implements IAmazonApi
             'handler' => $stack,
         ]);
 
-        return $oauthRequestClient->postAsync($uploadEndpoint, array('multipart' => $formData))
+        return $oauthRequestClient->postAsync($uploadEndpoint, ['multipart' => $formData])
             ->then(
                 function (ResponseInterface $response) {
                     return json_decode($response->getBody(), true);
@@ -73,7 +73,7 @@ class AmazonApi implements IAmazonApi
 
     private static function getFormDataParams($name, $contents)
     {
-        return array('name' => $name, 'contents' => $contents);
+        return ['name' => $name, 'contents' => $contents];
     }
 
 }

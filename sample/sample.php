@@ -3,15 +3,22 @@
 require_once('vendor/autoload.php');
 
 use Bynder\Api\BynderApiFactory;
-use Bynder\Api\Impl\BynderApi;
 
-$settings = array(
+define('BYNDER_CONSUMER_KEY', '');
+define('BYNDER_CONSUMER_SECRET', '');
+define('BYNDER_CLIENT_KEY', '');
+define('BYNDER_CLIENT_SECRET', '');
+define('BYNDER_URL', '');
+define('CALLBACK_URL', '');
+define('BYNDER_INTEGRATION_ID', '');
+
+$settings = [
     'consumerKey' => BYNDER_CONSUMER_KEY,
     'consumerSecret' => BYNDER_CONSUMER_SECRET,
     'token' => BYNDER_CLIENT_KEY,
     'tokenSecret' => BYNDER_CLIENT_SECRET,
     'baseUrl' => BYNDER_URL
-);
+];
 
 $haveTokens = true;
 
@@ -31,15 +38,16 @@ try {
         file_put_contents('tokens.txt', json_encode($tokenArray));
         $token = explode('=', $tokenArray[0])[1];
         $tokenSecret = explode('=', $tokenArray[1])[1];
-        $query = array(
+        $query = [
             'oauth_token' => $token,
             // Would be the url pointing to this script for example.
-            'callback' => 'CALLBACK URL'
-        );
+            'callback' => CALLBACK_URL
+        ];
 
         // Authorise the request token and redirect the user to the login page.
         $requestTokens = $bynderApi->authoriseRequestToken($query)->wait();
-        preg_match("/redirectToken=(.*)\"/", $requestTokens, $output_array);
+        $location = $requestTokens->getHeaders()['Location'][0];
+        preg_match("/redirectToken=(.*)/", $location, $output_array);
         header('Location: ' . BYNDER_URL . 'login/?redirectToken=' . $output_array[1]);
         exit();
     } // Here we're handling a redirect after a login.
@@ -48,13 +56,13 @@ try {
         $tokens = json_decode(file_get_contents('tokens.txt'), true);
         $token = explode('=', $tokens[0])[1];
         $tokenSecret = explode('=', $tokens[1])[1];
-        $settings = array(
+        $settings = [
             'consumerKey' => BYNDER_CONSUMER_KEY,
             'consumerSecret' => BYNDER_CONSUMER_SECRET,
             'token' => $token,
             'tokenSecret' => $tokenSecret,
             'baseUrl' => BYNDER_URL
-        );
+        ];
         $bynderApi = BynderApiFactory::create($settings);
 
         // Exchanging the authorised request token for an access token.
@@ -62,7 +70,8 @@ try {
     }
 
     $currentUser = $bynderApi->getCurrentUser()->wait();
-    $user = $bynderApi->getUser('userId')->wait();
+    $user = $bynderApi->getUser($currentUser['id'])->wait();
+    var_dump($user);
 
     if(isset($currentUser['profileId'])) {
         $roles = $bynderApi->getSecurityProfile($currentUser['profileId'])->wait();
@@ -78,12 +87,12 @@ try {
 
     // Get Media Items list.
     // Optional filter.
-    $query = array(
+    $query = [
         'count' => true,
         'limit' => 2,
         'type' => 'image',
         'versions' => 1
-    );
+    ];
 
     $mediaListPromise = $assetBankManager->getMediaList($query);
     $mediaList = $mediaListPromise->wait();
@@ -105,20 +114,20 @@ try {
     $tagsList = $tagsListPromise->wait();
     var_dump($tagsList);
 
-    $data = array(
+    $data = [
+        // Will need to create this file for successful test call
         'filePath' => 'test.jpg',
         'brandId' => $brandsList[0]['id'],
         'name' => 'Image name',
         'description' => 'Image description'
-    );
+    ];
     $filePromise = $assetBankManager->uploadFileAsync($data);
     $fileInfo = $filePromise->wait();
     var_dump($fileInfo);
 
-    $integrationId = "BYNDER_INTEGRATION_ID";
     $usageCreatePromise = $assetBankManager->createUsage(
         [
-            'integration_id' => $integrationId,
+            'integration_id' => BYNDER_INTEGRATION_ID,
             'asset_id' => $mediaId,
             'timestamp' =>  date(DateTime::ISO8601),
             'uri' => '/posts/1',
@@ -130,7 +139,7 @@ try {
 
     $usageCreatePromise = $assetBankManager->createUsage(
         [
-            'integration_id' => $integrationId,
+            'integration_id' => BYNDER_INTEGRATION_ID,
             'asset_id' => $mediaId,
             'timestamp' => date(DateTime::ISO8601),
             'uri' => '/posts/2',
@@ -149,7 +158,7 @@ try {
 
     $deleteUSages = $assetBankManager->deleteUSage(
         [
-            'integration_id' => $integrationId,
+            'integration_id' => BYNDER_INTEGRATION_ID,
             'asset_id' => $mediaId,
             'uri' => '/posts/2'
         ]

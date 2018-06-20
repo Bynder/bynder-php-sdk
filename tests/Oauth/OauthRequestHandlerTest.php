@@ -32,11 +32,13 @@ class OauthRequestHandlerTest extends TestCase
 
     /**
      * Tests a successful request.
+     *
+     * @throws \Exception
      */
     public function testSuccessfulGetRequest()
     {
         $oauthHandler = $this->initClient(new Response(200, array('Content-type' => 'application/json'),
-            json_encode(array('dummy' => 'body'))));
+            json_encode(['dummy' => 'body'])));
         $responsePromise = $oauthHandler->sendRequestAsync('GET', 'test');
         self::assertInstanceOf('GuzzleHttp\Promise\Promise', $responsePromise);
         $response = $responsePromise->wait();
@@ -46,11 +48,13 @@ class OauthRequestHandlerTest extends TestCase
 
     /**
      * Tests for a Client Exception when the response is a 401 code.
+     *
+     * @throws \Exception
      */
     public function testInvalidSignatureGetRequest()
     {
         $oauthHandler = $this->initClient(new Response(401, ['Content-Length' => 0],
-            json_encode(array('dummy' => 'body'))));
+            json_encode(['dummy' => 'body'])));
         $responsePromise = $oauthHandler->sendRequestAsync('GET', 'test');
         self::assertInstanceOf('GuzzleHttp\Promise\Promise', $responsePromise);
         self::expectException('GuzzleHttp\Exception\ClientException');
@@ -59,11 +63,13 @@ class OauthRequestHandlerTest extends TestCase
 
     /**
      * Test for a Server Exception when the reponse is a 500 code.
+     *
+     * @throws \Exception
      */
     public function testInternalErrorGetRequest()
     {
         $oauthHandler = $this->initClient(new Response(500, ['Content-Length' => 0],
-            json_encode(array('dummy' => 'body'))));
+            json_encode(['dummy' => 'body'])));
         $responsePromise = $oauthHandler->sendRequestAsync('GET', 'test');
         self::assertInstanceOf('GuzzleHttp\Promise\Promise', $responsePromise);
         self::expectException('GuzzleHttp\Exception\ServerException');
@@ -72,6 +78,8 @@ class OauthRequestHandlerTest extends TestCase
 
     /**
      * Tests for a Request Exception when a more generic error is returned, this includes timeouts, DNS errors, etc.
+     *
+     * @throws \Exception
      */
     public function testRequestErrorGetRequest()
     {

@@ -26,8 +26,10 @@ class BynderApiTest extends TestCase
 
     /**
      * @param $bynderApiFactory BynderApiFactory
+     *
      * @covers  \Bynder\Api\Impl\BynderApi::create
      * @depends testCreateApiFactory
+     * @return BynderApi
      */
     public function testCreateApiService(BynderApiFactory $bynderApiFactory)
     {
@@ -47,8 +49,13 @@ class BynderApiTest extends TestCase
 
     /**
      * Tests creation of BynderApi with invalid settings
+     *
      * @covers  \Bynder\Api\Impl\BynderApi::create
      * @depends testCreateApiFactory
+     *
+     * @param BynderApiFactory $bynderApiFactory
+     *
+     * @return BynderApi
      */
     public function testCreateApiServiceFail(BynderApiFactory $bynderApiFactory)
     {
@@ -61,6 +68,8 @@ class BynderApiTest extends TestCase
     /**
      * @covers  \Bynder\Api\Impl\BynderApi::getAssetBankManager
      * @depends testCreateApiService
+     *
+     * @param BynderApi $bynderApi
      */
     public function testGetAssetBankManager(BynderApi $bynderApi)
     {
@@ -71,6 +80,8 @@ class BynderApiTest extends TestCase
     /**
      * @covers  \Bynder\Api\Impl\BynderApi::getRequestHandler()
      * @depends testCreateApiService
+     *
+     * @param BynderApi $bynderApi
      */
     public function testGetRequestHandler(BynderApi $bynderApi)
     {
