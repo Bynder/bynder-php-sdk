@@ -103,6 +103,9 @@ the Asset Bank calls.
     setAccessTokenCredentials($token, $tokenSecret);
     userLogin($username, $password);
     userLogout();
+    getUser($userId, $query);
+    getCurrentUser();
+    getSecurityProfile($profileId);
 ```
 
 
@@ -114,10 +117,24 @@ Media management.
     getMediaList($query);
     getMediaInfo($mediaId, $versions);
     getMetaproperties();
+    getMetaproperty($propertyId);
+    getMetapropertyDependencies($propertyId);
+    getMetapropetryGlobalOptionDependencies();
+    getMetapropertyOptionDependencies($propertyId);
+    getMetapropertySpecificOptionDependencies($propertyId, $optionId, $query);
     getTags();
     getCategories();
+    getSmartfilters();
     uploadFileAsync($data);
     deleteMedia($mediaId);
+    modifyMedia($mediaId, array $data);
+    getDerivatives();
+    getMediaDownloadLocation($mediaId, $type = 'original');
+    getMediaDownloadLocationByVersion($mediaId, $version);
+    getMediaDownloadLocationForAssetItem($mediaId, $itemId, $hash = false);
+    createUsage($query);
+    getUsage($query);
+    deleteUsage($query);
 ```
 
 ## Tests
