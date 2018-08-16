@@ -306,10 +306,10 @@ class FileUploader
             'concurrency' => 1,
             'fulfilled' => function ($pollStatus, $i, $promise) {
                 if ($pollStatus != null) {
-                    if (sizeof($pollStatus['itemsDone']) > 0) {
+                    if (!empty($pollStatus['itemsDone'])) {
                         $promise->resolve($pollStatus['itemsDone']);
                     }
-                    if (sizeof($pollStatus['itemsFailed']) > 0) {
+                    if (!empty($pollStatus['itemsFailed'])) {
                         $promise->resolve(false);
                     }
                 }
