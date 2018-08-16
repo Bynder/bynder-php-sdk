@@ -10,4 +10,4 @@ php:
 
 install: composer install
 
-script: vendor/bin/phpunit
+script: vendor/bin/phpunit tests
