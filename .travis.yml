@@ -10,3 +10,4 @@ php:
   - hhvm
   - nightly
 
+install: composer require bynder/bynder-php-sdk
