@@ -11,3 +11,10 @@ php:
 install: composer install
 
 script: vendor/bin/phpunit tests
+
+notifications:
+  email:
+    recipients:
+      - ajax@bynder.com
+    on_success: never
+    on_failure: always
