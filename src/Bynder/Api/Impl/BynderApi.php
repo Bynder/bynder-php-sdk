@@ -242,6 +242,25 @@ class BynderApi implements IBynderApi
     }
 
     /**
+     * Retrieve all users.
+     *
+     * @param bool $includeInactive Include inactive users.
+     *
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @throws \Exception
+     */
+    public function getUsers($includeInactive = false)
+    {
+        if ($includeInactive) {
+            $inactive = '1';
+        }
+        else {
+            $inactive = '0';
+        }
+        return $this->requestHandler->sendRequestAsync('GET', "api/v4/users/?includeInActive=$inactive");
+    }
+
+    /**
      * Retrieve all security profiles or specific ones by ID.
      *
      * @param $profileId

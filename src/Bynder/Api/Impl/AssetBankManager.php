@@ -391,4 +391,36 @@ class AssetBankManager implements IAssetBankManager
             ['query' => $query]
         );
     }
+
+    /**
+     * Gets all collections based on query
+     *
+     * @param $query
+     *
+     * @return \GuzzleHttp\Promise\Promise Response of asset usage delete.
+     *
+     * @throws \GuzzleHttp\Exception\RequestException When request fails.
+     * @throws \Exception
+     */
+    public function getCollections($query)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/collections/',
+            ['query' => $query]
+        );
+    }
+
+    /**
+     * Gets all media assets related to a collection
+     *
+     * @param string $collectionId The collection id from bynder.
+     *
+     * @return \GuzzleHttp\Promise\Promise Response of asset usage delete.
+     *
+     * @throws \GuzzleHttp\Exception\RequestException When request fails.
+     * @throws \Exception
+     */
+    public function getCollectionAssets($collectionId)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', "api/v4/collections/$collectionId/media/");
+    }
 }
