@@ -393,11 +393,11 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
-     * Gets all collections based on query
+     * Gets all collections based on optional query parameters.
      *
-     * @param null|array $query Query parameters for the Bynder API.
+     * @param null|array $query.
      *
-     * @return \GuzzleHttp\Promise\Promise Response of asset usage delete.
+     * @return \GuzzleHttp\Promise\Promise
      *
      * @throws \GuzzleHttp\Exception\RequestException When request fails.
      * @throws \Exception
@@ -410,11 +410,11 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
-     * Gets all media assets related to a collection
+     * Gets all media assets related to a collection.
      *
-     * @param string $collectionId The collection id from Bynder.
+     * @param string $collectionId The Bynder Collection id.
      *
-     * @return \GuzzleHttp\Promise\Promise Response of asset usage delete.
+     * @return \GuzzleHttp\Promise\Promise
      *
      * @throws \GuzzleHttp\Exception\RequestException When request fails.
      * @throws \Exception

@@ -106,6 +106,7 @@ the Asset Bank calls.
     userLogout();
     getUser($userId, $query);
     getCurrentUser();
+    getUsers();
     getSecurityProfile($profileId);
 ```
 
@@ -123,6 +124,8 @@ Media management.
     getMetapropetryGlobalOptionDependencies();
     getMetapropertyOptionDependencies($propertyId);
     getMetapropertySpecificOptionDependencies($propertyId, $optionId, $query);
+    getCollections($query);
+    getCollectionAssets($collectionId);
     getTags();
     getCategories();
     getSmartfilters();
