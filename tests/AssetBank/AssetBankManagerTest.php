@@ -629,4 +629,75 @@ class AssetBankManagerTest extends TestCase
         self::assertNotNull($result);
         self::assertEquals($result, array());
     }
+
+    /**
+     * Test if we call getCollections it will use the correct params for the request and returns successfully.
+     *
+     * @group collections
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getCollections()
+     * @throws \Exception
+     */
+    public function testGetCollections()
+    {
+        $returnedCollections = [];
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/collections/')
+            ->willReturn($returnedCollections);
+
+        $assetBankManager = new AssetBankManager($stub);
+        $collectionList = $assetBankManager->getCollections();
+
+        self::assertNotNull($collectionList);
+        self::assertEquals($collectionList, $returnedCollections);
+
+
+        // Test with query params.
+        $query = [
+            'count' => true,
+            'limit' => 2,
+            'type' => 'image'
+        ];
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/collections/', ['query' => $query])
+            ->willReturn($returnedCollections);
+
+        $assetBankManager = new AssetBankManager($stub);
+        $collectionList = $assetBankManager->getCollections($query);
+
+        self::assertNotNull($collectionList);
+        self::assertEquals($collectionList, $returnedCollections);
+
+    }
+
+    /**
+     * Test if we call getCollections it will use the correct params for the request and returns successfully.
+     *
+     * @group collections
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getCollections()
+     * @throws \Exception
+     */
+    public function testGetCollection()
+    {
+        $collectionId = 'ABCDEFGH';
+        $returnedCollections = [];
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', "api/v4/collections/$collectionId/media/")
+            ->willReturn($returnedCollections);
+
+        $assetBankManager = new AssetBankManager($stub);
+        $collectionList = $assetBankManager->getCollectionAssets($collectionId);
+
+        self::assertNotNull($collectionList);
+        self::assertEquals($collectionList, $returnedCollections);
+    }
 }

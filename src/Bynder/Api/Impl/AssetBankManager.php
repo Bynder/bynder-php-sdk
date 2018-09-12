@@ -395,14 +395,14 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Gets all collections based on query
      *
-     * @param $query
+     * @param null|array $query Query parameters for the Bynder API.
      *
      * @return \GuzzleHttp\Promise\Promise Response of asset usage delete.
      *
      * @throws \GuzzleHttp\Exception\RequestException When request fails.
      * @throws \Exception
      */
-    public function getCollections($query)
+    public function getCollections($query = null)
     {
         return $this->requestHandler->sendRequestAsync('GET', 'api/v4/collections/',
             ['query' => $query]
@@ -412,7 +412,7 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Gets all media assets related to a collection
      *
-     * @param string $collectionId The collection id from bynder.
+     * @param string $collectionId The collection id from Bynder.
      *
      * @return \GuzzleHttp\Promise\Promise Response of asset usage delete.
      *
