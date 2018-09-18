@@ -254,4 +254,26 @@ interface IAssetBankManager
      * @throws \GuzzleHttp\Exception\RequestException When request fails.
      */
     public function deleteUsage($query);
+
+    /**
+     * Gets all collections based on optional query parameters.
+     *
+     * @param null|array $query.
+     * @return \GuzzleHttp\Promise\Promise
+     *
+     * @throws \GuzzleHttp\Exception\RequestException When request fails.
+     * @throws \Exception
+     */
+    public function getCollections($query);
+
+    /**
+     * Gets all media assets related to a collection.
+     *
+     * @param string $collectionId The Bynder Collection id.
+     * @return \GuzzleHttp\Promise\Promise
+     *
+     * @throws \GuzzleHttp\Exception\RequestException When request fails.
+     * @throws \Exception
+     */
+    public function getCollectionAssets($collectionId);
 }

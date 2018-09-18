@@ -89,6 +89,16 @@ interface IBynderApi
     public function getCurrentUser();
 
     /**
+     * Retrieve all users.
+     *
+     * @param bool $includeInactive Include inactive users.
+     *
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @throws \Exception
+     */
+    public function getUsers($includeInactive);
+
+    /**
      * Retrieve all security profiles or specific ones by ID.
      *
      * @param $profileId
