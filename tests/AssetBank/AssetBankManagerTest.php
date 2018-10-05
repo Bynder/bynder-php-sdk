@@ -392,16 +392,21 @@ class AssetBankManagerTest extends TestCase
             ->getMock();
 
         $propertyId = '00000000-0000-0000-0000000000000000';
+        $count = true;
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/')
-            ->willReturn([]);
+            ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/', [
+                'query' => [
+                    'count' => $count
+                ]
+            ])
+            ->willReturn(['query']);
 
         $assetBankManager = new AssetBankManager($stub);
-        $mediaLocation = $assetBankManager->getMetaproperty($propertyId);
+        $mediaLocation = $assetBankManager->getMetaproperty($propertyId, ['count' => true]);
 
         self::assertNotNull($mediaLocation);
-        self::assertEquals($mediaLocation, []);
+        self::assertEquals($mediaLocation, ['query']);
     }
 
     /**
