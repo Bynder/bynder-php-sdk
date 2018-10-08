@@ -107,13 +107,16 @@ class AssetBankManager implements IAssetBankManager
      * Gets a specific meta property
      *
      * @param string $propertyId Meta property id
+     * @param array $query
      *
      * @return \GuzzleHttp\Promise\Promise with the meta property.
      * @throws \Exception
      */
-    public function getMetaproperty($propertyId)
+    public function getMetaproperty($propertyId, $query = null)
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/' . $propertyId . '/');
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/' . $propertyId . '/', 
+            ['query' => $query]
+        );
     }
 
     /**
