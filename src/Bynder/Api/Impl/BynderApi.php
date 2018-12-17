@@ -29,15 +29,15 @@ class BynderApi implements IBynderApi
     /**
      * @var string Base Url necessary for API calls.
      */
-    private $baseUrl;
+    protected $baseUrl;
     /**
      * @var AssetBankManager Instance of the Asset bank manager.
      */
-    private $assetBankManager;
+    protected $assetBankManager;
     /**
      * @var OauthRequestHandler Instance of the Oauth request handler.
      */
-    private $requestHandler;
+    protected $requestHandler;
 
     /**
      * Initialises a new instance of the class.
@@ -279,7 +279,7 @@ class BynderApi implements IBynderApi
      * @param $settings
      * @return bool Whether the settings array is valid.
      */
-    private static function validateSettings($settings)
+    protected static function validateSettings($settings)
     {
         if (!isset($settings['consumerKey']) || !isset($settings['consumerSecret'])) {
             return false;
