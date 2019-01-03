@@ -24,12 +24,12 @@ class AssetBankManager implements IAssetBankManager
     /**
      * @var IOauthRequestHandler Request handler used to communicate with the API.
      */
-    private $requestHandler;
+    protected $requestHandler;
 
     /**
      * @var FileUploader Used for file uploading operations.
      */
-    private $fileUploader;
+    protected $fileUploader;
 
     /**
      * Initialises a new instance of the class.
@@ -114,7 +114,7 @@ class AssetBankManager implements IAssetBankManager
      */
     public function getMetaproperty($propertyId, $query = null)
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/' . $propertyId . '/', 
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/' . $propertyId . '/',
             ['query' => $query]
         );
     }
