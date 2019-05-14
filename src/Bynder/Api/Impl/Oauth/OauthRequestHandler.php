@@ -17,6 +17,7 @@ use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Subscriber\Oauth\Oauth1;
+use GuzzleHttp\Exception\RequestException;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -139,46 +140,56 @@ class OauthRequestHandler implements IOauthRequestHandler
      */
     public function sendRequestAsync($type, $uri, $options = null)
     {
-        $request = null;
-        switch ($type) {
-            case 'GET':
-                $request = $this->oauthRequestClient
-                    ->getAsync($uri, $options);
-                break;
-            case 'POST':
-                $request = $this->oauthRequestClient
-                    ->postAsync($uri, $options);
-                break;
-            case 'DELETE':
-                $request = $this->oauthRequestClient
-                    ->deleteAsync($uri, $options);
-                break;
-            default :
-                throw new Exception("The request type you entered is not valid.");
-                break;
-        }
-        return $request->then(
-            function (ResponseInterface $response) {
-                $contentType = self::checkResponseContentType($response->getHeader('Content-Type'));
-                switch ($contentType) {
-                    case 'json':
-                        return json_decode($response->getBody(), true);
-                        break;
-                    case 'string':
-                        return (string)$response->getBody();
-                        break;
-                    case 'html':
-                        return $response;
-                        break;
-                    default:
-                        // If we don't know the response type but it was a successful request, it's probably okay.
-                        if($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
-                            return $response;
-                        }
-                        throw new Exception("The response type not recognized.");
-                }
+        try {
+            if (!isset($options['timeout'])) {
+                $options['timeout'] = 10;
             }
-        );
+
+            $request = null;
+            switch ($type) {
+                case 'GET':
+                    $request = $this->oauthRequestClient
+                        ->getAsync($uri, $options);
+                    break;
+                case 'POST':
+                    $request = $this->oauthRequestClient
+                        ->postAsync($uri, $options);
+                    break;
+                case 'DELETE':
+                    $request = $this->oauthRequestClient
+                        ->deleteAsync($uri, $options);
+                    break;
+                default :
+                    throw new Exception("The request type you entered is not valid.");
+                    break;
+            }
+            return $request->then(
+                function (ResponseInterface $response) {
+                    $contentType = self::checkResponseContentType($response->getHeader('Content-Type'));
+                    switch ($contentType) {
+                        case 'json':
+                            return json_decode($response->getBody(), true);
+                            break;
+                        case 'string':
+                            return (string)$response->getBody();
+                            break;
+                        case 'html':
+                            return $response;
+                            break;
+                        default:
+                            // If we don't know the response type but it was a successful request, it's probably okay.
+                            if($response->getStatusCode() >= 200 && $response->getStatusCode() < 300) {
+                                return $response;
+                            }
+                            throw new Exception("The response type not recognized.");
+                    }
+                }
+            );
+        }
+        catch (RequestException $e) {
+            // Silent error.
+            return [];
+        }
     }
 
     private static function checkResponseContentType($contentType)
