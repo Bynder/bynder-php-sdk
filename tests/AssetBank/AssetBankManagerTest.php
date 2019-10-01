@@ -17,7 +17,7 @@ class AssetBankManagerTest extends TestCase
     public function testGetBrands()
     {
         $returnedBrands = [];
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -42,7 +42,7 @@ class AssetBankManagerTest extends TestCase
     public function testGetMediaList()
     {
         $returnedMedia = [];
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -82,7 +82,7 @@ class AssetBankManagerTest extends TestCase
     public function testGetMediaInfo()
     {
         $returnedMedia = [];
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -116,7 +116,7 @@ class AssetBankManagerTest extends TestCase
     public function testGetMetaproperties()
     {
         $returnedMedia = [];
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -130,7 +130,7 @@ class AssetBankManagerTest extends TestCase
         self::assertNotNull($metaproperties);
         self::assertEquals($metaproperties, $returnedMedia);
 
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -157,7 +157,7 @@ class AssetBankManagerTest extends TestCase
     public function testGetTags()
     {
         $returnedMedia = [];
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -171,7 +171,7 @@ class AssetBankManagerTest extends TestCase
         self::assertNotNull($tagList);
         self::assertEquals($tagList, $returnedMedia);
 
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -198,7 +198,7 @@ class AssetBankManagerTest extends TestCase
     public function testGetCategories()
     {
         $returnedMedia = [];
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -222,7 +222,7 @@ class AssetBankManagerTest extends TestCase
     public function testGetSmartFilters()
     {
         $returnedMedia = array();
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -247,7 +247,7 @@ class AssetBankManagerTest extends TestCase
     public function testModifyMedia()
     {
         $return = [];
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -273,7 +273,7 @@ class AssetBankManagerTest extends TestCase
     public function testGetDerivatives()
     {
         $returnedMedia = [];
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -296,7 +296,7 @@ class AssetBankManagerTest extends TestCase
      */
     public function testGetMediaDownloadLocation()
     {
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -328,7 +328,7 @@ class AssetBankManagerTest extends TestCase
      */
     public function testGetMediaDownloadLocationByVersion()
     {
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -355,7 +355,7 @@ class AssetBankManagerTest extends TestCase
      */
     public function testGetMediaDownloadLocationForAssetItem()
     {
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -387,7 +387,7 @@ class AssetBankManagerTest extends TestCase
      */
     public function testGetMetapropery()
     {
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -395,15 +395,15 @@ class AssetBankManagerTest extends TestCase
         $count = true;
 
         $stub->method('sendRequestAsync')
-            ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/', [
-                'query' => [
-                    'count' => $count
-                ]
-            ])
+             ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/', [
+                 'query' => [
+                     'count' => $count
+                 ]
+             ])
             ->willReturn(['query']);
 
         $assetBankManager = new AssetBankManager($stub);
-        $mediaLocation = $assetBankManager->getMetaproperty($propertyId, ['count' => true]);
+        $mediaLocation = $assetBankManager->getMetaproperty($propertyId, ['count' => $count]);
 
         self::assertNotNull($mediaLocation);
         self::assertEquals($mediaLocation, ['query']);
@@ -418,7 +418,7 @@ class AssetBankManagerTest extends TestCase
      */
     public function testGetMetapropertyDependencies()
     {
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -443,7 +443,7 @@ class AssetBankManagerTest extends TestCase
      */
     public function testGetMetapropertyOptions()
     {
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -472,7 +472,7 @@ class AssetBankManagerTest extends TestCase
      */
     public function testGetMetapropetryGlobalOptionDependencies()
     {
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -496,7 +496,7 @@ class AssetBankManagerTest extends TestCase
      */
     public function testGetMetapropertyOptionDependencies()
     {
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -522,7 +522,7 @@ class AssetBankManagerTest extends TestCase
      */
     public function testGetMetapropertySpecificOptionDependencies()
     {
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -550,7 +550,7 @@ class AssetBankManagerTest extends TestCase
      */
     public function testCreateAssetUsage()
     {
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -583,7 +583,7 @@ class AssetBankManagerTest extends TestCase
      */
     public function testGetAssetUsage()
     {
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -612,7 +612,7 @@ class AssetBankManagerTest extends TestCase
      */
     public function testDeleteAssetUsage()
     {
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -646,7 +646,7 @@ class AssetBankManagerTest extends TestCase
     public function testGetCollections()
     {
         $returnedCollections = [];
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -691,7 +691,7 @@ class AssetBankManagerTest extends TestCase
     {
         $collectionId = 'ABCDEFGH';
         $returnedCollections = [];
-        $stub = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler')
+        $stub = $this->getMockBuilder('Bynder\Api\RequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 

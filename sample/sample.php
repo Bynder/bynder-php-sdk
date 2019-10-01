@@ -2,84 +2,61 @@
 
 require_once('vendor/autoload.php');
 
-use Bynder\Api\BynderApiFactory;
+use Bynder\Api\BynderClient;
+use Bynder\Api\Impl\OAuth2\Configuration;
 
-define('BYNDER_CONSUMER_KEY', '');
-define('BYNDER_CONSUMER_SECRET', '');
-define('BYNDER_CLIENT_KEY', '');
-define('BYNDER_CLIENT_SECRET', '');
-define('BYNDER_URL', '');
-define('CALLBACK_URL', '');
 define('BYNDER_INTEGRATION_ID', '');
 
-$settings = [
-    'consumerKey' => BYNDER_CONSUMER_KEY,
-    'consumerSecret' => BYNDER_CONSUMER_SECRET,
-    'token' => BYNDER_CLIENT_KEY,
-    'tokenSecret' => BYNDER_CLIENT_SECRET,
-    'baseUrl' => BYNDER_URL
-];
+$bynderDomain = 'portal.getbynder.com';
+$redirectUri = '';
+$clientId = '';
+$clientSecret = '';
+$token = null;
 
-$haveTokens = true;
+/* If we have a token stored
+    $token = new \League\OAuth2\Client\Token\AccessToken([
+        'access_token' => '',
+        'refresh_token' => '',
+        'expires' => 123456789
+    ]);
+ */
 
 try {
+    $bynder = new BynderClient(new Configuration(
+        $bynderDomain,
+        $redirectUri,
+        $clientId,
+        $clientSecret,
+        $token,
+        ['timeout' => 5] // Guzzle HTTP request options
+    ));
 
-    $bynderApi = BynderApiFactory::create($settings);
+    if($token === null) {
+        echo $bynder->getAuthorizationUrl() . "\n\n"; //$scope = ['openid', 'offline', 'asset:read']) . "\n\n";
 
-    // Deprecated username/password login
-    // $tokens = $bynderApi->userLogin('username', 'password')->wait();
+        $code = readline("Enter code: ");
 
-    // If we want to test the Login functionality make sure we don't pass the access token and secret in the settings.
-    if (!$haveTokens && !isset($_GET['oauth_token'])) {
-        // Get the request token
-        $token = $bynderApi->getRequestToken()->wait();
-        $tokenArray = explode('&', $token);
-        // Storing this for later use because we're about to do a redirect.
-        file_put_contents('tokens.txt', json_encode($tokenArray));
-        $token = explode('=', $tokenArray[0])[1];
-        $tokenSecret = explode('=', $tokenArray[1])[1];
-        $query = [
-            'oauth_token' => $token,
-            // Would be the url pointing to this script for example.
-            'callback' => CALLBACK_URL
-        ];
+        if($code == null) {
+            exit;
+        }
 
-        // Oauth login url.
-        $loginUrl = BYNDER_URL . '/api/v4/oauth/authorise?' . http_build_query($query);
-        header('Location: ' . $loginUrl);
-        exit();
-    } // Here we're handling a redirect after a login.
-    elseif (!$haveTokens) {
-        // Get the request tokens we stored earlier.
-        $tokens = json_decode(file_get_contents('tokens.txt'), true);
-        $token = explode('=', $tokens[0])[1];
-        $tokenSecret = explode('=', $tokens[1])[1];
-        $settings = [
-            'consumerKey' => BYNDER_CONSUMER_KEY,
-            'consumerSecret' => BYNDER_CONSUMER_SECRET,
-            'token' => $token,
-            'tokenSecret' => $tokenSecret,
-            'baseUrl' => BYNDER_URL
-        ];
-        $bynderApi = BynderApiFactory::create($settings);
-
-        // Exchanging the authorised request token for an access token.
-        $token = $bynderApi->getAccessToken()->wait();
+        $token = $bynder->getAccessToken($code);
     }
 
-    $currentUser = $bynderApi->getCurrentUser()->wait();
-    $user = $bynderApi->getUser($currentUser['id'])->wait();
+    var_dump($token);
+
+    $currentUser = $bynder->getCurrentUser()->wait();
+    $user = $bynder->getUser($currentUser['id'])->wait();
     var_dump($user);
-
     if(isset($currentUser['profileId'])) {
-        $roles = $bynderApi->getSecurityProfile($currentUser['profileId'])->wait();
+        $roles = $bynder->getSecurityProfile($currentUser['profileId'])->wait();
     }
 
-    $assetBankManager = $bynderApi->getAssetBankManager();
+    $assetBankManager = $bynder->getAssetBankManager();
 
     // Get Brands. Returns a Promise.
     $brandsListPromise = $assetBankManager->getBrands();
-    //Wait for the promise to be resolved.
+    // Wait for the promise to be resolved.
     $brandsList = $brandsListPromise->wait();
     var_dump($brandsList);
 
@@ -117,9 +94,10 @@ try {
     $smartFilterList = $smartFilterListPromise->wait();
     var_dump($smartFilterList);
 
+    // Upload a file and create an Asset.
     $data = [
         // Will need to create this file for successful test call
-        'filePath' => 'test.jpg',
+        'filePath' => 'image.png',
         'brandId' => $brandsList[0]['id'],
         'name' => 'Image name',
         'description' => 'Image description'
@@ -128,6 +106,11 @@ try {
     $fileInfo = $filePromise->wait();
     var_dump($fileInfo);
 
+    if(BYNDER_INTEGRATION_ID == '') {
+        return;
+    }
+
+    // Create Asset usage.
     $usageCreatePromise = $assetBankManager->createUsage(
         [
             'integration_id' => BYNDER_INTEGRATION_ID,
@@ -140,6 +123,7 @@ try {
     $usageCreated = $usageCreatePromise->wait();
     var_dump($usageCreated);
 
+    // Create another Asset usage.
     $usageCreatePromise = $assetBankManager->createUsage(
         [
             'integration_id' => BYNDER_INTEGRATION_ID,
@@ -152,6 +136,7 @@ try {
     $usageCreated = $usageCreatePromise->wait();
     var_dump($usageCreated);
 
+    // Retrieve Asset usage.
     $retrieveUsages = $assetBankManager->getUsage(
         [
             'asset_id' => $mediaId
@@ -159,6 +144,7 @@ try {
     )->wait();
     var_dump($retrieveUsages);
 
+    // Delete Asset usage and retrieve again.
     $deleteUSages = $assetBankManager->deleteUSage(
         [
             'integration_id' => BYNDER_INTEGRATION_ID,
@@ -166,7 +152,6 @@ try {
             'uri' => '/posts/2'
         ]
     )->wait();
-
     $retrieveUsages = $assetBankManager->getUsage(
         [
             'asset_id' => $mediaId

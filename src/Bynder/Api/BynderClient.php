@@ -1,0 +1,129 @@
+<?php
+
+namespace Bynder\Api;
+
+use Bynder\Api\Impl\AssetBankManager;
+
+class BynderClient
+{
+
+    /**
+     * @var RequestHandler used to process API requests.
+     */
+    private $requestHandler;
+
+    /**
+     * @var AssetBankManager instance used for all Asset related operations.
+     */
+    private $assetBankManager;
+
+    public function __construct($configuration)
+    {
+        $this->configuration = $configuration;
+        $this->requestHandler = new RequestHandler($configuration);
+    }
+
+    /**
+     * Gets an instance of the asset bank manager to use for DAM queries.
+     *
+     * @return AssetBankManager An instance of the asset bank manager using the request handler previously created.
+     */
+    public function getAssetBankManager()
+    {
+        if(!isset($this->assetBankManager)) {
+            $this->assetBankManager = new AssetBankManager($this->requestHandler);
+        }
+
+        return $this->assetBankManager;
+    }
+
+    /**
+     * Returns the Oauth authorization url for user login.
+     *
+     * @param array $scope Custom scopes can be passed to override the defaults
+     *
+     * @return string
+     */
+    public function getAuthorizationUrl(array $scope = [])
+    {
+        return $this->requestHandler->getAuthorizationUrl([
+            'state' => sprintf('domain=%s', $this->configuration->getBynderDomain()),
+            'scope' => implode(' ', $scope)
+        ]);
+    }
+
+    /**
+     * Returns the Oauth access token.
+     *
+     * @param $code
+     * @return \League\OAuth2\Client\Token\AccessToken
+     */
+    public function getAccessToken($code)
+    {
+        $token = $this->requestHandler->getAccessToken($code);
+        $this->configuration->setToken($token);
+
+        return $token;
+    }
+
+    /**
+     * Retrieve all users.
+     *
+     * @param bool $includeInactive Include inactive users.
+     *
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @throws \Exception
+     */
+    public function getUsers($includeInactive = false)
+    {
+        if ($includeInactive) {
+            $inactive = '1';
+        }
+        else {
+            $inactive = '0';
+        }
+        return $this->requestHandler->sendRequestAsync('GET', "api/v4/users/?includeInActive=$inactive");
+    }
+
+    /**
+     * Retrieve all users or specific ones by ID.
+     *
+     * @param $userId
+     * @param $query
+     *
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @throws \Exception
+     */
+    public function getUser($userId = '', $query = null)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', "api/v4/users/$userId",
+            [
+                'query' => $query
+            ]
+        );
+    }
+
+    /**
+     * Retrieve current user.
+     *
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @throws \Exception
+     */
+    public function getCurrentUser()
+    {
+        return $this->requestHandler->sendRequestAsync('GET', "api/v4/currentUser/");
+    }
+
+    /**
+     * Retrieve all security profiles or specific ones by ID.
+     *
+     * @param $profileId
+     *
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     * @throws \Exception
+     */
+    public function getSecurityProfile($profileId = '')
+    {
+        return $this->requestHandler->sendRequestAsync('GET', "api/v4/profiles/$profileId");
+    }
+}

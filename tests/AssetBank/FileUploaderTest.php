@@ -27,12 +27,11 @@ class FileUploaderTest extends TestCase
         $mockRequestHandler = null;
         switch ($type) {
             case 'oauth':
-                $mockCredentials = $this->getMockBuilder('Bynder\Api\Impl\Oauth\Credentials')
+                $mockCredentials = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\Configuration')
                     ->disableOriginalConstructor()
                     ->getMock();
-                $mockRequestHandler = $this->getMockBuilder('Bynder\Api\Impl\Oauth\IOauthRequestHandler',
-                    $mockCredentials,
-                    'fakeURL')
+                $mockRequestHandler = $this->getMockBuilder('Bynder\Api\RequestHandler')
+                    ->setConstructorArgs([$mockCredentials])
                     ->getMock();
                 break;
 

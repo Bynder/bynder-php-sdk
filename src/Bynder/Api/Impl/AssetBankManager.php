@@ -12,7 +12,7 @@
 namespace Bynder\Api\Impl;
 
 use Bynder\Api\IAssetBankManager;
-use Bynder\Api\Impl\Oauth\IOauthRequestHandler;
+use Bynder\Api\RequestHandler;
 use Bynder\Api\Impl\Upload\FileUploader;
 
 /**
@@ -36,7 +36,7 @@ class AssetBankManager implements IAssetBankManager
      *
      * @param IOauthRequestHandler $requestHandler Request handler used to communicate with the API.
      */
-    public function __construct(IOauthRequestHandler $requestHandler)
+    public function __construct(RequestHandler $requestHandler)
     {
         $this->requestHandler = $requestHandler;
         $this->fileUploader = FileUploader::create($requestHandler);
@@ -107,14 +107,14 @@ class AssetBankManager implements IAssetBankManager
      * Gets a specific meta property
      *
      * @param string $propertyId Meta property id
-     * @param array $query
      *
      * @return \GuzzleHttp\Promise\Promise with the meta property.
      * @throws \Exception
      */
     public function getMetaproperty($propertyId, $query = null)
     {
-        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/' . $propertyId . '/',
+        return $this->requestHandler->sendRequestAsync(
+            'GET', 'api/v4/metaproperties/' . $propertyId . '/',
             ['query' => $query]
         );
     }
