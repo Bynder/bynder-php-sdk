@@ -32,9 +32,9 @@ try {
     ));
 
     if($token === null) {
-        echo $bynder->getAuthorizationUrl() . "\n\n"; //$scope = ['openid', 'offline', 'asset:read']) . "\n\n";
+        echo $bynder->getAuthorizationUrl('offline asset:read collection:read admin.user:read current.user:read current.profile:read meta.assetbank:read') . "\n\n";
 
-        $code = readline("Enter code: ");
+        $code = readline('Enter code: ');
 
         if($code == null) {
             exit;
