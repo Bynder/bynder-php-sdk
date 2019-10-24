@@ -153,7 +153,7 @@ class BynderOauthProvider extends AbstractProvider
      */
     protected function getDefaultScopes()
     {
-        return 'openid offline';
+        return '';
     }
 
     /**
