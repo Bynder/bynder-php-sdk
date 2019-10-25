@@ -7,10 +7,10 @@ use Bynder\Api\Impl\OAuth2\Configuration;
 
 define('BYNDER_INTEGRATION_ID', '');
 
-$bynderDomain = 'integrations.getbynder.com';
-$redirectUri = 'http://localhost/test/callback';
-$clientId = '756d8e30-25fc-4016-98fd-ed0e595dd773';
-$clientSecret = '746c97e6-3412-4ced-839e-af371aff3db5';
+$bynderDomain = 'portal.bynder.com';
+$redirectUri = '';
+$clientId = '';
+$clientSecret = '';
 $token = null;
 
 /* If we have a token stored
