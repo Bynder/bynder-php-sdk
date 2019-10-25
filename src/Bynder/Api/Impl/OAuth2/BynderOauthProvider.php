@@ -50,7 +50,6 @@ class BynderOauthProvider extends AbstractProvider
      */
     public function getBaseAccessTokenUrl(array $params)
     {
-        echo $this->bynderDomain;
         return $this->bynderDomain . '/v6/authentication/oauth2/token';
     }
 
