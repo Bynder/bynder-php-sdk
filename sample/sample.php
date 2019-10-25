@@ -7,10 +7,10 @@ use Bynder\Api\Impl\OAuth2\Configuration;
 
 define('BYNDER_INTEGRATION_ID', '');
 
-$bynderDomain = 'portal.getbynder.com';
-$redirectUri = '';
-$clientId = '';
-$clientSecret = '';
+$bynderDomain = 'integrations.getbynder.com';
+$redirectUri = 'http://localhost/test/callback';
+$clientId = '756d8e30-25fc-4016-98fd-ed0e595dd773';
+$clientSecret = '746c97e6-3412-4ced-839e-af371aff3db5';
 $token = null;
 
 /* If we have a token stored
@@ -32,7 +32,7 @@ try {
     ));
 
     if($token === null) {
-        echo $bynder->getAuthorizationUrl('offline asset:read collection:read admin.user:read current.user:read current.profile:read meta.assetbank:read') . "\n\n";
+        echo $bynder->getAuthorizationUrl(['offline asset:read collection:read admin.user:read current.user:read current.profile:read meta.assetbank:read']) . "\n\n";
 
         $code = readline('Enter code: ');
 
