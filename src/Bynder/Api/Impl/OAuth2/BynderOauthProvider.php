@@ -1,5 +1,5 @@
 <?php
-namespace Bynder\Api\Impl\Oauth2;
+namespace Bynder\Api\Impl\OAuth2;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
