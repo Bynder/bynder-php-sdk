@@ -8,7 +8,7 @@
  */
 
 // src/Bynder/Api/Impl/Oauth2/Credentials.php
-namespace Bynder\Api\Impl\Oauth2;
+namespace Bynder\Api\Impl\OAuth2;
 
 use Bynder\Api\Impl\Oauth2\BynderOauthProvider;
 
