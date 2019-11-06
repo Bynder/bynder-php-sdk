@@ -36,7 +36,7 @@ class AssetBankManager implements IAssetBankManager
      *
      * @param IOauthRequestHandler $requestHandler Request handler used to communicate with the API.
      */
-    public function __construct(RequestHandler $requestHandler)
+    public function __construct(AbstractRequestHandler $requestHandler)
     {
         $this->requestHandler = $requestHandler;
         $this->fileUploader = FileUploader::create($requestHandler);

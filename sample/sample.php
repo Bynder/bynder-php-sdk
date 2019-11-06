@@ -1,13 +1,15 @@
 <?php
-
 require_once('vendor/autoload.php');
 
 use Bynder\Api\BynderClient;
-use Bynder\Api\Impl\OAuth2\Configuration;
+use Bynder\Api\Impl\OAuth2;
+use Bynder\Api\Impl\PermanentTokens;
 
 define('BYNDER_INTEGRATION_ID', '');
 
-$bynderDomain = 'portal.bynder.com';
+// When using OAuth2
+
+$bynderDomain = 'portal.getbynder.com';
 $redirectUri = '';
 $clientId = '';
 $clientSecret = '';
@@ -21,33 +23,56 @@ $token = null;
     ]);
  */
 
-try {
-    $bynder = new BynderClient(new Configuration(
-        $bynderDomain,
-        $redirectUri,
-        $clientId,
-        $clientSecret,
-        $token,
-        ['timeout' => 5] // Guzzle HTTP request options
-    ));
+$bynder = new BynderClient(new Oauth2\Configuration(
+    $bynderDomain,
+    $redirectUri,
+    $clientId,
+    $clientSecret,
+    $token,
+    ['timeout' => 5] // Guzzle HTTP request options
+));
 
-    if($token === null) {
-        echo $bynder->getAuthorizationUrl(['offline asset:read collection:read admin.user:read current.user:read current.profile:read meta.assetbank:read']) . "\n\n";
+if($token === null) {
+    echo $bynder->getAuthorizationUrl([
+        'offline',
+        'current.user:read',
+        'current.profile:read',
+        'asset:read',
+        'asset:write',
+        'meta.assetbank:read',
+        'asset.usage:read',
+        'asset.usage:write',
+    ]) . "\n\n";
 
-        $code = readline('Enter code: ');
+    $code = readline('Enter code: ');
 
-        if($code == null) {
-            exit;
-        }
-
-        $token = $bynder->getAccessToken($code);
+    if($code == null) {
+        exit;
     }
 
+    $token = $bynder->getAccessToken($code);
     var_dump($token);
+}
 
+// When using permanent tokens
+
+$bynderDomain = 'portal.getbynder.com';
+$token = '';
+
+$configuration = new PermanentTokens\Configuration(
+    $bynderDomain,
+    $token,
+    ['timeout' => 5] // Guzzle HTTP request options
+);
+
+$bynder = new BynderClient($configuration);
+
+// Example calls
+
+try {
     $currentUser = $bynder->getCurrentUser()->wait();
-    $user = $bynder->getUser($currentUser['id'])->wait();
-    var_dump($user);
+    var_dump($currentUser);
+
     if(isset($currentUser['profileId'])) {
         $roles = $bynder->getSecurityProfile($currentUser['profileId'])->wait();
     }

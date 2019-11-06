@@ -11,7 +11,7 @@
 // src/Bynder/Api/Impl/Upload/FileUploader.php
 namespace Bynder\Api\Impl\Upload;
 
-use Bynder\Api\RequestHandler;
+use Bynder\Api\Impl\AbstractRequestHandler;
 use Exception;
 
 use VirtualFileSystem\FileSystem;
@@ -45,7 +45,7 @@ class FileUploader
 
     /**
      *
-     * @var OauthRequestHandler Request handler used to communicate with the API.
+     * @var AbstractRequestHandler Request handler used to communicate with the API.
      */
     private $requestHandler;
 
@@ -62,10 +62,10 @@ class FileUploader
     /**
      * Initialises a new instance of the class.
      *
-     * @param IOauthRequestHandler $requestHandler Request handler used to communicate with the API.
+     * @param AbstractRequestHandler $requestHandler Request handler used to communicate with the API.
      * @param IAmazonApi $amazonApi AmazonApi to upload parts.
      */
-    public function __construct(RequestHandler $requestHandler, IAmazonApi $amazonApi)
+    public function __construct(AbstractRequestHandler $requestHandler, IAmazonApi $amazonApi)
     {
         $this->requestHandler = $requestHandler;
         $this->amazonApi = $amazonApi;
@@ -74,10 +74,10 @@ class FileUploader
     /**
      * Creates a new instance of FileUploader.
      *
-     * @param IOauthRequestHandler $requestHandler Request handler used to communicate with the API.
+     * @param AbstractRequestHandler $requestHandler Request handler used to communicate with the API.
      * @return FileUploader
      */
-    public static function create(RequestHandler $requestHandler)
+    public static function create(AbstractRequestHandler $requestHandler)
     {
         return new FileUploader($requestHandler, new AmazonApi());
     }
