@@ -8,7 +8,6 @@ use Bynder\Api\Impl\PermanentTokens;
 
 class BynderClientTest extends TestCase
 {
-
     public function setUp()
     {
         $this->configuration = new OAuth2\Configuration(

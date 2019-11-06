@@ -7,7 +7,6 @@ use Bynder\Api\Impl\PermanentTokens;
 
 class BynderClient
 {
-
     /**
      * @var RequestHandler used to process API requests.
      */

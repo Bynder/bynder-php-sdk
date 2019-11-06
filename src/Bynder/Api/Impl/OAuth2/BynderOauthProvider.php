@@ -7,10 +7,6 @@ use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- *
- * @package Orbit\Api\Impl\OauthProvider
- */
 class BynderOauthProvider extends AbstractProvider
 {
     use BearerAuthorizationTrait;

@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * Copyright (c) Bynder. All rights reserved.
@@ -8,15 +7,12 @@
  * file that was distributed with this source code.
  */
 
-// src/Bynder/Api/Impl/Upload/FileUploader.php
 namespace Bynder\Api\Impl\Upload;
 
-use Bynder\Api\Impl\AbstractRequestHandler;
 use Exception;
-
-use VirtualFileSystem\FileSystem;
-
 use GuzzleHttp\Promise;
+use VirtualFileSystem\FileSystem;
+use Bynder\Api\Impl\AbstractRequestHandler;
 
 /**
  * Class used to upload files to Bynder.
@@ -50,7 +46,7 @@ class FileUploader
     private $requestHandler;
 
     /**
-     * @var IAmazonApi Amazon API used to upload parts.
+     * @var AmazonApi Amazon API used to upload parts.
      */
     private $amazonApi;
 
@@ -63,9 +59,9 @@ class FileUploader
      * Initialises a new instance of the class.
      *
      * @param AbstractRequestHandler $requestHandler Request handler used to communicate with the API.
-     * @param IAmazonApi $amazonApi AmazonApi to upload parts.
+     * @param AmazonApi $amazonApi AmazonApi to upload parts.
      */
-    public function __construct(AbstractRequestHandler $requestHandler, IAmazonApi $amazonApi)
+    public function __construct(AbstractRequestHandler $requestHandler, AmazonApi $amazonApi)
     {
         $this->requestHandler = $requestHandler;
         $this->amazonApi = $amazonApi;
@@ -375,7 +371,4 @@ class FileUploader
         }
         return $this->requestHandler->sendRequestAsync('POST', $uri, ['form_params' => $data]);
     }
-
 }
-
-

@@ -9,7 +9,6 @@
 
 namespace Bynder\Api\Impl\PermanentTokens;
 
-
 class Configuration
 {
     private $bynderDomain;

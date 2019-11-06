@@ -19,7 +19,6 @@ class RequestHandler extends AbstractRequestHandler
 
     protected function sendAuthenticatedRequest($requestMethod, $uri, $options = [])
     {
-        var_dump($options);
         $request = new \GuzzleHttp\Psr7\Request($requestMethod, $uri, $options);
         return $this->httpClient->sendAsync(
             $request,

@@ -1,5 +1,4 @@
 <?php
-
 namespace Bynder\Api\Impl;
 
 abstract class AbstractRequestHandler
