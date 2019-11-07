@@ -48,7 +48,7 @@ class BynderClient
     public function getAuthorizationUrl(array $scope, $state = null)
     {
         return $this->requestHandler->getAuthorizationUrl([
-            'state' => $state ? $state : sha1(uniqid()),
+            'state' => $state,
             'scope' => implode(' ', $scope)
         ]);
     }
