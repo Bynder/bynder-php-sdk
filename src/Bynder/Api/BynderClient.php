@@ -41,6 +41,7 @@ class BynderClient
      * Returns the Oauth authorization url for user login.
      *
      * @param array $scope Custom scopes can be passed to override the defaults
+     * @param string $state Custom state can be passed to override the default random generation
      *
      * @return string
      */
