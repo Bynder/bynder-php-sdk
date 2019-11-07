@@ -44,10 +44,10 @@ class BynderClient
      *
      * @return string
      */
-    public function getAuthorizationUrl(array $scope)
+    public function getAuthorizationUrl(array $scope, string $state = null)
     {
         return $this->requestHandler->getAuthorizationUrl([
-            'state' => sprintf('domain=%s', $this->configuration->getBynderDomain()),
+            'state' => $state ?? sha1(uniqid()),
             'scope' => implode(' ', $scope)
         ]);
     }
