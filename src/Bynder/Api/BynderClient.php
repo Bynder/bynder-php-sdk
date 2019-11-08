@@ -41,13 +41,14 @@ class BynderClient
      * Returns the Oauth authorization url for user login.
      *
      * @param array $scope Custom scopes can be passed to override the defaults
+     * @param string $state Custom state can be passed to override the default random generation
      *
      * @return string
      */
-    public function getAuthorizationUrl(array $scope)
+    public function getAuthorizationUrl(array $scope, $state = null)
     {
         return $this->requestHandler->getAuthorizationUrl([
-            'state' => sprintf('domain=%s', $this->configuration->getBynderDomain()),
+            'state' => $state,
             'scope' => implode(' ', $scope)
         ]);
     }
