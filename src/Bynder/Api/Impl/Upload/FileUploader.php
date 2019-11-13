@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * Copyright (c) Bynder. All rights reserved.
@@ -8,15 +7,12 @@
  * file that was distributed with this source code.
  */
 
-// src/Bynder/Api/Impl/Upload/FileUploader.php
 namespace Bynder\Api\Impl\Upload;
 
-use Bynder\Api\RequestHandler;
 use Exception;
-
-use VirtualFileSystem\FileSystem;
-
 use GuzzleHttp\Promise;
+use VirtualFileSystem\FileSystem;
+use Bynder\Api\Impl\AbstractRequestHandler;
 
 /**
  * Class used to upload files to Bynder.
@@ -45,12 +41,12 @@ class FileUploader
 
     /**
      *
-     * @var OauthRequestHandler Request handler used to communicate with the API.
+     * @var AbstractRequestHandler Request handler used to communicate with the API.
      */
     private $requestHandler;
 
     /**
-     * @var IAmazonApi Amazon API used to upload parts.
+     * @var AmazonApi Amazon API used to upload parts.
      */
     private $amazonApi;
 
@@ -62,10 +58,10 @@ class FileUploader
     /**
      * Initialises a new instance of the class.
      *
-     * @param IOauthRequestHandler $requestHandler Request handler used to communicate with the API.
-     * @param IAmazonApi $amazonApi AmazonApi to upload parts.
+     * @param AbstractRequestHandler $requestHandler Request handler used to communicate with the API.
+     * @param AmazonApi $amazonApi AmazonApi to upload parts.
      */
-    public function __construct(RequestHandler $requestHandler, IAmazonApi $amazonApi)
+    public function __construct(AbstractRequestHandler $requestHandler, AmazonApi $amazonApi)
     {
         $this->requestHandler = $requestHandler;
         $this->amazonApi = $amazonApi;
@@ -74,10 +70,10 @@ class FileUploader
     /**
      * Creates a new instance of FileUploader.
      *
-     * @param IOauthRequestHandler $requestHandler Request handler used to communicate with the API.
+     * @param AbstractRequestHandler $requestHandler Request handler used to communicate with the API.
      * @return FileUploader
      */
-    public static function create(RequestHandler $requestHandler)
+    public static function create(AbstractRequestHandler $requestHandler)
     {
         return new FileUploader($requestHandler, new AmazonApi());
     }
@@ -375,7 +371,4 @@ class FileUploader
         }
         return $this->requestHandler->sendRequestAsync('POST', $uri, ['form_params' => $data]);
     }
-
 }
-
-

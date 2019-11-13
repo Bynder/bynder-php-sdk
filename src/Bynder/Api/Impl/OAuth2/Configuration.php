@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-// src/Bynder/Api/Impl/Oauth2/Credentials.php
 namespace Bynder\Api\Impl\OAuth2;
 
 use Bynder\Api\Impl\Oauth2\BynderOauthProvider;
@@ -37,7 +36,6 @@ class Configuration
      * @var string Initial access token, used for logout.
      */
     private $initialToken;
-
 
     /**
      * Initialises a new instance with the specified params.
@@ -106,26 +104,6 @@ class Configuration
     public function setToken($token)
     {
         $this->token = $token;
-    }
-
-    /**
-     * Returns the Access token secret.
-     *
-     * @return string
-     */
-    public function getTokenSecret()
-    {
-        return $this->tokenSecret;
-    }
-
-    /**
-     * Sets the Access token secret.
-     *
-     * @param string $tokenSecret The Oauth2 access token secret.
-     */
-    public function setTokenSecret($tokenSecret)
-    {
-        $this->tokenSecret = $tokenSecret;
     }
 
     /**

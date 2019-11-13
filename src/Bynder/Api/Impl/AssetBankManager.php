@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * Copyright (c) Bynder. All rights reserved.
@@ -8,21 +7,14 @@
  * file that was distributed with this source code.
  */
 
-// src/Bynder/Api/Impl/AssetBankManager.php
 namespace Bynder\Api\Impl;
 
-use Bynder\Api\IAssetBankManager;
-use Bynder\Api\RequestHandler;
 use Bynder\Api\Impl\Upload\FileUploader;
 
-/**
- * Implementation of IAssetBankManager, providing operations available on the Bynder Asset Bank via API.
- */
-class AssetBankManager implements IAssetBankManager
+class AssetBankManager
 {
-
     /**
-     * @var IOauthRequestHandler Request handler used to communicate with the API.
+     * @var AbstractRequestHandler Request handler used to communicate with the API.
      */
     protected $requestHandler;
 
@@ -34,19 +26,19 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Initialises a new instance of the class.
      *
-     * @param IOauthRequestHandler $requestHandler Request handler used to communicate with the API.
+     * @param  AbstractRequestHandler  $requestHandler Request handler used to communicate with the API.
      */
-    public function __construct(RequestHandler $requestHandler)
+    public function __construct(AbstractRequestHandler $requestHandler)
     {
         $this->requestHandler = $requestHandler;
         $this->fileUploader = FileUploader::create($requestHandler);
     }
 
     /**
-     * Gets a list of all Brands available.
+     * Gets a list of all available brands.
      *
-     * @see IAssetBankManager::getBrands() for more information.
-     * @throws \Exception
+     * @return \GuzzleHttp\Promise\Promise with a list of all Brands.
+     * @throws \GuzzleHttp\Exception\RequestException When request fails.
      */
     public function getBrands()
     {
@@ -56,11 +48,9 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Gets a list of all media available, params sent in $query will filter the results.
      *
-     * @param array $query
-     *
-     * @see IAssetBankManager::getMediaList() for more information.
+     * @param  array  $query
      * @return \GuzzleHttp\Promise\Promise
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getMediaList($query = null)
     {
@@ -72,12 +62,10 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Retrieves specific media information for $mediaId.
      *
-     * @param string $mediaId
-     * @param array  $query
-     *
-     * @see IAssetBankManager::getMediaInfo() for more information.
+     * @param  string  $mediaId
+     * @param  array  $query
      * @return \GuzzleHttp\Promise\Promise
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getMediaInfo($mediaId, $query = null)
     {
@@ -90,11 +78,9 @@ class AssetBankManager implements IAssetBankManager
      * Retrieves a dictionary of all metaproperties available, keyed by the
      * metaproperty name.
      *
-     * @param array $query
-     *
+     * @param  array  $query
      * @return \GuzzleHttp\Promise\Promise
-     * @throws \Exception
-     * @see IAssetBankManager::getMetaproperties() for more information.
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getMetaproperties($query = null)
     {
@@ -104,12 +90,11 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
-     * Gets a specific meta property
+     * Gets a specific metaproperty.
      *
-     * @param string $propertyId Meta property id
-     *
-     * @return \GuzzleHttp\Promise\Promise with the meta property.
-     * @throws \Exception
+     * @param  string  $propertyId  Metaproperty id
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getMetaproperty($propertyId, $query = null)
     {
@@ -120,12 +105,11 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
-     * Gets all dependencies for meta property
+     * Gets all dependencies for metaproperty.
      *
-     * @param string $propertyId Meta property id
-     *
-     * @return \GuzzleHttp\Promise\Promise with the meta property.
-     * @throws \Exception
+     * @param  string  $propertyId  Metaproperty id
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getMetapropertyDependencies($propertyId)
     {
@@ -134,12 +118,11 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
-     * Gets a list of meta property options
+     * Gets a list of metaproperty options.
      *
-     * @param array $query Associative array of parameters to filter the results.
-     *
-     * @return \GuzzleHttp\Promise\Promise with all requested meta property options.
-     * @throws \Exception
+     * @param  array  $query  Associative array of parameters to filter the results.
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getMetapropertyOptions($query)
     {
@@ -149,10 +132,10 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
-     * Gets a list of all meta property option dependencies (globally)
+     * Gets a list of all meta property option dependencies (globally).
      *
-     * @return \GuzzleHttp\Promise\Promise with all meta property options dependencies.
-     * @throws \Exception
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getMetapropetryGlobalOptionDependencies()
     {
@@ -160,12 +143,11 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
-     * Gets a list of all meta property option dependencies for a specific property
+     * Gets a list of all metaproperty option dependencies for a specific property.
      *
-     * @param string $propertyId Meta property id
-     *
-     * @return \GuzzleHttp\Promise\Promise with all meta property options dependencies.
-     * @throws \Exception
+     * @param  string  $propertyId Metaproperty id
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getMetapropertyOptionDependencies($propertyId)
     {
@@ -174,14 +156,13 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
-     * Gets a list of all meta property option dependencies for a specific option
+     * Gets a list of all meta property option dependencies for a specific option.
      *
-     * @param string $propertyId Meta property id
-     * @param string $optionId   Option id
-     * @param array  $query      Associative array of parameters to filter the results.
-     *
-     * @return \GuzzleHttp\Promise\Promise with all meta property options dependencies.
-     * @throws \Exception
+     * @param  string  $propertyId  Metaproperty id
+     * @param  string  $optionId  Metaproperty option id
+     * @param  array  $query  Associative array of parameters to filter the results
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getMetapropertySpecificOptionDependencies($propertyId, $optionId, $query)
     {
@@ -194,11 +175,9 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Retrieves a list of all tags available.
      *
-     * @param array $query
-     *
-     * @see IAssetBankManager::getTags() for more information.
+     * @param  array  $query
      * @return \GuzzleHttp\Promise\Promise
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getTags($query = null)
     {
@@ -210,8 +189,8 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Retrieves a list of all categories available.
      *
-     * @see IAssetBankManager::getCategories() for more information.
-     * @throws \Exception
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getCategories()
     {
@@ -221,7 +200,8 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Retrieves a list of smarfilter information.
      *
-     * @see IAssetBankManager::getSmartfilters() for more information.
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getSmartfilters()
     {
@@ -231,11 +211,9 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Uploads a file to the Asset Bank.
      *
-     * @param array $data File data and information for upload.
-     *
-     * @see IAssetBankManager::uploadFileAsync() for more information.
+     * @param  array  $data  File data and information for upload
      * @return \GuzzleHttp\Promise\Promise
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function uploadFileAsync($data)
     {
@@ -245,12 +223,9 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Deletes a media item from the asset bank.
      *
-     * @param string $mediaId
-     *
-     * @see IAssetBankManager::deleteMedia() for more information.
-     *
+     * @param  string  $mediaId
      * @return \GuzzleHttp\Promise\Promise
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function deleteMedia($mediaId)
     {
@@ -258,17 +233,14 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
-     * Modifies existing assets fields
+     * Modifies existing assets fields.
      *
      * @link http://docs.bynder.apiary.io/#reference/assets/specific-asset-operations/modify-asset
      *
-     * @param string $mediaId
-     * @param array  $data File information to be set.
-     *
-     * @see  IAssetBankManager::modifyMedia() for more information.
-     *
+     * @param  string  $mediaId
+     * @param  array  $data  File information to be set
      * @return \GuzzleHttp\Promise\Promise
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function modifyMedia($mediaId, array $data)
     {
@@ -280,8 +252,8 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Returns existing custom derivatives for current account.
      *
-     * @see IAssetBankManager::getDerivatives() for more information.
-     * @throws \Exception
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getDerivatives()
     {
@@ -289,15 +261,14 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
-     * Gets the download location for a specific asset
+     * Gets the download location for a specific asset.
      *
      * @param string $mediaId The Bynder media identifier (Asset id).
-     * @param string $type    Type of files to download. Note that when multiple additional files are
-     *                        available only the download url of the latest one will be returned.
-     *                        E.g. additional, original. Default = original
-     *
+     * @param string $type Type of files to download. Note that when multiple additional files are
+     *                     available only the download url of the latest one will be returned.
+     *                     E.g. additional, original. Default = original
      * @return \GuzzleHttp\Promise\Promise
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getMediaDownloadLocation($mediaId, $type = 'original')
     {
@@ -310,13 +281,12 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
-     * Gets the download location for a specific asset with a specific version
+     * Gets the download location for a specific asset with a specific version.
      *
-     * @param string $mediaId The Bynder media identifier (Asset id).
-     * @param int    $version Asset version to download.
-     *
-     * @return \GuzzleHttp\Promise\Promise with the download location for a specific asset.
-     * @throws \Exception
+     * @param  string  $mediaId The Bynder media identifier (Asset id)
+     * @param  int  $version Asset version to download
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getMediaDownloadLocationByVersion($mediaId, $version)
     {
@@ -325,14 +295,13 @@ class AssetBankManager implements IAssetBankManager
     }
 
     /**
-     * Gets the download location for a specific asset item
+     * Gets the download location for a specific asset item.
      *
-     * @param string  $mediaId The Bynder media identifier (Asset id).
-     * @param string  $itemId  The id of the specific asset item you’d like to download.
-     * @param boolean $hash    Indicates whether or not to treat the itemId as a hashed item id.
-     *
-     * @return \GuzzleHttp\Promise\Promise with the download location for a specific asset.
-     * @throws \Exception
+     * @param  string  $mediaId  The Bynder media identifier (Asset id)
+     * @param  string  $itemId  The id of the specific asset item you’d like to download
+     * @param  boolean  $hash  Indicates whether or not to treat the itemId as a hashed item id
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getMediaDownloadLocationForAssetItem($mediaId, $itemId, $hash = false)
     {
@@ -347,12 +316,9 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Creates a usage record for a media asset.
      *
-     * @param $query
-     *
-     * @return \GuzzleHttp\Promise\Promise Asset usage information.
-     *
-     * @throws \GuzzleHttp\Exception\RequestException When request fails.
-     * @throws \Exception
+     * @param  $query
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function createUsage($query)
     {
@@ -364,12 +330,9 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Gets all the media assets usage records.
      *
-     * @param $query
-     *
-     * @return \GuzzleHttp\Promise\Promise List of asset usage information.
-     *
-     * @throws \GuzzleHttp\Exception\RequestException When request fails.
-     * @throws \Exception
+     * @param  $query
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getUsage($query)
     {
@@ -381,12 +344,9 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Deletes a usage record of a media asset.
      *
-     * @param $query
-     *
-     * @return \GuzzleHttp\Promise\Promise Response of asset usage delete.
-     *
-     * @throws \GuzzleHttp\Exception\RequestException When request fails.
-     * @throws \Exception
+     * @param  $query
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException 
      */
     public function deleteUsage($query)
     {
@@ -398,12 +358,9 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Gets all collections based on optional query parameters.
      *
-     * @param null|array $query.
-     *
+     * @param  null|array  $query
      * @return \GuzzleHttp\Promise\Promise
-     *
-     * @throws \GuzzleHttp\Exception\RequestException When request fails.
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getCollections($query = null)
     {
@@ -415,12 +372,9 @@ class AssetBankManager implements IAssetBankManager
     /**
      * Gets all media assets related to a collection.
      *
-     * @param string $collectionId The Bynder Collection id.
-     *
+     * @param  string  $collectionId  The Bynder Collection id
      * @return \GuzzleHttp\Promise\Promise
-     *
-     * @throws \GuzzleHttp\Exception\RequestException When request fails.
-     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\RequestException
      */
     public function getCollectionAssets($collectionId)
     {

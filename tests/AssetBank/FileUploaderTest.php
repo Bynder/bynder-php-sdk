@@ -30,13 +30,13 @@ class FileUploaderTest extends TestCase
                 $mockCredentials = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\Configuration')
                     ->disableOriginalConstructor()
                     ->getMock();
-                $mockRequestHandler = $this->getMockBuilder('Bynder\Api\RequestHandler')
+                $mockRequestHandler = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\RequestHandler')
                     ->setConstructorArgs([$mockCredentials])
                     ->getMock();
                 break;
 
             case 'aws':
-                $mockRequestHandler = $this->getMockBuilder('Bynder\Api\Impl\Upload\IAmazonApi')
+                $mockRequestHandler = $this->getMockBuilder('Bynder\Api\Impl\Upload\AmazonApi')
                     ->disableOriginalConstructor()
                     ->getMock();
                 break;

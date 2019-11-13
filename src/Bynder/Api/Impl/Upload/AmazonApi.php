@@ -1,5 +1,4 @@
 <?php
-
 /**
  *
  * Copyright (c) Bynder. All rights reserved.
@@ -8,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-// src/Bynder/Api/Impl/Upload/AmazonApi.php
 namespace Bynder\Api\Impl\Upload;
 
 use GuzzleHttp\Client;
@@ -16,18 +14,17 @@ use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use Psr\Http\Message\ResponseInterface;
 
-class AmazonApi implements IAmazonApi
+class AmazonApi
 {
-
     /**
      * Uploads a chunk of a file to an S3 bucket using multipart upload.
      *
-     * @param $filePath
-     * @param $uploadEndpoint
-     * @param $uploadRequestInfo
-     * @param $chunkNumber
-     * @param $chunk
-     * @param $numberOfChunks
+     * @param  $filePath
+     * @param  $uploadEndpoint
+     * @param  $uploadRequestInfo
+     * @param  $chunkNumber
+     * @param  $chunk
+     * @param  $numberOfChunks
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function uploadPartToAmazon(
@@ -75,5 +72,4 @@ class AmazonApi implements IAmazonApi
     {
         return ['name' => $name, 'contents' => $contents];
     }
-
 }

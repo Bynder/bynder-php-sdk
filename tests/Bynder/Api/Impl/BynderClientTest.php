@@ -3,14 +3,14 @@ namespace Bynder\Test\Bynder\Api;
 
 use PHPUnit\Framework\TestCase;
 use Bynder\Api\BynderClient;
-use Bynder\Api\Impl\OAuth2\Configuration;
+use Bynder\Api\Impl\OAuth2;
+use Bynder\Api\Impl\PermanentTokens;
 
 class BynderClientTest extends TestCase
 {
-
     public function setUp()
     {
-        $this->configuration = new Configuration(
+        $this->configuration = new OAuth2\Configuration(
             'test.getbynder.com',
             'test.com/callback',
             'clientId',
@@ -18,6 +18,17 @@ class BynderClientTest extends TestCase
             null
         );
         $this->bynderClient = new BynderClient($this->configuration);
+    }
+
+    public function testAllowedConfigurationOptions()
+    {
+        self::assertInstanceOf(
+            'Bynder\Api\BynderClient',
+            new BynderClient(new PermanentTokens\Configuration('', ''))
+        );
+
+        self::setExpectedException('\Exception');
+        new BynderClient(null);
     }
 
     public function testGetAssetBankManager()
