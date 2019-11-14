@@ -115,11 +115,10 @@ Media management.
     getMetaproperties();
     getMetaproperty($propertyId);
     getMetapropertyDependencies($propertyId);
+    getMetapropertyOptions($query);
     getMetapropetryGlobalOptionDependencies();
     getMetapropertyOptionDependencies($propertyId);
     getMetapropertySpecificOptionDependencies($propertyId, $optionId, $query);
-    getCollections($query);
-    getCollectionAssets($collectionId);
     getTags();
     getCategories();
     getSmartfilters();
@@ -133,6 +132,8 @@ Media management.
     createUsage($query);
     getUsage($query);
     deleteUsage($query);
+    getCollections($query);
+    getCollectionAssets($collectionId);
 ```
 
 ## Tests
