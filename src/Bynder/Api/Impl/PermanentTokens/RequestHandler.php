@@ -26,6 +26,7 @@ class RequestHandler extends AbstractRequestHandler
                 $options,
                 $this->configuration->getRequestOptions(),
                 ['headers'=> [
+                    'User-Agent' => 'bynder-php-sdk/' . $this->getSdkVersion(),
                     'Authorization' => 'Bearer ' . $this->configuration->getToken()
                 ]]
             )
