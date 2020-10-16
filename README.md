@@ -138,6 +138,20 @@ Media management.
 
 ## Tests
 
+### Using Docker
+
+Build the Docker image and tag it:
+```bash
+docker build -t bynder-php-sdk-tests
+```
+
+Run the tests:
+```bash
+docker run bynder-php-sdk-tests
+```
+
+### Running it locally
+
 Install dependencies as mentioned above (which will resolve [PHPUnit](http://packagist.org/packages/phpunit/phpunit)), then you can run the test suite:
 
 ```bash
