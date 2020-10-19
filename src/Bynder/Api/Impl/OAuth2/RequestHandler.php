@@ -43,7 +43,14 @@ class RequestHandler extends AbstractRequestHandler
             $this->oauthProvider->getAuthenticatedRequest(
                 $requestMethod, $uri, $this->configuration->getToken()
             ),
-            array_merge($options, $this->configuration->getRequestOptions())
+            array_merge(
+                $options,
+                $this->configuration->getRequestOptions(),
+                ['headers'=> [
+                        'User-Agent' => 'bynder-php-sdk/' . $this->configuration->getSdkVersion()
+                    ]
+                ]
+            )
         );
     }
 }

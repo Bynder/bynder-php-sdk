@@ -30,6 +30,7 @@ class Configuration
         $this->bynderDomain = $bynderDomain;
         $this->token = $token;
         $this->requestOptions = $requestOptions;
+        $this->package = json_decode(file_get_contents('composer.json'));
     }
 
     public function getBynderDomain()
@@ -57,6 +58,11 @@ class Configuration
         $this->token = $token;
     }
 
+    /**
+     * Returns the request options.
+     *
+     * @return array
+     */
     public function getRequestOptions()
     {
         return $this->requestOptions;
@@ -65,5 +71,15 @@ class Configuration
     public function setRequestOptions(array $requestOptions)
     {
         $this->requestOptions = $requestOptions;
+    }
+
+    /**
+     * Returns the SDK's version.
+     *
+     * @return string
+     */
+    public function getSdkVersion()
+    {
+        return $this->package['version'];
     }
 }

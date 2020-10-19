@@ -52,7 +52,7 @@ class Configuration
         $this->clientSecret = $clientSecret;
         $this->token = $token;
         $this->requestOptions = $requestOptions;
-
+        $this->package = json_decode(file_get_contents('composer.json'));
         $this->initialToken = $token;
     }
 
@@ -136,5 +136,15 @@ class Configuration
     public function setRequestOptions(array $requestOptions)
     {
         $this->requestOptions = $requestOptions;
+    }
+
+    /**
+     * Returns the SDK's version.
+     *
+     * @return string
+     */
+    public function getSdkVersion()
+    {
+        return $this->package['version'];
     }
 }
