@@ -9,7 +9,7 @@
 
 namespace Bynder\Api\Impl\OAuth2;
 
-use Bynder\Api\Impl\Oauth2\BynderOauthProvider;;
+use Bynder\Api\Impl\Oauth2\BynderOauthProvider;
 
 /**
  * Class to hold Oauth2 tokens necessary for every API request.
