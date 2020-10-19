@@ -9,8 +9,6 @@
 
 namespace Bynder\Api\Impl\PermanentTokens;
 
-$package = json_decode(file_get_contents('composer.json'));
-
 class Configuration
 {
     private $bynderDomain;
@@ -32,7 +30,7 @@ class Configuration
         $this->bynderDomain = $bynderDomain;
         $this->token = $token;
         $this->requestOptions = $requestOptions;
-        $this->sdkVersion = $package['version'];
+        $this->package = json_decode(file_get_contents('composer.json'));
     }
 
     public function getBynderDomain()
@@ -82,6 +80,6 @@ class Configuration
      */
     public function getSdkVersion()
     {
-        return $this->sdkVersion;
+        return $this->package['version'];
     }
 }

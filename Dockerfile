@@ -11,4 +11,4 @@ RUN composer install
 # Copy ALL the things!
 COPY . .
 
-CMD ["./vendor/bin/phpunit", "tests"]
+CMD ["vendor/bin/phpunit", "tests", "-c", "phpunit.xml.dist", "--whitelist", "src"]

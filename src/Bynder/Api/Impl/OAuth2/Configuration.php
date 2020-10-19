@@ -9,9 +9,7 @@
 
 namespace Bynder\Api\Impl\OAuth2;
 
-use Bynder\Api\Impl\Oauth2\BynderOauthProvider;
-
-$package = json_decode(file_get_contents('composer.json'));
+use Bynder\Api\Impl\Oauth2\BynderOauthProvider;;
 
 /**
  * Class to hold Oauth2 tokens necessary for every API request.
@@ -54,7 +52,7 @@ class Configuration
         $this->clientSecret = $clientSecret;
         $this->token = $token;
         $this->requestOptions = $requestOptions;
-        $this->sdkVersion = $package['version'];
+        $this->package = json_decode(file_get_contents('composer.json'));
         $this->initialToken = $token;
     }
 
@@ -147,6 +145,6 @@ class Configuration
      */
     public function getSdkVersion()
     {
-        return $this->sdkVersion;
+        return $this->package['version'];
     }
 }
