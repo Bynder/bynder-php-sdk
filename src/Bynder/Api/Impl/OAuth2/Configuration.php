@@ -17,7 +17,7 @@ use Bynder\Api\Impl\Oauth2\BynderOauthProvider;
 class Configuration
 {
     private $bynderDomain;
-
+    private $rootDir;
     private $redirectUri;
 
     /**
@@ -52,7 +52,8 @@ class Configuration
         $this->clientSecret = $clientSecret;
         $this->token = $token;
         $this->requestOptions = $requestOptions;
-        $this->package = json_decode(file_get_contents('composer.json'));
+        $this->rootDir = dirname(__FILE__, 6);
+        $this->package = json_decode(file_get_contents($this->rootDir . '/composer.json'));
         $this->initialToken = $token;
     }
 
@@ -145,6 +146,6 @@ class Configuration
      */
     public function getSdkVersion()
     {
-        return $this->package['version'];
+        return $this->package->version;
     }
 }
