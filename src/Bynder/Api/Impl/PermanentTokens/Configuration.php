@@ -31,7 +31,7 @@ class Configuration
         $this->bynderDomain = $bynderDomain;
         $this->token = $token;
         $this->requestOptions = $requestOptions;
-        $this->rootDir = dirname(__FILE__, 6);
+        $this->rootDir = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
         $this->package = json_decode(file_get_contents($this->rootDir . '/composer.json'));
     }
 

@@ -52,7 +52,7 @@ class Configuration
         $this->clientSecret = $clientSecret;
         $this->token = $token;
         $this->requestOptions = $requestOptions;
-        $this->rootDir = dirname(__FILE__, 6);
+        $this->rootDir = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
         $this->package = json_decode(file_get_contents($this->rootDir . '/composer.json'));
         $this->initialToken = $token;
     }
