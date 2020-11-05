@@ -12,6 +12,7 @@ namespace Bynder\Api\Impl\PermanentTokens;
 class Configuration
 {
     private $bynderDomain;
+    private $rootDir;
 
     /**
      * @var string Permanent token.
@@ -30,7 +31,8 @@ class Configuration
         $this->bynderDomain = $bynderDomain;
         $this->token = $token;
         $this->requestOptions = $requestOptions;
-        $this->package = json_decode(file_get_contents('composer.json'));
+        $this->rootDir = dirname(dirname(dirname(dirname(dirname(dirname(__FILE__))))));
+        $this->package = json_decode(file_get_contents($this->rootDir . '/composer.json'));
     }
 
     public function getBynderDomain()
@@ -80,6 +82,6 @@ class Configuration
      */
     public function getSdkVersion()
     {
-        return $this->package['version'];
+        return $this->package->version;
     }
 }
