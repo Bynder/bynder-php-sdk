@@ -20,15 +20,23 @@ class RequestHandler extends AbstractRequestHandler
     protected function sendAuthenticatedRequest($requestMethod, $uri, $options = [])
     {
         $request = new \GuzzleHttp\Psr7\Request($requestMethod, $uri, $options);
+        $updatedHeaders = ['headers'=> [
+            'User-Agent' => 'bynder-php-sdk/' . $this->configuration->getSdkVersion()
+            ]
+        ];
+        
+        if(!is_null($options['headers'])) {
+            $updatedHeaders = ['headers' => array_merge($options['headers'],
+                                                        $updatedHeaders['headers']
+                                                        )
+                                ];
+        }
         return $this->httpClient->sendAsync(
             $request,
             array_merge(
                 $options,
                 $this->configuration->getRequestOptions(),
-                ['headers'=> [
-                    'User-Agent' => 'bynder-php-sdk/' . $this->configuration->getSdkVersion(),
-                    'Authorization' => 'Bearer ' . $this->configuration->getToken()
-                ]]
+                $updatedHeaders
             )
         );
     }

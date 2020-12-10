@@ -37,7 +37,18 @@ class RequestHandler extends AbstractRequestHandler
 
     protected function sendAuthenticatedRequest($requestMethod, $uri, $options = [])
     {
+        $updatedHeaders = ['headers'=> [
+            'User-Agent' => 'bynder-php-sdk/' . $this->configuration->getSdkVersion()
+            ]
+        ];
+        
         $this->configuration->refreshToken($this->oauthProvider);
+        if(!is_null($options['headers'])) {
+            $updatedHeaders = ['headers' => array_merge($options['headers'],
+                                                        $updatedHeaders['headers']
+                                                        )
+                                ];
+        }
 
         return $this->oauthProvider->getHttpClient()->sendAsync(
             $this->oauthProvider->getAuthenticatedRequest(
@@ -46,10 +57,7 @@ class RequestHandler extends AbstractRequestHandler
             array_merge(
                 $options,
                 $this->configuration->getRequestOptions(),
-                ['headers'=> [
-                        'User-Agent' => 'bynder-php-sdk/' . $this->configuration->getSdkVersion()
-                    ]
-                ]
+                $updatedHeaders
             )
         );
     }
