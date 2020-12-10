@@ -61,18 +61,17 @@ class FileUploader
     /**
      * Uploads a file with the data specified in the data parameter.
      *
-     * Client requests S3-upload endpoint information from the Bynder API.
+     * Client requests a unique fileId from the Bynder API.
      * For each file the client needs to requests upload authorization from the Bynder API.
-     * The client uploads a file chunked with CORS directly to the Amazon S3 endpoint received in step 1.
-     *      Each chunk is named "FIXED_PREFIX/p{PARTNUMBER}", the partnumber needs to be sequentially updated.
-     * Each chunk needs to be registered as completed using a request to Bynder.
+     * The client uploads a file chunked with Bynder API received in step 1.
+     * Each chunk needs to have a valid sha256 to be validated as completed request to Bynder passed as form data.
      * When the file is completely uploaded, the client sends a “finalise” request to Bynder.
      * After the file is processed, the client sends a “save” call to save the file in Bynder.
      *      Additional information can be provided such as title, tags, metadata and description.
      *
      * @param $data array containing the file and media asset information.
      *
-     * @return Promise\Promise file promise.
+     * @return json object containing fileId, correlationId and media information.
      * @throws Exception
      */
     public function uploadFile($data)
