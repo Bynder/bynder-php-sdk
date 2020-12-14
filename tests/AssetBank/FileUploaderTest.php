@@ -192,7 +192,7 @@ class FileUploaderTest extends TestCase
             'media' => 'DONE'
         )));
     }
-    
+
     /**
      * Builds a valid prepare upload request.
      *

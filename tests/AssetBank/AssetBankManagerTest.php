@@ -1,4 +1,5 @@
 <?php
+
 namespace Bynder\Test\AssetBank;
 
 use Bynder\Api\Impl\AssetBankManager;
@@ -137,8 +138,7 @@ class AssetBankManagerTest extends TestCase
         $stub->method('sendRequestAsync')
             ->with('GET', 'api/v4/metaproperties/', [
                 'query' => ['count' => 1]
-                ]
-            )
+            ])
             ->willReturn(['query']);
 
         $assetBankManager = new AssetBankManager($stub);
@@ -178,8 +178,7 @@ class AssetBankManagerTest extends TestCase
         $stub->method('sendRequestAsync')
             ->with('GET', 'api/v4/tags/', [
                 'query' => ['limit' => 10]
-                ]
-            )
+            ])
             ->willReturn(['query']);
 
         $assetBankManager = new AssetBankManager($stub);
@@ -231,7 +230,7 @@ class AssetBankManagerTest extends TestCase
             ->willReturn($returnedMedia);
 
         $assetBankManager = new AssetBankManager($stub);
-        $smartFilters= $assetBankManager->getSmartfilters();
+        $smartFilters = $assetBankManager->getSmartfilters();
 
         self::assertNotNull($smartFilters);
         self::assertEquals($smartFilters, $returnedMedia);
@@ -255,7 +254,7 @@ class AssetBankManagerTest extends TestCase
         $formData = ['name' => 'test'];
 
         $stub->method('sendRequestAsync')
-            ->with('POST', 'api/v4/media/'.$mediaId.'/', ['form_params' => $formData])
+            ->with('POST', 'api/v4/media/' . $mediaId . '/', ['form_params' => $formData])
             ->willReturn($return);
 
         $assetBankManager = new AssetBankManager($stub);
@@ -305,11 +304,10 @@ class AssetBankManagerTest extends TestCase
 
         $stub->method('sendRequestAsync')
             ->with('GET', 'api/v4/media/' . $mediaId . '/download/', [
-                    'query' => [
-                        'type' => $type
-                    ]
+                'query' => [
+                    'type' => $type
                 ]
-            )
+            ])
             ->willReturn(['query']);
 
         $assetBankManager = new AssetBankManager($stub);
@@ -365,11 +363,10 @@ class AssetBankManagerTest extends TestCase
 
         $stub->method('sendRequestAsync')
             ->with('GET', 'api/v4/media/' . $mediaId . '/download/' . $itemId . '/', [
-                    'query' => [
-                        'hash' => $hash
-                    ]
+                'query' => [
+                    'hash' => $hash
                 ]
-            )
+            ])
             ->willReturn(['query']);
 
         $assetBankManager = new AssetBankManager($stub);
@@ -395,11 +392,11 @@ class AssetBankManagerTest extends TestCase
         $count = true;
 
         $stub->method('sendRequestAsync')
-             ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/', [
-                 'query' => [
-                     'count' => $count
-                 ]
-             ])
+            ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/', [
+                'query' => [
+                    'count' => $count
+                ]
+            ])
             ->willReturn(['query']);
 
         $assetBankManager = new AssetBankManager($stub);
@@ -452,7 +449,7 @@ class AssetBankManagerTest extends TestCase
 
         $stub->method('sendRequestAsync')
             ->with('GET', 'api/v4/metaproperties/options/', [
-                    'query' => $query
+                'query' => $query
             ])
             ->willReturn(['query']);
 
@@ -676,7 +673,6 @@ class AssetBankManagerTest extends TestCase
 
         self::assertNotNull($collectionList);
         self::assertEquals($collectionList, $returnedCollections);
-
     }
 
     /**
