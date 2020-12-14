@@ -33,7 +33,7 @@ class FileUploader
 
     /**
      *
-     * @var string sh256 digest of the file to be uploaded.
+     * @var string sha256 digest of the file to be uploaded.
      */
     private $fileSha256;
 
@@ -72,7 +72,6 @@ class FileUploader
      * @param $data array containing the file and media asset information.
      *
      * @return json object containing fileId, correlationId and media information.
-     * @throws Exception
      */
     public function uploadFile($data)
     {
@@ -93,11 +92,27 @@ class FileUploader
         }
     }
 
+    /**
+     * Initializes and prepares the file for upload by generating a fileId.
+     * 
+     * @return string A uuid4 that can be used to identify the file to be uploaded.
+     * @throws Exception
+     */
     private function prepareFile()
     {
         return $this->requestHandler->sendRequestAsync('POST', 'v7/file_cmds/upload/prepare');
     }
 
+    /**
+     * Upload the file in chunks of CHUNK_SIZE.
+     * 
+     * @param string $filePath refering to the path of the file to be uploaded.
+     * @param string $fileId returned from the prepare endpoint used to identify the file to be uploaded.
+     * @param integer $fileSize of the file to be uploaded.
+     * 
+     * @return integer The number of chunks in which to upload the file.
+     * @throws Exception
+     */
     private function uploadInChunks($filePath, $fileId, $fileSize)
     {
         $chunksCount = 0;
@@ -105,10 +120,8 @@ class FileUploader
             $chunksCount = round(($fileSize + self::CHUNK_SIZE - 1) / self::CHUNK_SIZE);
             $chunkNumber = 0;
             while ($chunk = fread($file, self::CHUNK_SIZE)) {
-                $chunkNumber++;
-                echo $chunk;
-                // POST the chunk here
                 $this->uploadChunk($fileId, $chunk, $chunkNumber);
+                $chunkNumber++;
             }
         }
         return $chunksCount;
@@ -126,6 +139,17 @@ class FileUploader
         )->wait();
     }
 
+    /**
+     * Finalises a completely uploaded file.
+     * 
+     * @param string $fileId returned from the prepare endpoint used to identify the file to be uploaded.
+     * @param string $filePath refering to the path of the file to be uploaded.
+     * @param integer $fileSize of the file to be uploaded.
+     * @param integer $chunksCount denoting the number of chunks in which the file is to be uploaded.
+     * 
+     * @return string The correlationId of save media request.
+     * @throws Exception
+     */
     private function finalizeFile($fileId, $filePath, $fileSize, $chunksCount)
     {
 
@@ -151,8 +175,9 @@ class FileUploader
     /**
      * Saves the file in the Bynder Asset Bank. This can be either a new or existing file, depending on whether or not
      * the mediaId parameter is passed.
-     *
-     * @param array $data Array of relevant file upload data, such as uploadId and brandId.
+     * 
+     * @param string $fileId The uuid4 used to identify the file to be uploaded.
+     * @param array $data Array of relevant file upload data, such as brandId.
      *
      * @return Promise\Promise The information of the uploaded file, including IDs and all final file urls.
      * @throws Exception

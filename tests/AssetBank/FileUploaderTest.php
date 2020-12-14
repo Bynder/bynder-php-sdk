@@ -22,13 +22,12 @@ class FileUploaderTest extends TestCase
         $this->root = vfsStream::setup("root");
     }
 
-    /**
-     * @param $type string The handler to
+    /** 
+     * Intialize the mock request handler.
      * @return null|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function initMockRequestHandler($type)
+    private function initMockRequestHandler()
     {
-        $mockRequestHandler = null;
         $mockCredentials = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\Configuration')
             ->disableOriginalConstructor()
             ->getMock();
@@ -49,7 +48,7 @@ class FileUploaderTest extends TestCase
      *      4. Save media asset
      *
      * @covers \Bynder\Api\Impl\Upload\FileUploader::uploadFile()
-     * @throws \Exception
+     * @throws Exception
      */
     public function testCorrectUploadFileSequence()
     {
@@ -60,7 +59,7 @@ class FileUploaderTest extends TestCase
         $this->assertTrue(file_exists($filePath));
 
         // Initiate the mock handlers for normal Oauth and AWS calls.
-        $mockOauthHandler = $this->initMockRequestHandler('oauth');
+        $mockOauthHandler = $this->initMockRequestHandler();
 
         $fileId = 'testing-file_id';
         $fileChunk = '';
@@ -118,7 +117,7 @@ class FileUploaderTest extends TestCase
         )));
     }
 
-     /**
+    /**
      * Tests if the correct upload sequence is processed when we start a file upload,
      *  with a mediaId specified.
      *
@@ -129,7 +128,7 @@ class FileUploaderTest extends TestCase
      *      4. Save media asset
      *
      * @covers \Bynder\Api\Impl\Upload\FileUploader::uploadFile()
-     * @throws \Exception
+     * @throws Exception
      */
     public function testCorrectUploadFileSequenceMediaId()
     {
@@ -140,7 +139,7 @@ class FileUploaderTest extends TestCase
         $this->assertTrue(file_exists($filePath));
 
         // Initiate the mock handlers for normal Oauth and AWS calls.
-        $mockOauthHandler = $this->initMockRequestHandler('oauth');
+        $mockOauthHandler = $this->initMockRequestHandler();
 
         $fileId = 'testing-file_id';
         $fileChunk = '';
@@ -229,7 +228,9 @@ class FileUploaderTest extends TestCase
     /**
      * Builds a valid init upload request.
      *
-     * @param $filePath string Path of the file to be uploaded.
+     * @param string Path of the file to be uploaded.
+     * @param integer The chunk number of is upload.
+     * @param string The data chunk to be uploaded.
      * @return array The request params.
      */
     private static function getUploadChunksRequest($fileId, $chunkNumber, $chunk)
@@ -244,9 +245,8 @@ class FileUploaderTest extends TestCase
     }
 
     /**
-     * Returns a valid fulfilled response with dummy data.
+     * Returns a valid fulfilled response with dummy data for the upload request.
      *
-     * @param $filePath string Path of the file to be uploaded.
      * @return FulfilledPromise
      */
     private static function getUploadChunksResponse()
@@ -261,11 +261,11 @@ class FileUploaderTest extends TestCase
     /**
      * Builds a valid finalise api request.
      *
-     * @param $fileId string fileId of the file to be uploaded returned by the prepare.
-     * @param $filePath string Path of the file to be uploaded.
-     * @param $fileSize integer Size of the file to be uploaded.
-     * @param $chunksCount integer number of chunks in which the file is to be uploaded.
-     * @param $fileSha256 string sha digest of the file is to be uploaded.
+     * @param string $fileId of the file to be uploaded returned by the prepare.
+     * @param string Path of the file to be uploaded.
+     * @param integer $fileSize of the file to be uploaded.
+     * @param integer $chunksCount denoting number of chunks in which the file is to be uploaded.
+     * @param string $fileSha256 digest of the file is to be uploaded.
      * 
      * @return array The request params.
      */
@@ -287,7 +287,7 @@ class FileUploaderTest extends TestCase
     }
 
     /**
-     * Returns a fulfilled promise with the correlationId in the header.
+     * Returns a fulfilled promise with the correlationId in the header for the finalise_api request.
      *
      * @return FulfilledPromise
      */
@@ -302,8 +302,8 @@ class FileUploaderTest extends TestCase
     /**
      * Builds a valid save media request.
      *
-     * @param $fileId string fileId of the file to be uploaded returned by the prepare.
-     * @param $filePath string Path of the file to be uploaded.
+     * @param string $fileId of the file to be uploaded returned by the prepare.
+     * @param string $filePath of the file to be uploaded.
      *
      * @return array The request params.
      */
@@ -323,9 +323,9 @@ class FileUploaderTest extends TestCase
     /**
      * Builds a valid save media request when mediaId is passed.
      *
-     * @param $fileId string fileId of the file to be uploaded returned by the prepare.
-     * @param $filePath string Path of the file to be uploaded.
-     * @param $mediaId string mediaId of the file to be updated with the new version.
+     * @param string $fileId of the file to be uploaded returned by the prepare.
+     * @param string $filePath of the file to be uploaded.
+     * @param string $mediaId of the file to be updated with the new version.
      *
      * @return array The request params.
      */
