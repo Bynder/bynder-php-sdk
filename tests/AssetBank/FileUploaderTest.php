@@ -78,7 +78,7 @@ class FileUploaderTest extends TestCase
         $mockOauthHandler
             ->expects($this->at(1))
             ->method('sendRequestAsync')
-            ->with(...self::getUploadChunksRequest($fileId, 1, $fileChunk))
+            ->with(...self::getUploadChunksRequest($fileId, 0, $fileChunk))
             ->will($this->returnValue(self::getUploadChunksResponse()));
 
         // Finalises the upload.
@@ -94,15 +94,12 @@ class FileUploaderTest extends TestCase
             ))
             ->will($this->returnValue(self::getFinaliseApiResponse()));
 
-
-
         // Save media asset.
         $mockOauthHandler
             ->expects($this->at(3))
             ->method('sendRequestAsync')
             ->with(...self::getSaveMediaRequest($fileId, $filePath))
             ->will($this->returnValue(new FulfilledPromise('DONE')));
-
 
         // Start a new FileUploader instance with our mockHandlers.
         $fileUploader = new FileUploader($mockOauthHandler);
@@ -159,7 +156,7 @@ class FileUploaderTest extends TestCase
         $mockOauthHandler
             ->expects($this->at(1))
             ->method('sendRequestAsync')
-            ->with(...self::getUploadChunksRequest($fileId, 1, $fileChunk))
+            ->with(...self::getUploadChunksRequest($fileId, 0, $fileChunk))
             ->will($this->returnValue(self::getUploadChunksResponse()));
 
         // Finalises the upload.
@@ -175,15 +172,12 @@ class FileUploaderTest extends TestCase
             ))
             ->will($this->returnValue(self::getFinaliseApiResponse()));
 
-
-
         // Save media asset.
         $mockOauthHandler
             ->expects($this->at(3))
             ->method('sendRequestAsync')
             ->with(...self::getSaveMediaRequestWithMediaId($fileId, $filePath, $mediaId))
             ->will($this->returnValue(new FulfilledPromise('DONE')));
-
 
         // Start a new FileUploader instance with our mockHandlers.
         $fileUploader = new FileUploader($mockOauthHandler);
@@ -198,6 +192,7 @@ class FileUploaderTest extends TestCase
             'media' => 'DONE'
         )));
     }
+    
     /**
      * Builds a valid prepare upload request.
      *

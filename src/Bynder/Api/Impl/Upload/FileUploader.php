@@ -182,7 +182,7 @@ class FileUploader
      * @return Promise\Promise The information of the uploaded file, including IDs and all final file urls.
      * @throws Exception
      */
-    public function saveMediaAsync($fileId, $data)
+    private function saveMediaAsync($fileId, $data)
     {
         $uri = "api/v4/media/save/" . $fileId;
         if (isset($data['mediaId'])) {
