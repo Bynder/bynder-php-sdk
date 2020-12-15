@@ -189,7 +189,7 @@ class FileUploaderTest extends TestCase
     {
         return [
             'POST',
-            'api/v4/upload/fakeUploadId/',
+            'api/v4/upload/',
             [
                 'form_params' => [
                     'id' => 'fakeUploadId',
@@ -220,7 +220,7 @@ class FileUploaderTest extends TestCase
     {
         return [
             'POST',
-            'api/v4/upload/fakeUploadId/',
+            'api/v4/upload/',
             [
                 'form_params' => [
                     'id' => 'fakeUploadId',
