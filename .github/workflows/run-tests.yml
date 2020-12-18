@@ -6,12 +6,20 @@ jobs:
   build:
     strategy:
       matrix:
-        php: [ '5.6' ]
+        php: [ '5.6', '7.1' ]
 
     runs-on: ubuntu-latest
 
     steps:
-      - run: vendor/bin/phpunit
+      - uses: actions/checkout@v2
+
+      - name: Install composer
+        uses: php-actions/composer@dynamic-docker
+        with:
+          php_version: ${{ matrix.php }}
+          command: install
+      - name: Run tests
+        run: vendor/bin/phpunit tests -c phpunit.xml.dist --whitelist src
 
 
     #    steps:
