@@ -12,17 +12,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Validate dependencies
+      - name: Validate dependencies
         uses: php-actions/composer@dynamic-docker
         with:
           command: validate
 
-    - name: Install composer
-      uses: php-actions/composer@dynamic-docker
-      with:
-        command: install
+      - name: Install composer
+        uses: php-actions/composer@dynamic-docker
+        with:
+          command: install
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
