@@ -21,7 +21,7 @@ jobs:
       - name: Print wd
         run: pwd
       - name: Run tests
-        run: vendor/bin/phpunit tests -c phpunit.xml.dist --whitelist src
+        run: vendor/bin/phpunit tests
 
 
     #    steps:
