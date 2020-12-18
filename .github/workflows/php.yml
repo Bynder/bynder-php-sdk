@@ -8,6 +8,9 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        php: [ '5.5', '7.1' ]
 
     runs-on: ubuntu-latest
 
@@ -17,6 +20,7 @@ jobs:
       - name: Install composer
         uses: php-actions/composer@dynamic-docker
         with:
+          php-version: ${{ matrix.php }}
           command: install
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
