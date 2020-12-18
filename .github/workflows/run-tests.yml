@@ -21,7 +21,7 @@ jobs:
       - name: Print wd
         run: pwd
       - name: Run tests
-        run: vendor/bin/phpunit tests
+        run: vendor/bin/phpunit
 
 
     #    steps:
