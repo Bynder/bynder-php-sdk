@@ -10,15 +10,15 @@ jobs:
 
     runs-on: ubuntu-latest
 
-      steps:
-        - name: Composer install
+    steps:
+      - name: Composer install
         uses: docker://composer:1.9.1
         with:
           args: install
-        - name: PHPUnit testing
-          uses: docker://php:5.5
-          with:
-            args: php vendor/bin/phpunit
+      - name: PHPUnit testing
+        uses: docker://php:5.5
+        with:
+          args: php vendor/bin/phpunit
 
 
     #    steps:
