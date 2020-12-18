@@ -14,11 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Validate dependencies
-        uses: php-actions/composer@dynamic-docker
-        with:
-          command: validate
-
       - name: Install composer
         uses: php-actions/composer@dynamic-docker
         with:
