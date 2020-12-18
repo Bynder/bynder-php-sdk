@@ -14,12 +14,15 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate
+    - name: Validate dependencies
+        uses: php-actions/composer@dynamic-docker
+        with:
+          command: validate
 
     - name: Install composer
+      uses: php-actions/composer@dynamic-docker
       with:
-        command: composer install
+        command: install
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
