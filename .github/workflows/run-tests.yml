@@ -10,14 +10,24 @@ jobs:
 
     runs-on: ubuntu-latest
 
-#    steps:
-#      - uses: actions/checkout@v2
-#
-#      - name: Install composer
-#        uses: php-actions/composer@dynamic-docker
-#        with:
-#          php_version: ${{ matrix.php }}
-#          command: install
+      - name: Composer install
+        uses: docker://composer:1.9.1
+        with:
+          args: install
+      - name: PHPUnit testing
+        uses: docker://php:5.5
+        with:
+          args: php vendor/bin/phpunit
+
+
+    #    steps:
+    #      - uses: actions/checkout@v2
+    #
+    #      - name: Install composer
+    #        uses: php-actions/composer@dynamic-docker
+    #        with:
+    #          php_version: ${{ matrix.php }}
+    #          command: install
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
