@@ -33,7 +33,7 @@
     }
   },
   "scripts": {
-    "test": "XDEBUG_MODE=coverage vendor/bin/phpunit tests -c phpunit.xml.dist --whitelist src",
+    "test": "XDEBUG_MODE=coverage vendor/bin/phpunit tests --coverage-clover=coverage.xml",
     "coverage": "php vendor/bin/php-coveralls -v"
   },
   "autoload-dev": {
