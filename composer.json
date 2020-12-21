@@ -31,7 +31,9 @@
       "Bynder\\": "src/Bynder"
     }
   },
-  "test": "vendor/bin/phpunit",
+  "scripts": {
+    "test": "vendor/bin/phpunit"
+  },
   "autoload-dev": {
     "psr-4": {
       "Bynder\\Tests\\": "tests"
