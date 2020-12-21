@@ -23,6 +23,14 @@ jobs:
 
       - name: Run test suite
         run: composer run-script test
+        
+      - name: Upload coverage results to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+        run: |
+          composer global require php-coveralls/php-coveralls
+          php-coveralls --coverage_clover=build/logs/clover.xml -v
+
      # - name: Run tests
      #   run: vendor/bin/phpunit
 
