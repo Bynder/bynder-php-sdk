@@ -1,7 +1,6 @@
 # Bynder PHP SDK
-[![Build Status](https://travis-ci.org/Bynder/bynder-php-sdk.svg?branch=master)](https://travis-ci.org/Bynder/bynder-php-sdk)
+![Build and Publish](https://github.com/Arpit-Sharma-USC/bynder-php-sdk/workflows/Build%20and%20Publish/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/Bynder/bynder-php-sdk/badge.svg)](https://coveralls.io/github/Bynder/bynder-php-sdk)
-[![Coverage Status](https://coveralls.io/repos/github/Arpit-Sharma-USC/bynder-php-sdk/badge.svg?branch=master)](https://coveralls.io/github/Arpit-Sharma-USC/bynder-php-sdk?branch=master)
 
 The main goal of this SDK is to speed up the integration of Bynder customers who use PHP. Making it easier to connect to the Bynder API (https://bynder.docs.apiary.io) and executing requests on it.
 
