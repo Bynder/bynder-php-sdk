@@ -32,7 +32,8 @@
     }
   },
   "scripts": {
-    "test": "vendor/bin/phpunit tests"
+    "test": "vendor/bin/phpunit tests -c phpunit.xml.dist --whitelist src",
+    "coverage": "php vendor/bin/php-coveralls -v"
   },
   "autoload-dev": {
     "psr-4": {
