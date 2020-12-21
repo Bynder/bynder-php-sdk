@@ -23,8 +23,6 @@ jobs:
 
       - name: Run test suite
         run: composer run-script test
-      - name: Coverage
-        run: composer run-script coverage
      # - name: Run tests
      #   run: vendor/bin/phpunit
 
