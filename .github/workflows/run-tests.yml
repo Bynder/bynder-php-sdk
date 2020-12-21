@@ -18,8 +18,6 @@ jobs:
         with:
           php_version: ${{ matrix.php }}
           command: install
-      - name: Print wd
-        run: pwd
       # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
       # Docs: https://getcomposer.org/doc/articles/scripts.md
 
