@@ -32,8 +32,7 @@
     }
   },
   "scripts": {
-    "test": "XDEBUG_MODE=coverage vendor/bin/phpunit tests -c phpunit.xml.dist",
-    "coverage": "php vendor/bin/php-coveralls -v"
+    "test": "XDEBUG_MODE=coverage vendor/bin/phpunit tests -c phpunit.xml.dist"
   },
   "autoload-dev": {
     "psr-4": {
