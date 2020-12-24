@@ -32,12 +32,6 @@ class FileUploader
     private $requestHandler;
 
     /**
-     *
-     * @var string sha256 digest of the file to be uploaded.
-     */
-    private $fileSha256;
-
-    /**
      * Initialises a new instance of the class.
      *
      * @param AbstractRequestHandler $requestHandler Request handler used to communicate with the API.
@@ -71,7 +65,11 @@ class FileUploader
      *
      * @param $data array containing the file and media asset information.
      *
-     * @return json object containing fileId, correlationId and media information.
+     * @return json object containing the error message(if an Exception was thrown) or: 
+     *  - success: boolean that indicate the result of the upload call
+     *  - mediaitems: a list of mediaitems created, with at least the original.
+     *  - batchId: the batchId of the upload.
+     *  - mediaid: the mediaId update or created.
      */
     public function uploadFile($data)
     {
@@ -79,16 +77,16 @@ class FileUploader
             $fileId = $this->prepareFile()->wait()['file_id'];
             $filePath = $data['filePath'];
             $fileSize = filesize($filePath);
-            $this->fileSha256 = hash_file("sha256", $filePath);
+            $fileSha256 = hash_file("sha256", $filePath);
             $chunksCount = $this->uploadInChunks($filePath, $fileId, $fileSize);
-            $correlationId = $this->finalizeFile($fileId, $filePath, $fileSize, $chunksCount);
-            $media = $this->saveMediaAsync($fileId, $data)->wait();
-            return json_encode(array(
-                'fileId' => $fileId, 'correlationId' => $correlationId,
-                'media' => $media
-            ));
+            $this->finalizeFile($fileId, $filePath, $fileSize, $chunksCount, $fileSha256);
+            return $this->saveMediaAsync($fileId, $data)->wait();
         } catch (Exception $e) {
-            echo "Unable to upload file. " . $e->getMessage();
+            return json_encode(
+                array(
+                    'Error' => "Unable to upload file. " . $e->getMessage()
+                )
+            );
         }
     }
 
@@ -132,7 +130,7 @@ class FileUploader
         $sessionHeader = ['headers' => [
             'content-sha256' => hash("sha256", $chunk)
         ]];
-        $res = $this->requestHandler->sendRequestAsync(
+        $this->requestHandler->sendRequestAsync(
             'POST',
             'v7/file_cmds/upload/' . $fileId . '/chunk/' . $chunkNumber,
             $sessionHeader
@@ -146,29 +144,28 @@ class FileUploader
      * @param string $filePath refering to the path of the file to be uploaded.
      * @param integer $fileSize of the file to be uploaded.
      * @param integer $chunksCount denoting the number of chunks in which the file is to be uploaded.
+     * @param string $fileSha256 represents the sha digest of the file to be uploaded.
      * 
-     * @return string The correlationId of save media request.
      * @throws Exception
      */
-    private function finalizeFile($fileId, $filePath, $fileSize, $chunksCount)
+    private function finalizeFile($fileId, $filePath, $fileSize, $chunksCount, $fileSha256)
     {
 
         $formData = array(
             'fileName' => basename($filePath),
             'fileSize' => $fileSize,
             'chunksCount' => $chunksCount,
-            'sha256' => $this->fileSha256,
+            'sha256' => $fileSha256,
             'intent' => "upload_main_uploader_asset",
         );
 
-        $response = $this->requestHandler->sendRequestAsync(
+        $this->requestHandler->sendRequestAsync(
             'POST',
             'v7/file_cmds/upload/' . $fileId . '/finalise_api',
             [
                 'form_params' => $formData
             ]
         )->wait();
-        return $response->getHeader('X-API-Correlation-ID')[0];
     }
 
 
@@ -177,13 +174,17 @@ class FileUploader
      * the mediaId parameter is passed.
      * 
      * @param string $fileId The uuid4 used to identify the file to be uploaded.
-     * @param array $data Array of relevant file upload data, such as brandId.
+     * @param array $data Array of relevant file upload data, such as brandId, mediaId etc.
      *
      * @return Promise\Promise The information of the uploaded file, including IDs and all final file urls.
      * @throws Exception
      */
     private function saveMediaAsync($fileId, $data)
     {
+        if (!isset($data['brandId']) || trim($data['brandId']) === '') {
+            throw new Exception('Invalid or Empty brandId');
+        }
+
         $uri = "api/v4/media/save/" . $fileId;
         if (isset($data['mediaId'])) {
             $uri = sprintf("api/v4/media/" . $data['mediaId'] . "/save/" . $fileId);

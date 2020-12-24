@@ -6,23 +6,19 @@ abstract class AbstractRequestHandler
 {
     protected $configuration;
 
-    public function formRequest($uri, $requestMethod)
+    public function sendRequestAsync($requestMethod, $uri, $options = [])
     {
-        if (!in_array($requestMethod, ['GET', 'POST', 'DELETE'])) {
-            throw new Exception('Invalid request method provided');
-        }
-
-        return sprintf(
+        $uri = sprintf(
             'https://%s/%s',
             $this->configuration->getBynderDomain(),
             $uri
         );
-    }
 
-    public function sendRequestAsync($requestMethod, $uri, $options = [])
-    {
-        $composedUri = $this->formRequest($uri, $requestMethod);
-        $request = $this->sendAuthenticatedRequest($requestMethod, $composedUri, $options);
+        if (!in_array($requestMethod, ['GET', 'POST', 'DELETE'])) {
+            throw new Exception('Invalid request method provided');
+        }
+
+        $request = $this->sendAuthenticatedRequest($requestMethod, $uri, $options);
 
         return $request->then(
             function ($response) {
@@ -39,13 +35,6 @@ abstract class AbstractRequestHandler
                 }
             }
         );
-    }
-
-
-    public function sendRequestAsyncRawResponse($requestMethod, $uri, $options = [])
-    {
-        $composedUri = $this->formRequest($uri, $requestMethod);
-        return $this->sendAuthenticatedRequest($requestMethod, $composedUri, $options);
     }
 
     abstract protected function sendAuthenticatedRequest($requestMethod, $uri, $options = []);

@@ -63,6 +63,7 @@ class FileUploaderTest extends TestCase
 
         $fileId = 'testing-file_id';
         $fileChunk = '';
+        $brandId = 'testBrandId';
         if ($file = fopen($filePath, 'rb')) {
             $fileChunk = fread($file, self::CHUNK_SIZE);
         }
@@ -98,20 +99,18 @@ class FileUploaderTest extends TestCase
         $mockOauthHandler
             ->expects($this->at(3))
             ->method('sendRequestAsync')
-            ->with(...self::getSaveMediaRequest($fileId, $filePath))
+            ->with(...self::getSaveMediaRequest($fileId, $filePath, $brandId))
             ->will($this->returnValue(new FulfilledPromise('DONE')));
 
         // Start a new FileUploader instance with our mockHandlers.
         $fileUploader = new FileUploader($mockOauthHandler);
         $fileUpload = $fileUploader->uploadFile(array(
-            'filePath' => $filePath
+            'filePath' => $filePath,
+            'brandId' => $brandId
         ));
 
         $this->assertNotNull($fileUpload);
-        $this->assertEquals($fileUpload, json_encode(array(
-            'fileId' => $fileId, 'correlationId' => 'TesterCorrelationId',
-            'media' => 'DONE'
-        )));
+        $this->assertEquals($fileUpload, 'DONE');
     }
 
     /**
@@ -140,6 +139,7 @@ class FileUploaderTest extends TestCase
 
         $fileId = 'testing-file_id';
         $fileChunk = '';
+        $brandId = 'testBrandId';
         if ($file = fopen($filePath, 'rb')) {
             $fileChunk = fread($file, self::CHUNK_SIZE);
         }
@@ -176,21 +176,93 @@ class FileUploaderTest extends TestCase
         $mockOauthHandler
             ->expects($this->at(3))
             ->method('sendRequestAsync')
-            ->with(...self::getSaveMediaRequestWithMediaId($fileId, $filePath, $mediaId))
+            ->with(...self::getSaveMediaRequestWithMediaId($fileId, $filePath, $brandId, $mediaId))
             ->will($this->returnValue(new FulfilledPromise('DONE')));
 
         // Start a new FileUploader instance with our mockHandlers.
         $fileUploader = new FileUploader($mockOauthHandler);
         $fileUpload = $fileUploader->uploadFile(array(
             'filePath' => $filePath,
+            'brandId' => $brandId,
             'mediaId' => $mediaId
         ));
 
         $this->assertNotNull($fileUpload);
-        $this->assertEquals($fileUpload, json_encode(array(
-            'fileId' => $fileId, 'correlationId' => 'TesterCorrelationId',
-            'media' => 'DONE'
-        )));
+        $this->assertEquals($fileUpload,  'DONE');
+    }
+
+    /**
+     * Tests if the exception is thrown under FileUploader::saveMediaAsync,
+     *  when a invalid brandId is specified.
+     *
+     * The order it tests is:
+     *      1. Prepare upload
+     *      2. Upload file in chunks
+     *      3. Finalise the upload 
+     *      4. Save media asset
+     *
+     * @covers \Bynder\Api\Impl\Upload\FileUploader::uploadFile()
+     * @throws Exception
+     */
+    public function testInvalidBrandId()
+    {
+        $filePath = vfsStream::url('root/tempFile.txt');
+        $this->assertFalse(file_exists($filePath));
+        file_put_contents($filePath, "test content in file");
+        $this->assertEquals(filesize($filePath), 20);
+        $this->assertTrue(file_exists($filePath));
+
+        // Initiate the mock handlers for normal Oauth and AWS calls.
+        $mockOauthHandler = $this->initMockRequestHandler();
+
+        $fileId = 'testing-file_id';
+        $fileChunk = '';
+        $brandId = '';
+        if ($file = fopen($filePath, 'rb')) {
+            $fileChunk = fread($file, self::CHUNK_SIZE);
+        }
+        $mediaId = 'test-media-id';
+
+        // Prepare upload.
+        $mockOauthHandler
+            ->expects($this->at(0))
+            ->method('sendRequestAsync')
+            ->with(...self::getPrepareRequest())
+            ->will($this->returnValue(self::getPrepareResponse()));
+
+        // Upload in chunks.
+        $mockOauthHandler
+            ->expects($this->at(1))
+            ->method('sendRequestAsync')
+            ->with(...self::getUploadChunksRequest($fileId, 0, $fileChunk))
+            ->will($this->returnValue(self::getUploadChunksResponse()));
+
+        // Finalises the upload.
+        $mockOauthHandler
+            ->expects($this->at(2))
+            ->method('sendRequestAsync')
+            ->with(...self::getFinaliseApiRequest(
+                $fileId,
+                $filePath,
+                filesize($filePath),
+                1.0,
+                hash("sha256", $fileChunk)
+            ))
+            ->will($this->returnValue(self::getFinaliseApiResponse()));
+
+
+        // Start a new FileUploader instance with our mockHandlers.
+        $fileUploader = new FileUploader($mockOauthHandler);
+        $fileUpload = $fileUploader->uploadFile(array(
+            'filePath' => $filePath,
+            'brandId' => $brandId,
+            'mediaId' => $mediaId
+        ));
+        $this->assertEquals($fileUpload, json_encode(
+            array(
+                "Error" => "Unable to upload file. Invalid or Empty brandId"
+            )
+        ));
     }
 
     /**
@@ -281,6 +353,9 @@ class FileUploaderTest extends TestCase
         ];
     }
 
+
+
+
     /**
      * Returns a fulfilled promise with the correlationId in the header for the finalise_api request.
      *
@@ -302,14 +377,15 @@ class FileUploaderTest extends TestCase
      *
      * @return array The request params.
      */
-    private static function getSaveMediaRequest($fileId, $filePath)
+    private static function getSaveMediaRequest($fileId, $filePath, $brandId)
     {
         return [
             'POST',
             'api/v4/media/save/' . $fileId,
             [
                 'form_params' => [
-                    'filePath' => $filePath
+                    'filePath' => $filePath,
+                    'brandId' => $brandId
                 ]
             ]
         ];
@@ -324,14 +400,15 @@ class FileUploaderTest extends TestCase
      *
      * @return array The request params.
      */
-    private static function getSaveMediaRequestWithMediaId($fileId, $filePath, $mediaId)
+    private static function getSaveMediaRequestWithMediaId($fileId, $filePath, $brandId, $mediaId)
     {
         return [
             'POST',
             'api/v4/media/' . $mediaId . "/save/" . $fileId,
             [
                 'form_params' => [
-                    'filePath' => $filePath
+                    'filePath' => $filePath,
+                    'brandId' => $brandId
                 ]
             ]
         ];
