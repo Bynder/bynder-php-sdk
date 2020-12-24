@@ -156,7 +156,7 @@ class FileUploader
             'fileSize' => $fileSize,
             'chunksCount' => $chunksCount,
             'sha256' => $fileSha256,
-            'intent' => "upload_main_uploader_asset",
+            'intent' => "upload_main_uploader_asset"
         );
 
         $this->requestHandler->sendRequestAsync(

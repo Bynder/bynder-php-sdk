@@ -347,14 +347,11 @@ class FileUploaderTest extends TestCase
                     'fileSize' => $fileSize,
                     'chunksCount' => $chunksCount,
                     'sha256' => $fileSha256,
-                    'intent' => "upload_main_uploader_asset",
+                    'intent' => "upload_main_uploader_asset"
                 ]
             ]
         ];
     }
-
-
-
 
     /**
      * Returns a fulfilled promise with the correlationId in the header for the finalise_api request.
