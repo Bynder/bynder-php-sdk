@@ -36,20 +36,15 @@ class RequestHandler extends AbstractRequestHandler
         );
     }
 
-    protected function sendAuthenticatedRequest($requestMethod, $uri, $options = [])
+    protected function sendAuthenticatedRequest($requestMethod, $uri, $options = ['headers' => []])
     {
-        $updatedHeaders = ['headers' => [
-            'User-Agent' => 'bynder-php-sdk/' . $this->configuration->getSdkVersion()
-        ]];
-
         $this->configuration->refreshToken($this->oauthProvider);
-        if (!is_null($options['headers'])) {
-            $updatedHeaders = ['headers' => array_merge(
-                $options['headers'],
-                $updatedHeaders['headers']
-            )];
-        }
-
+        $updatedHeaders = ['headers' => array_merge(
+                    $options['headers'],
+                    [
+                        'User-Agent' => 'bynder-php-sdk/' . $this->configuration->getSdkVersion()
+                    ]
+                )];
         return $this->oauthProvider->getHttpClient()->sendAsync(
             $this->oauthProvider->getAuthenticatedRequest(
                 $requestMethod,
