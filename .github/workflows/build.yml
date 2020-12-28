@@ -16,10 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install composer
+      - name: Setup
         uses: shivammathur/setup-php@v2
         with:
           php_version: ${{ matrix.php }}
+      - name: Install composer
         run: composer install
       - name: Run test suite
         run: composer run-script test
