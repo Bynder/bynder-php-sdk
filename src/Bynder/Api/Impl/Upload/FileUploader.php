@@ -179,12 +179,14 @@ class FileUploader
      */
     private function saveMediaAsync($fileId, $data)
     {
+        // If the mediaId is present, save the file as a new version of an existing asset.
         if (isset($data['mediaId'])) {
             $uri = sprintf("api/v4/media/" . $data['mediaId'] . "/save/" . $fileId);
             unset($data['mediaId']);
             return $this->requestHandler->sendRequestAsync('POST', $uri, ['form_params' => $data]);
         }
 
+        // If the mediaId is missing then save the file as a new asset in which case a brandId must be specified.
         if (!isset($data['brandId']) || trim($data['brandId']) === '') {
             throw new Exception('Invalid or Empty brandId');
         }
