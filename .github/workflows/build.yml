@@ -17,9 +17,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install composer
-        uses: php-actions/composer@dynamic-docker
+        uses: shivammathur/setup-php@v2
         with:
           php_version: ${{ matrix.php }}
-          command: install
+        run: composer install
       - name: Run test suite
         run: composer run-script test
