@@ -71,11 +71,10 @@ class FileUploader
      *  - batchId: the batchId of the upload.
      *  - mediaid: the mediaId update or created.
      */
-    public function uploadFile($data)
+    public function uploadFile($filePath, $data)
     {
         try {
             $fileId = $this->prepareFile()->wait()['file_id'];
-            $filePath = $data['filePath'];
             $fileSize = filesize($filePath);
             $fileSha256 = hash_file("sha256", $filePath);
             $chunksCount = $this->uploadInChunks($filePath, $fileId, $fileSize);
@@ -168,7 +167,6 @@ class FileUploader
         )->wait();
     }
 
-
     /**
      * Saves the file in the Bynder Asset Bank. This can be either a new or existing file, depending on whether or not
      * the mediaId parameter is passed.
@@ -181,15 +179,16 @@ class FileUploader
      */
     private function saveMediaAsync($fileId, $data)
     {
-        if (!isset($data['brandId']) || trim($data['brandId']) === '') {
-            throw new Exception('Invalid or Empty brandId');
-        }
-
-        $uri = "api/v4/media/save/" . $fileId;
         if (isset($data['mediaId'])) {
             $uri = sprintf("api/v4/media/" . $data['mediaId'] . "/save/" . $fileId);
             unset($data['mediaId']);
+            return $this->requestHandler->sendRequestAsync('POST', $uri, ['form_params' => $data]);
         }
+
+        if (!isset($data['brandId']) || trim($data['brandId']) === '') {
+            throw new Exception('Invalid or Empty brandId');
+        }
+        $uri = "api/v4/media/save/" . $fileId;
         return $this->requestHandler->sendRequestAsync('POST', $uri, ['form_params' => $data]);
     }
 }

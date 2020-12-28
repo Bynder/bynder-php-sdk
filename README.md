@@ -122,7 +122,7 @@ Media management.
     getTags();
     getCategories();
     getSmartfilters();
-    uploadFileAsync($data);
+    uploadFileAsync($filePath, $data);
     deleteMedia($mediaId);
     modifyMedia($mediaId, array $data);
     getDerivatives();
