@@ -120,14 +120,14 @@ try {
     var_dump($smartFilterList);
 
     // Upload a file and create an Asset.
+    $filePath = 'image.png';
     $data = [
         // Will need to create this file for successful test call
-        'filePath' => 'image.png',
         'brandId' => $brandsList[0]['id'],
         'name' => 'Image name',
         'description' => 'Image description'
     ];
-    $filePromise = $assetBankManager->uploadFileAsync($data);
+    $filePromise = $assetBankManager->uploadFileAsync($filePath, $data);
     $fileInfo = $filePromise->wait();
     var_dump($fileInfo);
 

@@ -121,7 +121,7 @@ Media management.
     getTags();
     getCategories();
     getSmartfilters();
-    uploadFileAsync($data);
+    uploadFileAsync($filePath, $data);
     deleteMedia($mediaId);
     modifyMedia($mediaId, array $data);
     getDerivatives();
@@ -141,7 +141,7 @@ Media management.
 
 Build the Docker image and tag it:
 ```bash
-docker build -t bynder-php-sdk-tests
+docker build -t bynder-php-sdk-tests .
 ```
 
 Run the tests:

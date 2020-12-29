@@ -1,4 +1,5 @@
 <?php
+
 namespace Bynder\Api\Impl\OAuth2;
 
 use Bynder\Api\Impl\AbstractRequestHandler;
@@ -35,21 +36,25 @@ class RequestHandler extends AbstractRequestHandler
         );
     }
 
-    protected function sendAuthenticatedRequest($requestMethod, $uri, $options = [])
+    protected function sendAuthenticatedRequest($requestMethod, $uri, $options = ['headers' => []])
     {
         $this->configuration->refreshToken($this->oauthProvider);
-
+        $updatedHeaders = ['headers' => array_merge(
+                    $options['headers'],
+                    [
+                        'User-Agent' => 'bynder-php-sdk/' . $this->configuration->getSdkVersion()
+                    ]
+                )];
         return $this->oauthProvider->getHttpClient()->sendAsync(
             $this->oauthProvider->getAuthenticatedRequest(
-                $requestMethod, $uri, $this->configuration->getToken()
+                $requestMethod,
+                $uri,
+                $this->configuration->getToken()
             ),
             array_merge(
                 $options,
                 $this->configuration->getRequestOptions(),
-                ['headers'=> [
-                        'User-Agent' => 'bynder-php-sdk/' . $this->configuration->getSdkVersion()
-                    ]
-                ]
+                $updatedHeaders
             )
         );
     }

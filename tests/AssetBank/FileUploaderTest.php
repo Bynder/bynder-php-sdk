@@ -1,14 +1,22 @@
 <?php
+
 namespace Bynder\Test\AssetBank;
 
 use Bynder\Api\Impl\Upload\FileUploader;
 use GuzzleHttp\Promise\FulfilledPromise;
+use GuzzleHttp\Psr7;
 use PHPUnit\Framework\TestCase;
 use org\bovigo\vfs\vfsStream;
 
 class FileUploaderTest extends TestCase
 {
     private $root;
+
+    const CHUNK_SIZE = 1024 * 1024 * 5;
+
+    const fileId = 'testing-file_id';
+
+    const brandId = 'testBrandId';
 
     /**
      * Sets up VFS root directory.
@@ -18,271 +26,315 @@ class FileUploaderTest extends TestCase
         $this->root = vfsStream::setup("root");
     }
 
-    /**
-     * @param $type string The handler to
+    /** 
+     * Intialize the mock request handler.
      * @return null|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function initMockRequestHandler($type)
+    private function initMockRequestHandler()
     {
-        $mockRequestHandler = null;
-        switch ($type) {
-            case 'oauth':
-                $mockCredentials = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\Configuration')
-                    ->disableOriginalConstructor()
-                    ->getMock();
-                $mockRequestHandler = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\RequestHandler')
-                    ->setConstructorArgs([$mockCredentials])
-                    ->getMock();
-                break;
+        $mockCredentials = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\Configuration')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockRequestHandler = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\RequestHandler')
+            ->setConstructorArgs([$mockCredentials])
+            ->getMock();
 
-            case 'aws':
-                $mockRequestHandler = $this->getMockBuilder('Bynder\Api\Impl\Upload\AmazonApi')
-                    ->disableOriginalConstructor()
-                    ->getMock();
-                break;
-        }
         return $mockRequestHandler;
     }
 
     /**
-     * Tests if the correct upload sequence is processed when we start a file upload.
-     *
-     * The order it tests is:
-     *      1. Init upload
-     *      2. Get closest s3 endpoint
-     *      3. Upload part to Amazon
-     *      4. Register chunk in Bynder
-     *      5. Finalize upload.
-     *      6. Poll status
-     *      7. Save
-     *
-     * @covers \Bynder\Api\Impl\Upload\FileUploader::uploadFile()
-     * @throws \Exception
+     * Generates the file path by creating a test file.
+     * @return string path of the file generated.
      */
-    public function testCorrectUploadFileSequence()
+    private function setUpFilePath()
     {
         $filePath = vfsStream::url('root/tempFile.txt');
         $this->assertFalse(file_exists($filePath));
         file_put_contents($filePath, "test content in file");
+        $this->assertEquals(filesize($filePath), 20);
         $this->assertTrue(file_exists($filePath));
-
-        // Initiate the mock handlers for normal Oauth and AWS calls.
-        $mockOauthHandler = $this->initMockRequestHandler('oauth');
-        $mockAwsHandler = $this->initMockRequestHandler('aws');
-
-        // Get closest upload endpoint.
-        $mockOauthHandler
-            ->expects($this->at(0))
-            ->method('sendRequestAsync')
-            ->with(...self::getUploadEndpointRequest())
-            ->will($this->returnValue(self::getUploadEndpointResponse()));
-
-        // Initialise upload.
-        $mockOauthHandler
-            ->expects($this->at(1))
-            ->method('sendRequestAsync')
-            ->with(...self::getInitUploadRequest($filePath))
-            ->will($this->returnValue(self::getInitUploadResponse()));
-
-        // Upload chunk to Amazon.
-        $mockAwsHandler
-            ->expects($this->once())
-            ->method('uploadPartToAmazon')
-            ->will($this->returnValue(new FulfilledPromise('uploadPartToAmazonCompleted')));
-
-        // Register chunk in Bynder.
-        $mockOauthHandler
-            ->expects($this->at(2))
-            ->method('sendRequestAsync')
-            ->with(...self::getRegisterChunkRequest())
-            ->will($this->returnValue(self::getRegisterChunkResponse()));
-
-        // Finalises the upload.
-        $mockOauthHandler
-            ->expects($this->at(3))
-            ->method('sendRequestAsync')
-            ->with(...self::getFinaliseRequest())
-            ->will($this->returnValue(self::getFinaliseResponse()));
-
-        // Poll status of upload.
-        $mockOauthHandler
-            ->expects($this->at(4))
-            ->method('sendRequestAsync')
-            ->with(...self::getPollStatusRequest())
-            ->will($this->returnValue(self::getPollStatusResponse()));
-
-        // Save media asset.
-        $mockOauthHandler
-            ->expects($this->at(5))
-            ->method('sendRequestAsync')
-            ->with(...self::getSaveMediaRequest($filePath))
-            ->will($this->returnValue(new FulfilledPromise('DONE')));
-
-        // Start a new FileUploader instance with our mockHandlers.
-        $fileUploader = new FileUploader($mockOauthHandler, $mockAwsHandler);
-        $fileUpload = $fileUploader->uploadFile(array(
-            'filePath' => $filePath
-        ));
-
-        $fileUploadRes = $fileUpload->wait();
-
-        $this->assertNotNull($fileUpload);
-        $this->assertEquals($fileUploadRes, 'DONE');
+        return $filePath;
     }
 
     /**
-     * Builds a valid init upload request.
+     * Sets up the mock requests for implicit calls to prepareFile, uploadInChunks and finalizeFile.
+     */
+    private function setUpMockPrepareUploadFinalise($mockOauthHandler, $filePath)
+    {
+        $fileChunk = '';
+        if ($file = fopen($filePath, 'rb')) {
+            $fileChunk = fread($file, self::CHUNK_SIZE);
+        }
+
+        // Prepare upload.
+        $mockOauthHandler
+            ->expects($this->at(0))
+            ->method('sendRequestAsync')
+            ->with(...self::getPrepareRequest())
+            ->will($this->returnValue(self::getPrepareResponse()));
+
+        // Upload in chunks.
+        $mockOauthHandler
+            ->expects($this->at(1))
+            ->method('sendRequestAsync')
+            ->with(...self::getUploadChunksRequest(self::fileId, 0, $fileChunk))
+            ->will($this->returnValue(self::getUploadChunksResponse()));
+
+        // Finalises the upload.
+        $mockOauthHandler
+            ->expects($this->at(2))
+            ->method('sendRequestAsync')
+            ->with(...self::getFinaliseApiRequest(
+                self::fileId,
+                basename($filePath),
+                filesize($filePath),
+                1.0,
+                hash("sha256", $fileChunk)
+            ))
+            ->will($this->returnValue(self::getFinaliseApiResponse()));
+    }
+    /**
+     * Tests if the correct upload sequence is processed when we start a file upload.
      *
-     * @param $filePath string Path of the file to be uploaded.
+     * The order it tests is:
+     *      1. Prepare upload
+     *      2. Upload file in chunks
+     *      3. Finalise the upload 
+     *      4. Save media asset
+     *
+     * @covers \Bynder\Api\Impl\Upload\FileUploader::uploadFile()
+     * @throws Exception
+     */
+    public function testCorrectUploadFileSequence()
+    {
+
+        $filePath = $this->setUpFilePath();
+        // Initiate the mock handlers for normal Oauth and AWS calls.
+        $mockOauthHandler = $this->initMockRequestHandler();
+        $this->setUpMockPrepareUploadFinalise($mockOauthHandler, $filePath);
+
+        // Save new media asset.
+        $mockOauthHandler
+            ->expects($this->at(3))
+            ->method('sendRequestAsync')
+            ->with(...self::getSaveMediaRequest(self::fileId, self::brandId))
+            ->will($this->returnValue(new FulfilledPromise('DONE')));
+
+        // Start a new FileUploader instance with our mockHandlers.
+        $fileUploader = new FileUploader($mockOauthHandler);
+        $fileUpload = $fileUploader->uploadFile($filePath, array(
+            'brandId' => self::brandId
+        ));
+
+        $this->assertNotNull($fileUpload);
+        $this->assertEquals($fileUpload, 'DONE');
+    }
+
+    /**
+     * Tests if the correct upload sequence is processed when we start a file upload,
+     *  with a mediaId specified.
+     *
+     * The order it tests is:
+     *      1. Prepare upload
+     *      2. Upload file in chunks
+     *      3. Finalise the upload 
+     *      4. Save media asset
+     *
+     * @covers \Bynder\Api\Impl\Upload\FileUploader::uploadFile()
+     * @throws Exception
+     */
+    public function testCorrectUploadFileSequenceMediaId()
+    {
+        $filePath = $this->setUpFilePath();
+        // Initiate the mock handlers for normal Oauth and AWS calls.
+        $mockOauthHandler = $this->initMockRequestHandler();
+        $mediaId = 'test-media-id';
+        $this->setUpMockPrepareUploadFinalise($mockOauthHandler, $filePath);
+
+        // Save existing media asset.
+        $mockOauthHandler
+            ->expects($this->at(3))
+            ->method('sendRequestAsync')
+            ->with(...self::getSaveMediaRequestWithMediaId(self::fileId, $mediaId))
+            ->will($this->returnValue(new FulfilledPromise('DONE')));
+
+        // Start a new FileUploader instance with our mockHandlers.
+        $fileUploader = new FileUploader($mockOauthHandler);
+        $fileUpload = $fileUploader->uploadFile($filePath, array(
+            'mediaId' => $mediaId
+        ));
+
+        $this->assertNotNull($fileUpload);
+        $this->assertEquals($fileUpload,  'DONE');
+    }
+
+    /**
+     * Tests if the exception is thrown under FileUploader::saveMediaAsync,
+     *  when a invalid brandId is specified.
+     *
+     * The order it tests is:
+     *      1. Prepare upload
+     *      2. Upload file in chunks
+     *      3. Finalise the upload 
+     *      4. Save media asset
+     *
+     * @covers \Bynder\Api\Impl\Upload\FileUploader::uploadFile()
+     * @throws Exception
+     */
+    public function testInvalidBrandId()
+    {
+        $filePath = $this->setUpFilePath();
+        // Initiate the mock handlers for normal Oauth and AWS calls.
+        $mockOauthHandler = $this->initMockRequestHandler();
+        $brandId = '';
+        $this->setUpMockPrepareUploadFinalise($mockOauthHandler, $filePath);
+
+        // Start a new FileUploader instance with our mockHandlers.
+        $fileUploader = new FileUploader($mockOauthHandler);
+        $fileUpload = $fileUploader->uploadFile($filePath, array(
+            'brandId' => $brandId
+        ));
+        $this->assertEquals($fileUpload, json_encode(
+            array(
+                "Error" => "Unable to upload file. Invalid or Empty brandId"
+            )
+        ));
+    }
+
+    /**
+     * Builds a valid prepare upload request.
+     *
      * @return array The request params.
      */
-    private static function getInitUploadRequest($filePath)
+    private static function getPrepareRequest()
     {
         return [
             'POST',
-            'api/upload/init',
-            ['form_params' => ['filename' => $filePath]]
+            'v7/file_cmds/upload/prepare'
         ];
     }
 
     /**
-     * Gets a valid Fullfilled promise with the necessary response variables.
+     * Returns a Fullfilled promise with a fake fileId.
      *
-     * @return FulfilledPromise
+     * @return array The request params.
      */
-    private static function getInitUploadResponse()
+    private static function getPrepareResponse()
     {
         return new FulfilledPromise(
             [
-                's3_filename' => 's3_filename',
-                's3file' => ['uploadid' => 'fakeUploadId', 'targetid' => 'fakeTargetid'],
+                'file_id' => 'testing-file_id'
             ]
         );
     }
 
     /**
-     * Builds a valid upload endpoint request.
+     * Builds a valid init upload request.
      *
+     * @param string Path of the file to be uploaded.
+     * @param integer The chunk number of is upload.
+     * @param string The data chunk to be uploaded.
      * @return array The request params.
      */
-    private static function getUploadEndpointRequest()
-    {
-        return ['GET', 'api/upload/endpoint'];
-    }
-
-    /**
-     * Returns a Fullfilled promise with some dummy data.
-     *
-     * @return FulfilledPromise
-     */
-    private static function getUploadEndpointResponse()
-    {
-        return new FulfilledPromise('fakeUploadLocationEndpoint');
-    }
-
-    /**
-     * Builds a valid register chunk request.
-     *
-     * @return array The request params.
-     */
-    private static function getRegisterChunkRequest()
+    private static function getUploadChunksRequest($fileId, $chunkNumber, $chunk)
     {
         return [
             'POST',
-            'api/v4/upload/',
-            [
-                'form_params' => [
-                    'id' => 'fakeUploadId',
-                    'targetid' => 'fakeTargetid',
-                    'filename' => 's3_filename/p1',
-                    'chunkNumber' => 1,
-                ]
-            ]
+            'v7/file_cmds/upload/' . $fileId . '/chunk/' . $chunkNumber,
+            ['headers' => [
+                'content-sha256' => hash("sha256", $chunk)
+            ]]
         ];
     }
 
     /**
-     * Returns a Fullfilled promise with a fake UploadId.
+     * Returns a valid fulfilled response with dummy data for the upload request.
      *
      * @return FulfilledPromise
      */
-    private static function getRegisterChunkResponse()
-    {
-        return new FulfilledPromise('fakeUploadId');
-    }
-
-    /**
-     * Builds a valid finalise upload request.
-     *
-     * @return array The request params.
-     */
-    private static function getFinaliseRequest()
-    {
-        return [
-            'POST',
-            'api/v4/upload/',
-            [
-                'form_params' => [
-                    'id' => 'fakeUploadId',
-                    'targetid' => 'fakeTargetid',
-                    's3_filename' => 's3_filename/p1',
-                    'chunks' => 1,
-                ]
-            ]
-        ];
-    }
-
-    /**
-     * Returns a Fullfilled promise with a fake importId.
-     *
-     * @return FulfilledPromise
-     */
-    private static function getFinaliseResponse()
-    {
-        return new FulfilledPromise(['importId' => 'importId']);
-    }
-
-    /**
-     * Builds a valid poll status request.
-     *
-     * @return array The request params.
-     */
-    private static function getPollStatusRequest()
-    {
-        return ['GET', 'api/v4/upload/poll/', ['query' => ['items' => 'importId'], 'delay' => 0]];
-    }
-
-    /**
-     * Returns a Fullfilled promise the required response params.
-     *
-     * @return FulfilledPromise
-     */
-    private static function getPollStatusResponse()
+    private static function getUploadChunksResponse()
     {
         return new FulfilledPromise(
             [
-                'itemsDone' => 'importId',
-                'itemsFailed' => null,
-            ]);
+                'test' => 'SuccessfulResponseUploadChunk'
+            ]
+        );
+    }
+
+    /**
+     * Builds a valid finalise api request.
+     *
+     * @param string $fileId of the file to be uploaded returned by the prepare.
+     * @param string $fileName of the file to be uploaded.
+     * @param integer $fileSize of the file to be uploaded.
+     * @param integer $chunksCount denoting number of chunks in which the file is to be uploaded.
+     * @param string $fileSha256 digest of the file is to be uploaded.
+     * 
+     * @return array The request params.
+     */
+    private static function getFinaliseApiRequest($fileId, $fileName, $fileSize, $chunksCount, $fileSha256)
+    {
+        return [
+            'POST',
+            'v7/file_cmds/upload/' . $fileId . '/finalise_api',
+            [
+                'form_params' => [
+                    'fileName' => $fileName,
+                    'fileSize' => $fileSize,
+                    'chunksCount' => $chunksCount,
+                    'sha256' => $fileSha256
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * Returns a fulfilled promise with the correlationId in the header for the finalise_api request.
+     *
+     * @return FulfilledPromise
+     */
+    private static function getFinaliseApiResponse()
+    {
+
+        return new FulfilledPromise(
+            new Psr7\Response(200, ['X-API-Correlation-ID' => 'TesterCorrelationId'], 'body string')
+        );
     }
 
     /**
      * Builds a valid save media request.
      *
-     * @param string $filePath The file to be uploaded
+     * @param string $fileId of the file to be uploaded returned by the prepare.
+     * @param string $brandId of the file to be uploaded.
+     *
      * @return array The request params.
      */
-    private static function getSaveMediaRequest($filePath)
+    private static function getSaveMediaRequest($fileId, $brandId)
     {
         return [
             'POST',
-            'api/v4/media/save/',
+            'api/v4/media/save/' . $fileId,
             [
                 'form_params' => [
-                    'filePath' => $filePath,
-                    'importId' => 'importId'
+                    'brandId' => $brandId
                 ]
             ]
+        ];
+    }
+
+    /**
+     * Builds a valid save media request when mediaId is passed.
+     *
+     * @param string $fileId of the file to be uploaded returned by the prepare.
+     * @param string $mediaId of the file to be updated with the new version.
+     *
+     * @return array The request params.
+     */
+    private static function getSaveMediaRequestWithMediaId($fileId, $mediaId)
+    {
+        return [
+            'POST',
+            'api/v4/media/' . $mediaId . "/save/" . $fileId
         ];
     }
 }

@@ -211,13 +211,14 @@ class AssetBankManager
     /**
      * Uploads a file to the Asset Bank.
      *
+     * @param  string  $filePath  Path of the file to upload
      * @param  array  $data  File data and information for upload
      * @return \GuzzleHttp\Promise\Promise
      * @throws \GuzzleHttp\Exception\RequestException
      */
-    public function uploadFileAsync($data)
+    public function uploadFileAsync($filePath, $data)
     {
-        return $this->fileUploader->uploadFile($data);
+        return $this->fileUploader->uploadFile($filePath, $data);
     }
 
     /**

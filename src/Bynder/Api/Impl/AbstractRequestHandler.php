@@ -1,4 +1,5 @@
 <?php
+
 namespace Bynder\Api\Impl;
 
 abstract class AbstractRequestHandler
@@ -8,7 +9,9 @@ abstract class AbstractRequestHandler
     public function sendRequestAsync($requestMethod, $uri, $options = [])
     {
         $uri = sprintf(
-            'https://%s/%s', $this->configuration->getBynderDomain(), $uri
+            'https://%s/%s',
+            $this->configuration->getBynderDomain(),
+            $uri
         );
 
         if (!in_array($requestMethod, ['GET', 'POST', 'DELETE'])) {
@@ -20,7 +23,7 @@ abstract class AbstractRequestHandler
         return $request->then(
             function ($response) {
                 $mimeType = explode(';', $response->getHeader('Content-Type')[0])[0];
-                switch($mimeType) {
+                switch ($mimeType) {
                     case 'application/json':
                         return json_decode($response->getBody(), true);
                     case 'text/plain':
