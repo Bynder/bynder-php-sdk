@@ -154,8 +154,7 @@ class FileUploader
             'fileName' => basename($filePath),
             'fileSize' => $fileSize,
             'chunksCount' => $chunksCount,
-            'sha256' => $fileSha256,
-            'intent' => "upload_main_uploader_asset"
+            'sha256' => $fileSha256
         );
 
         $this->requestHandler->sendRequestAsync(
@@ -183,7 +182,7 @@ class FileUploader
         if (isset($data['mediaId'])) {
             $uri = sprintf("api/v4/media/" . $data['mediaId'] . "/save/" . $fileId);
             unset($data['mediaId']);
-            return $this->requestHandler->sendRequestAsync('POST', $uri, ['form_params' => $data]);
+            return $this->requestHandler->sendRequestAsync('POST', $uri);
         }
 
         // If the mediaId is missing then save the file as a new asset in which case a brandId must be specified.

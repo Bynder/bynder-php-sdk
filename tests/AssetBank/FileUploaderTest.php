@@ -282,8 +282,7 @@ class FileUploaderTest extends TestCase
                     'fileName' => $fileName,
                     'fileSize' => $fileSize,
                     'chunksCount' => $chunksCount,
-                    'sha256' => $fileSha256,
-                    'intent' => "upload_main_uploader_asset"
+                    'sha256' => $fileSha256
                 ]
             ]
         ];
