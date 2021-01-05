@@ -77,9 +77,10 @@ class FileUploader
             $fileId = $this->prepareFile()->wait()['file_id'];
             $fileSize = filesize($filePath);
             $fileSha256 = hash_file("sha256", $filePath);
+            $fileName = basename($filePath);
             $chunksCount = $this->uploadInChunks($filePath, $fileId, $fileSize);
-            $this->finalizeFile($fileId, $filePath, $fileSize, $chunksCount, $fileSha256);
-            return $this->saveMediaAsync($fileId, $data)->wait();
+            $this->finalizeFile($fileId, $fileName, $fileSize, $chunksCount, $fileSha256);
+            return $this->saveMediaAsync($fileId, $data, $fileName)->wait();
         } catch (Exception $e) {
             return json_encode(
                 array(
@@ -140,18 +141,18 @@ class FileUploader
      * Finalises a completely uploaded file.
      * 
      * @param string $fileId returned from the prepare endpoint used to identify the file to be uploaded.
-     * @param string $filePath refering to the path of the file to be uploaded.
+     * @param string $fileName refering to the name of the file to be uploaded.
      * @param integer $fileSize of the file to be uploaded.
      * @param integer $chunksCount denoting the number of chunks in which the file is to be uploaded.
      * @param string $fileSha256 represents the sha digest of the file to be uploaded.
      * 
      * @throws Exception
      */
-    private function finalizeFile($fileId, $filePath, $fileSize, $chunksCount, $fileSha256)
+    private function finalizeFile($fileId, $fileName, $fileSize, $chunksCount, $fileSha256)
     {
 
         $formData = array(
-            'fileName' => basename($filePath),
+            'fileName' => $fileName,
             'fileSize' => $fileSize,
             'chunksCount' => $chunksCount,
             'sha256' => $fileSha256
@@ -172,12 +173,16 @@ class FileUploader
      * 
      * @param string $fileId The uuid4 used to identify the file to be uploaded.
      * @param array $data Array of relevant file upload data, such as brandId, mediaId etc.
+     * @param string $fileName The name of the file to be uploaded.
      *
      * @return Promise\Promise The information of the uploaded file, including IDs and all final file urls.
      * @throws Exception
      */
-    private function saveMediaAsync($fileId, $data)
+    private function saveMediaAsync($fileId, $data, $fileName)
     {
+        if (!isset($data['name']) || trim($data['name']) === '') {
+            $data['name'] = $fileName;
+        }
         // If the mediaId is present, save the file as a new version of an existing asset.
         if (isset($data['mediaId'])) {
             $uri = sprintf("api/v4/media/" . $data['mediaId'] . "/save/" . $fileId);

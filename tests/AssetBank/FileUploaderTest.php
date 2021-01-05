@@ -18,6 +18,8 @@ class FileUploaderTest extends TestCase
 
     const brandId = 'testBrandId';
 
+    const fileName = 'Testing_fileName';
+
     /**
      * Sets up VFS root directory.
      */
@@ -117,13 +119,13 @@ class FileUploaderTest extends TestCase
         $mockOauthHandler
             ->expects($this->at(3))
             ->method('sendRequestAsync')
-            ->with(...self::getSaveMediaRequest(self::fileId, self::brandId))
+            ->with(...self::getSaveMediaRequest(self::fileId, self::brandId, self::fileName))
             ->will($this->returnValue(new FulfilledPromise('DONE')));
 
         // Start a new FileUploader instance with our mockHandlers.
         $fileUploader = new FileUploader($mockOauthHandler);
         $fileUpload = $fileUploader->uploadFile($filePath, array(
-            'brandId' => self::brandId
+            'brandId' => self::brandId, 'name' => self::fileName
         ));
 
         $this->assertNotNull($fileUpload);
@@ -306,17 +308,19 @@ class FileUploaderTest extends TestCase
      *
      * @param string $fileId of the file to be uploaded returned by the prepare.
      * @param string $brandId of the file to be uploaded.
+     * @param string $fileName of the file to be uploaded.
      *
      * @return array The request params.
      */
-    private static function getSaveMediaRequest($fileId, $brandId)
+    private static function getSaveMediaRequest($fileId, $brandId, $fileName)
     {
         return [
             'POST',
             'api/v4/media/save/' . $fileId,
             [
                 'form_params' => [
-                    'brandId' => $brandId
+                    'brandId' => $brandId,
+                    'name' => $fileName
                 ]
             ]
         ];
