@@ -14,12 +14,12 @@ $bynder = null;
 
 $conf = parse_ini_file('./sample_config.ini', 1)['oauth2'];
 
-$bynderDomain = $conf['bynderDomain'];
-$redirectUri = $conf['redirectUri'];
-$clientId = $conf['clientId'];
-$clientSecret = $conf['clientSecret'];
-if ($conf['token'] !== null && $conf['token'] !== '') {
-    $token = $conf['token'];
+$bynderDomain = $conf['BYDNER_DOMAIN'];
+$redirectUri = $conf['REDIRECT_URI'];
+$clientId = $conf['CLIENT_ID'];
+$clientSecret = $conf['CLIENT_SECRET'];
+if ($conf['TOKEN'] !== null && $conf['TOKEN'] !== '') {
+    $token = $conf['TOKEN'];
 }
 
 $bynder = new BynderClient(new Oauth2\Configuration(
