@@ -3,7 +3,6 @@ require_once('vendor/autoload.php');
 
 use Bynder\Api\BynderClient;
 use Bynder\Api\Impl\OAuth2;
-use Bynder\Api\Impl\PermanentTokens;
 
 define('BYNDER_INTEGRATION_ID', '');
 
@@ -53,19 +52,6 @@ if($token === null) {
     $token = $bynder->getAccessToken($code);
     var_dump($token);
 }
-
-// When using permanent tokens
-
-$bynderDomain = 'portal.getbynder.com';
-$token = '';
-
-$configuration = new PermanentTokens\Configuration(
-    $bynderDomain,
-    $token,
-    ['timeout' => 5] // Guzzle HTTP request options
-);
-
-$bynder = new BynderClient($configuration);
 
 // Example calls
 

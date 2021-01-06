@@ -3,7 +3,6 @@ require_once('vendor/autoload.php');
 
 use Bynder\Api\BynderClient;
 use Bynder\Api\Impl\OAuth2;
-use Bynder\Api\Impl\PermanentTokens;
 
 
 $bynderDomain = 'portal.getbynder.com';
@@ -12,63 +11,43 @@ $clientId = '';
 $clientSecret = '';
 $token = null;
 $bynder = null;
-$configuration = null;
 
-$conf = parse_ini_file('./sample_config.ini', 1);
-var_dump($conf['authMethod']);
+$conf = parse_ini_file('./sample_config.ini', 1)['oauth2'];
 
-if ($conf['authMethod'] == 'permanentTokens') {
-    // When using Permanent Tokens
-
-    $bynderDomain = $conf['permanentTokens']['bynderDomain'];
-    $token = $conf['permanentTokens']['token'];
-    $configuration = new PermanentTokens\Configuration(
-        $bynderDomain,
-        $token,
-        ['timeout' => 5] // Guzzle HTTP request options
-    );
-
-    $bynder = new BynderClient($configuration);
-} else {
-    // When using OAuth2
-
-    $bynderDomain = $conf['oauth2']['bynderDomain'];
-    $redirectUri = $conf['oauth2']['redirectUri'];
-    $clientId = $conf['oauth2']['clientId'];
-    $clientSecret = $conf['oauth2']['clientSecret'];
-    $token = $conf['oauth2']['token'];
-
-    $bynder = new BynderClient(new Oauth2\Configuration(
-        $bynderDomain,
-        $redirectUri,
-        $clientId,
-        $clientSecret,
-        $token,
-        ['timeout' => 5] // Guzzle HTTP request options
-    ));
-
-    if ($token === null) {
-        echo $bynder->getAuthorizationUrl([
-            'offline',
-            'current.user:read',
-            'current.profile:read',
-            'asset:read',
-            'asset:write',
-            'meta.assetbank:read',
-            'asset.usage:read',
-            'asset.usage:write',
-        ]) . "\n\n";
-
-        $code = readline('Enter code: ');
-
-        if ($code == null) {
-            exit;
-        }
-
-        $token = $bynder->getAccessToken($code);
-        var_dump($token);
-    }
+$bynderDomain = $conf['bynderDomain'];
+$redirectUri = $conf['redirectUri'];
+$clientId = $conf['clientId'];
+$clientSecret = $conf['clientSecret'];
+if ($conf['token'] !== null && $conf['token'] !== '') {
+    $token = $conf['token'];
 }
+
+$bynder = new BynderClient(new Oauth2\Configuration(
+    $bynderDomain,
+    $redirectUri,
+    $clientId,
+    $clientSecret,
+    $token,
+    ['timeout' => 5] // Guzzle HTTP request options
+));
+
+if ($token === null || $token === '') {
+    echo $bynder->getAuthorizationUrl([
+        'offline',
+        'asset:read',
+        'asset:write',
+    ]) . "\n\n";
+
+    $code = readline('Enter code: ');
+
+    if ($code == null) {
+        exit;
+    }
+
+    $token = $bynder->getAccessToken($code);
+    var_dump($token);
+}
+
 
 /* If we have a token stored
     $token = new \League\OAuth2\Client\Token\AccessToken([
@@ -80,13 +59,6 @@ if ($conf['authMethod'] == 'permanentTokens') {
 
 
 try {
-    $currentUser = $bynder->getCurrentUser()->wait();
-    var_dump($currentUser);
-
-    if (isset($currentUser['profileId'])) {
-        $roles = $bynder->getSecurityProfile($currentUser['profileId'])->wait();
-    }
-
     $assetBankManager = $bynder->getAssetBankManager();
 
     // Get Brands. Returns a Promise.
@@ -132,6 +104,27 @@ try {
 
     $sampleMediaId = $fileInfo['mediaid'];
     var_dump($sampleMediaId);
+
+    try {
+        $temp;
+        $attempts = 0;
+        retry:
+        $mediaItemPromise = $assetBankManager->getMediaInfo($sampleMediaId, $query);
+        $mediaItem = $mediaItemPromise->wait();
+        if ($mediaItem == null || $mediaItem['id'] != $sampleMediaId) {
+            throw new Exception('Media Not found.');
+        }
+        var_dump($mediaItem);
+    } catch (Exception $e) {
+        if ($attempts < 5) {
+            $attempts++;
+            echo 'Failed to get media - trying again...' . PHP_EOL;
+            sleep(5);
+            goto retry;
+        }
+        echo 'Failed to get media after retrying 5 times. ' . $e->getMessage() . PHP_EOL;
+    }
+
     $data = [
         // Will need to create this file for successful test call
         'mediaId' => $sampleMediaId,

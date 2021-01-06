@@ -88,25 +88,21 @@ All the calls are **Asynchronous**, which means they will return a **Promise** o
 Again, for a more thorough example there is a sample [application use case](sample/sample.php) in this repo.
 
 To run the [sample upload application code](https://github.com/Bynder/bynder-php-sdk/blob/master/sample/sampleUploadApplication.php) add ```sample_config.ini``` to the root directory of the project.
-You may choose either ```oauth2``` or ```permanentTokens``` as the authentication method.
-For ```oauth2``` populate the following:
+You can only choose ```oauth2``` as the authentication method.
 ```
 [oauth2] 
+bynderDomain = <your_domain>
 redirectUri = <your_redirectUri>
 clientId = <your_clientId>
 clientSecret = <your_clientSecret>
-token = <token>
-```
-For ```permanentTokens``` populate the following:
-```
-[permanentTokens]
-bynderDomain = 'dam.bynder.com'
 token = <your_token>
 ```
 
 Use the ```sample_config.ini``` as a guideline. 
 
-After a successful run you should see the file **image.png** uploaded to your dashboard.
+If the ```token``` isn't specified, when prompted to enter the code click the url generated and copy over the code in the url generated as a result under the parameter ```code``` and paste it in the console.
+
+After a successful run you should see the file **Sample name** uploaded to your dashboard.
 
 ## Methods Available
 These are the methods currently available on the **Bynder PHP SDK**, refer to the [Bynder API Docs](http://docs.bynder.apiary.io/)) for more specific details on the calls.
