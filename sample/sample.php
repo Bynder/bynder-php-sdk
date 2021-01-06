@@ -8,11 +8,18 @@ define('BYNDER_INTEGRATION_ID', '');
 
 // When using OAuth2
 
-$bynderDomain = 'portal.getbynder.com';
-$redirectUri = '';
-$clientId = '';
-$clientSecret = '';
 $token = null;
+$bynder = null;
+
+$conf = parse_ini_file('./sample_config.ini', 1)['oauth2'];
+
+$bynderDomain = $conf['BYDNER_DOMAIN'];
+$redirectUri = $conf['REDIRECT_URI'];
+$clientId = $conf['CLIENT_ID'];
+$clientSecret = $conf['CLIENT_SECRET'];
+if ($conf['TOKEN'] !== null && $conf['TOKEN'] !== '') {
+    $token = $conf['TOKEN'];
+}
 
 /* If we have a token stored
     $token = new \League\OAuth2\Client\Token\AccessToken([
@@ -31,7 +38,7 @@ $bynder = new BynderClient(new Oauth2\Configuration(
     ['timeout' => 5] // Guzzle HTTP request options
 ));
 
-if($token === null) {
+if ($token === null || $token === '') {
     echo $bynder->getAuthorizationUrl([
         'offline',
         'current.user:read',
@@ -45,7 +52,7 @@ if($token === null) {
 
     $code = readline('Enter code: ');
 
-    if($code == null) {
+    if ($code == null) {
         exit;
     }
 
@@ -59,7 +66,7 @@ try {
     $currentUser = $bynder->getCurrentUser()->wait();
     var_dump($currentUser);
 
-    if(isset($currentUser['profileId'])) {
+    if (isset($currentUser['profileId'])) {
         $roles = $bynder->getSecurityProfile($currentUser['profileId'])->wait();
     }
 
@@ -117,7 +124,7 @@ try {
     $fileInfo = $filePromise->wait();
     var_dump($fileInfo);
 
-    if(BYNDER_INTEGRATION_ID == '') {
+    if (BYNDER_INTEGRATION_ID == '') {
         return;
     }
 

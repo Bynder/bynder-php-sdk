@@ -4,11 +4,6 @@ require_once('vendor/autoload.php');
 use Bynder\Api\BynderClient;
 use Bynder\Api\Impl\OAuth2;
 
-
-$bynderDomain = 'portal.getbynder.com';
-$redirectUri = '';
-$clientId = '';
-$clientSecret = '';
 $token = null;
 $bynder = null;
 
