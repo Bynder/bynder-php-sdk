@@ -13,7 +13,7 @@ $bynder = null;
 
 $conf = parse_ini_file('./sample_config.ini', 1)['oauth2'];
 
-$bynderDomain = $conf['BYDNER_DOMAIN'];
+$bynderDomain = $conf['BYNDER_DOMAIN'];
 $redirectUri = $conf['REDIRECT_URI'];
 $clientId = $conf['CLIENT_ID'];
 $clientSecret = $conf['CLIENT_SECRET'];

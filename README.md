@@ -91,11 +91,11 @@ To run the [sample upload application code](https://github.com/Bynder/bynder-php
 You can only choose ```oauth2``` as the authentication method.
 ```
 [oauth2] 
-bynderDomain = <your_domain>
-redirectUri = <your_redirectUri>
-clientId = <your_clientId>
-clientSecret = <your_clientSecret>
-token = <your_token>
+BYNDER_DOMAIN = <your_domain>
+REDIRECT_URI = <your_redirectUri>
+CLIENT_ID = <your_clientId>
+CLIENT_SECRET = <your_clientSecret>
+TOKEN = <your_token>
 ```
 
 Use the ```sample_config.ini``` as a guideline. 
