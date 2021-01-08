@@ -1,56 +1,15 @@
 <?php
 require_once('vendor/autoload.php');
 
-use Bynder\Api\BynderClient;
-use Bynder\Api\Impl\OAuth2;
+include('util/SetUpCredentials.php');
 
-$token = null;
-$bynder = null;
-
-$conf = parse_ini_file('./sample_config.ini', 1)['oauth2'];
-
-$bynderDomain = $conf['BYNDER_DOMAIN'];
-$redirectUri = $conf['REDIRECT_URI'];
-$clientId = $conf['CLIENT_ID'];
-$clientSecret = $conf['CLIENT_SECRET'];
-if ($conf['TOKEN'] !== null && $conf['TOKEN'] !== '') {
-    $token = $conf['TOKEN'];
-}
-
-$bynder = new BynderClient(new Oauth2\Configuration(
-    $bynderDomain,
-    $redirectUri,
-    $clientId,
-    $clientSecret,
-    $token,
-    ['timeout' => 5] // Guzzle HTTP request options
+$creds = new SetUpCredentials();
+$creds->setup(array(
+    'offline',
+    'asset:read',
+    'asset:write',
 ));
-
-if ($token === null || $token === '') {
-    echo $bynder->getAuthorizationUrl([
-        'offline',
-        'asset:read',
-        'asset:write',
-    ]) . "\n\n";
-
-    $code = readline('Enter code: ');
-
-    if ($code == null) {
-        exit;
-    }
-
-    $token = $bynder->getAccessToken($code);
-    var_dump($token);
-}
-
-
-/* If we have a token stored
-    $token = new \League\OAuth2\Client\Token\AccessToken([
-        'access_token' => '',
-        'refresh_token' => '',
-        'expires' => 123456789
-    ]);
- */
+$bynder = $creds->getBynder();
 
 
 try {
