@@ -41,6 +41,7 @@ try {
 
 
     // Upload a file and create an Asset.
+    echo 'Uploading a new asset';
     $fileHandle = fopen('sample.txt', 'w');
     fwrite($fileHandle, 'sample');
     $filePath = 'sample.txt';
@@ -51,15 +52,15 @@ try {
     ];
     $filePromise = $assetBankManager->uploadFileAsync($filePath, $data);
     $fileInfo = $filePromise->wait();
+    echo 'Media Id of the uploaded asset:';
     var_dump($fileInfo);
 
     // Upload to an existing Asset
-
     $sampleMediaId = $fileInfo['mediaid'];
     var_dump($sampleMediaId);
+    echo 'Uploading to an existing asset';
 
     try {
-        $temp;
         $attempts = 0;
         retry:
         $mediaItemPromise = $assetBankManager->getMediaInfo($sampleMediaId, $query);
