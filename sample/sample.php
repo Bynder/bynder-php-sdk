@@ -6,7 +6,7 @@ include('util/SetUpCredentials.php');
 define('BYNDER_INTEGRATION_ID', '');
 
 $creds = new SetUpCredentials();
-$creds->setup(array(
+$creds->setUp(array(
     'offline',
     'current.user:read',
     'current.profile:read',

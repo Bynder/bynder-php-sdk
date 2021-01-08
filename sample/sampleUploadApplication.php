@@ -4,7 +4,7 @@ require_once('vendor/autoload.php');
 include('util/SetUpCredentials.php');
 
 $creds = new SetUpCredentials();
-$creds->setup(array(
+$creds->setUp(array(
     'offline',
     'asset:read',
     'asset:write',
