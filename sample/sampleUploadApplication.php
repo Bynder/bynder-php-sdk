@@ -86,7 +86,6 @@ try {
     fwrite($fileHandle, 'sample');
     $filePath = 'sample.txt';
     $data = [
-        // Will need to create this file for successful test call
         'brandId' => $brandsList[0]['id'],
         'name' => 'Sample name',
         'description' => 'Sample description'
@@ -121,7 +120,6 @@ try {
     }
 
     $data = [
-        // Will need to create this file for successful test call
         'mediaId' => $sampleMediaId,
         'name' => 'Sample name',
         'description' => 'Sample description'
