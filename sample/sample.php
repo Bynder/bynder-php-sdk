@@ -1,71 +1,22 @@
 <?php
 require_once('vendor/autoload.php');
 
-use Bynder\Api\BynderClient;
-use Bynder\Api\Impl\OAuth2;
-use Bynder\Api\Impl\PermanentTokens;
+include('util/SetUpCredentials.php');
 
 define('BYNDER_INTEGRATION_ID', '');
 
-// When using OAuth2
-
-$bynderDomain = 'portal.getbynder.com';
-$redirectUri = '';
-$clientId = '';
-$clientSecret = '';
-$token = null;
-
-/* If we have a token stored
-    $token = new \League\OAuth2\Client\Token\AccessToken([
-        'access_token' => '',
-        'refresh_token' => '',
-        'expires' => 123456789
-    ]);
- */
-
-$bynder = new BynderClient(new Oauth2\Configuration(
-    $bynderDomain,
-    $redirectUri,
-    $clientId,
-    $clientSecret,
-    $token,
-    ['timeout' => 5] // Guzzle HTTP request options
+$creds = new SetUpCredentials();
+$creds->setUp(array(
+    'offline',
+    'current.user:read',
+    'current.profile:read',
+    'asset:read',
+    'asset:write',
+    'meta.assetbank:read',
+    'asset.usage:read',
+    'asset.usage:write',
 ));
-
-if($token === null) {
-    echo $bynder->getAuthorizationUrl([
-        'offline',
-        'current.user:read',
-        'current.profile:read',
-        'asset:read',
-        'asset:write',
-        'meta.assetbank:read',
-        'asset.usage:read',
-        'asset.usage:write',
-    ]) . "\n\n";
-
-    $code = readline('Enter code: ');
-
-    if($code == null) {
-        exit;
-    }
-
-    $token = $bynder->getAccessToken($code);
-    var_dump($token);
-}
-
-// When using permanent tokens
-
-$bynderDomain = 'portal.getbynder.com';
-$token = '';
-
-$configuration = new PermanentTokens\Configuration(
-    $bynderDomain,
-    $token,
-    ['timeout' => 5] // Guzzle HTTP request options
-);
-
-$bynder = new BynderClient($configuration);
+$bynder = $creds->getBynder();
 
 // Example calls
 
@@ -73,7 +24,7 @@ try {
     $currentUser = $bynder->getCurrentUser()->wait();
     var_dump($currentUser);
 
-    if(isset($currentUser['profileId'])) {
+    if (isset($currentUser['profileId'])) {
         $roles = $bynder->getSecurityProfile($currentUser['profileId'])->wait();
     }
 
@@ -131,7 +82,7 @@ try {
     $fileInfo = $filePromise->wait();
     var_dump($fileInfo);
 
-    if(BYNDER_INTEGRATION_ID == '') {
+    if (BYNDER_INTEGRATION_ID == '') {
         return;
     }
 

@@ -87,6 +87,23 @@ For instance, if we only wanted to retrieve **2 images** here is what the call w
 All the calls are **Asynchronous**, which means they will return a **Promise** object, making it a bit more flexible in order to adjust to any kind of application.
 Again, for a more thorough example there is a sample [application use case](sample/sample.php) in this repo.
 
+To run the [sample upload application code](https://github.com/Bynder/bynder-php-sdk/blob/master/sample/sampleUploadApplication.php) add ```sample_config.ini``` to the root directory of the project.
+You can only choose ```oauth2``` as the authentication method.
+```
+[oauth2] 
+BYNDER_DOMAIN = <your_domain>
+REDIRECT_URI = <your_redirectUri>
+CLIENT_ID = <your_clientId>
+CLIENT_SECRET = <your_clientSecret>
+TOKEN = <your_token>
+```
+
+Use the ```sample_config.ini``` as a guideline. 
+
+If the ```token``` isn't specified, when prompted to enter the code click the url generated and copy over the code in the url generated as a result under the parameter ```code``` and paste it in the console.
+
+After a successful run you should see the file **Sample name** uploaded to your dashboard.
+
 ## Methods Available
 These are the methods currently available on the **Bynder PHP SDK**, refer to the [Bynder API Docs](http://docs.bynder.apiary.io/)) for more specific details on the calls.
 
