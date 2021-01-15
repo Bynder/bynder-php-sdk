@@ -22,8 +22,11 @@ class BynderOauthProvider extends AbstractProvider
 
     public function __construct(array $options = [], array $collaborators = [])
     {
-        $this->bynderDomain = 'https://' . $options['bynderDomain'];
-        unset($options['bynderDomain']);
+        if(isset($options['bynderDomain'])) 
+        {
+            $this->bynderDomain = 'https://' . $options['bynderDomain'];
+            unset($options['bynderDomain']);
+        }
 
         return parent::__construct($options, $collaborators);
     }
