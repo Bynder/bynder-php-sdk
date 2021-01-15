@@ -20,14 +20,16 @@ class RequestHandler extends AbstractRequestHandler
     {
         $this->configuration = $configuration;
 
+        $redirectUri = $configuration->getRedirectUri();
+
         $this->oauthProvider = new BynderOauthProvider([
             'clientId' => $configuration->getClientId(),
             'clientSecret' => $configuration->getClientSecret(),
-            'redirectUri' => $configuration->getRedirectUri(),
+            'redirectUri' => $redirectUri,
             'bynderDomain' => $configuration->getBynderDomain()
         ]);
-        // Switch between authorization_code and client_credentials here based on redirectUri
-        $this->grantType = $configuration->getRedirectUri() === null
+        // Switch between authorization_code and client_credentials based on redirectUri
+        $this->grantType = $redirectUri === null
             || $configuration->getRedirectUri() === '' ?
             self::CLIENT_CREDENTIALS :
             self::AUTHORIZATION_CODE;
@@ -40,11 +42,11 @@ class RequestHandler extends AbstractRequestHandler
 
     public function getAccessToken($code)
     {
-        print_r('In request handler');
         if ($this->grantType == self::AUTHORIZATION_CODE) {
             if ($code === null || $code === '') {
                 //throw exception, code is required when using authorization_code grant type
-                throw new \InvalidArgumentException('\'code\' cannot be empty or null when using authorization_code grant type.');
+                throw new \InvalidArgumentException('\'code\' cannot be empty or null when 
+                using authorization_code grant type.');
             }
 
             return $this->oauthProvider->getAccessToken(
@@ -58,7 +60,8 @@ class RequestHandler extends AbstractRequestHandler
     }
 
     /**
-     * This method can be used as a utility method to explicitly choose and set grantType.
+     * This method can be used as a utility method to explicitly
+     * choose and set grantType.
      * 
      * @param string $grantType of the oauth flow
      * @throws \InvalidArgumentException
@@ -76,7 +79,8 @@ class RequestHandler extends AbstractRequestHandler
     }
 
     /**
-     * This method sets the oauthProvider. This is particularly useful when injecting mock oauthProviders while testing.
+     * This method sets the oauthProvider. This is particularly 
+     * useful when injecting mock oauthProviders while testing.
      * 
      * @param OAuthProvider $oauthProvider instance 
      */

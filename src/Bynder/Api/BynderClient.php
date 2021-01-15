@@ -21,7 +21,7 @@ class BynderClient
         if ($configuration instanceof OAuth2\Configuration) {
             $this->requestHandler = new OAuth2\RequestHandler($configuration);
         } else {
-            throw new \Exception('Invalid configuration passed. You can only use OAuth2 configuration.');
+            throw new \Exception('Invalid configuration passed. Note: You can only use OAuth2 configuration.');
         }
 
         $this->configuration = $configuration;
