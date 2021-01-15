@@ -1,4 +1,5 @@
 <?php
+
 namespace Bynder\Test\Bynder\Api;
 
 use PHPUnit\Framework\TestCase;
@@ -10,6 +11,8 @@ use Bynder\Api\Impl\OAuth2;
 class BynderClientTest extends TestCase
 {
     const CODE = 'dummy-test-code';
+    const ACCESS_TOKEN = 'dummy-test-access_token';
+
     const BYNDER_DOMAIN = 'test.getbynder.com';
     const CLIENT_ID = 'clientId';
     const CLIENT_SECRET = 'clientSecret';
@@ -63,52 +66,82 @@ class BynderClientTest extends TestCase
         parse_str($parsedUrl['query'], $queryParams);
 
         self::assertSame(
-            $parsedUrl['host'], $this->configuration->getBynderDomain()
+            $parsedUrl['host'],
+            $this->configuration->getBynderDomain()
         );
         self::assertSame(
-            $queryParams['redirect_uri'], $this->configuration->getRedirectUri()
+            $queryParams['redirect_uri'],
+            $this->configuration->getRedirectUri()
         );
         self::assertSame(
-            $queryParams['client_id'], $this->configuration->getClientId()
+            $queryParams['client_id'],
+            $this->configuration->getClientId()
         );
         self::assertSame(
-            $queryParams['scope'], 'openid offline'
+            $queryParams['scope'],
+            'openid offline'
         );
     }
 
-    //test for authorization_code
-    public function testGetAccessToken()
+    /**
+     * Tests the whether the access token is correctly generated and
+     * fetched for OAuth2 when grantType used is client_credentials.
+     * 
+     * @covers \Bynder\Api\Impl\OAuth2\RequestHandler::getAccessToken()
+     * @throws \InvalidArgumentException
+     */
+    public function testGetAccessTokenClientCredentials()
     {
-        $requestHandler = $this->setUpOAuth2('authorization_code', 'test.com/callback');
+        $requestHandler = $this->setUpRequestHandler('client_credentials');
         $this->getAccessToken($requestHandler);
     }
 
-    // test for auth_code but no code
+    /**
+     * Tests the whether the access token is correctly generated and
+     * fetched for OAuth2 when grantType used is authorization_code.
+     * 
+     * @covers \Bynder\Api\Impl\OAuth2\RequestHandler::getAccessToken()
+     * @throws \InvalidArgumentException
+     */
+    public function testGetAccessTokenAuthorizationCode()
+    {
+        $requestHandler = $this->setUpRequestHandler('authorization_code', 'test.com/callback');
+        $this->getAccessToken($requestHandler);
+    }
+
+    /**
+     * Tests the whether an exception is thrown for OAuth2 when 
+     * grantType used is authorization_code and no code is passed.
+     * 
+     * @covers \Bynder\Api\Impl\OAuth2\RequestHandler::getAccessToken()
+     * @throws \InvalidArgumentException
+     */
     public function testGetAccessTokenError()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->bynderClient->getAccessToken(null);
     }
 
-    //test for client creds
-    public function testGetAccessTokenClientCredentials()
+    /**
+     * Sets up a requestHandler based on a mocked up oauthProvider.
+     * 
+     * @param string $grantType denotes the grant type used
+     * @param string $redirectUri (optional) denoted an optional redirectUri.
+     * This is only needed when using authorization_code as grant_type.
+     * 
+     * @return RequestHandler An instance of the requestHandler.
+     */
+    private function setUpRequestHandler($grantType, $redirectUri = null)
     {
-        $requestHandler = $this->setUpOAuth2('client_credentials');
-        $this->getAccessToken($requestHandler);
-    }
-
-
-    private function setUpOAuth2($grantType, $redirectUri = null)
-    {
-        $oAuthProvider = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\BynderOauthProvider')
+        $oauthProvider = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\BynderOauthProvider')
             ->setMethods(array('getAccessToken'))
             ->getMock();
 
-        $oAuthProvider
+        $oauthProvider
             ->expects($this->at(0))
             ->method('getAccessToken')
             ->with($grantType)
-            ->will($this->returnValue(self::getPrepareResponse()));
+            ->will($this->returnValue(self::getAccessTokenResponse()));
 
         $configuration = new OAuth2\Configuration(
             self::BYNDER_DOMAIN,
@@ -119,22 +152,33 @@ class BynderClientTest extends TestCase
         );
 
         $requestHandler = new RequestHandler($configuration);
-        $requestHandler->setOAuthProvider($oAuthProvider);
+        $requestHandler->setOAuthProvider($oauthProvider);
 
         return $requestHandler;
     }
 
+    /**
+     * Helps test the returned access token response.
+     * 
+     * @param RequestHandler $requestHandler to be used to make requests
+     */
     private function getAccessToken($requestHandler)
     {
-        $token = $requestHandler->getAccessToken(self::CODE);
-        $this->assertNotNull($token);
-        $this->assertEquals($token, self::getPrepareResponse());
+        $tokenResponse = $requestHandler->getAccessToken(self::CODE);
+        $this->assertNotNull($tokenResponse);
+        $this->assertEquals($tokenResponse, self::getAccessTokenResponse());
+        $this->assertEquals($tokenResponse['accessToken'], self::ACCESS_TOKEN);
     }
 
-    private static function getPrepareResponse()
+    /**
+     * Returns a valid access token response.
+     * 
+     * @return array containing the token response.
+     */
+    private static function getAccessTokenResponse()
     {
         return [
-            "accessToken" => "dummy-access-token",
+            "accessToken" => self::ACCESS_TOKEN,
             "expires" => 1610640069,
             "refreshToken" => 'refresh-token',
             "resourceOwnerId" => "owner",

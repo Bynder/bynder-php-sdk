@@ -27,7 +27,8 @@ class RequestHandler extends AbstractRequestHandler
             'bynderDomain' => $configuration->getBynderDomain()
         ]);
         // Switch between authorization_code and client_credentials here based on redirectUri
-        $this->grantType = $configuration->getRedirectUri() === null || $configuration->getRedirectUri() === '' ?
+        $this->grantType = $configuration->getRedirectUri() === null
+            || $configuration->getRedirectUri() === '' ?
             self::CLIENT_CREDENTIALS :
             self::AUTHORIZATION_CODE;
     }
@@ -45,7 +46,7 @@ class RequestHandler extends AbstractRequestHandler
                 //throw exception, code is required when using authorization_code grant type
                 throw new \InvalidArgumentException('\'code\' cannot be empty or null when using authorization_code grant type.');
             }
-            
+
             return $this->oauthProvider->getAccessToken(
                 self::AUTHORIZATION_CODE,
                 ['code' => $code]
@@ -60,16 +61,26 @@ class RequestHandler extends AbstractRequestHandler
      * This method can be used as a utility method to explicitly choose and set grantType.
      * 
      * @param string $grantType of the oauth flow
-    */
+     * @throws \InvalidArgumentException
+     */
     public function setGrantType($grantType)
     {
-        if ($grantType !== self::AUTHORIZATION_CODE && $grantType !== self::CLIENT_CREDENTIALS) {
-            throw new \InvalidArgumentException('This grant type is currently unsupported. Please use only \'authorization_code\' or \'client_credentials\'');
+        if (
+            $grantType !== self::AUTHORIZATION_CODE
+            && $grantType !== self::CLIENT_CREDENTIALS
+        ) {
+            throw new \InvalidArgumentException('This grant type is currently unsupported. 
+            Please use only \'authorization_code\' or \'client_credentials\'');
         }
         $this->grantType = $grantType;
     }
 
-    public function setOAuthProvider($oauthProvider) 
+    /**
+     * This method sets the oauthProvider. This is particularly useful when injecting mock oauthProviders while testing.
+     * 
+     * @param OAuthProvider $oauthProvider instance 
+     */
+    public function setOAuthProvider($oauthProvider)
     {
         $this->oauthProvider = $oauthProvider;
     }
@@ -78,11 +89,11 @@ class RequestHandler extends AbstractRequestHandler
     {
         $this->configuration->refreshToken($this->oauthProvider);
         $updatedHeaders = ['headers' => array_merge(
-                    $options['headers'],
-                    [
-                        'User-Agent' => 'bynder-php-sdk/' . $this->configuration->getSdkVersion()
-                    ]
-                )];
+            $options['headers'],
+            [
+                'User-Agent' => 'bynder-php-sdk/' . $this->configuration->getSdkVersion()
+            ]
+        )];
         return $this->oauthProvider->getHttpClient()->sendAsync(
             $this->oauthProvider->getAuthenticatedRequest(
                 $requestMethod,
