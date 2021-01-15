@@ -31,14 +31,13 @@ class SetUpCredentials
         ));
 
         if ($this->token === null) {
-            echo $this->bynder->getAuthorizationUrl($scopes) . "\n\n";
-
-            $code = readline('Enter code: ');
-
-            if ($code == null) {
-                exit;
+            if ($redirectUri !== null) {
+                echo $this->bynder->getAuthorizationUrl($scopes) . "\n\n";
+                $code = readline('Enter code: ');
+                if ($code === null) {
+                    exit;
+                }
             }
-
             $this->token = $this->bynder->getAccessToken($code);
             var_dump($this->token);
         }
