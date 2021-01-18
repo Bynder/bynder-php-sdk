@@ -115,7 +115,13 @@ class BynderClientTest extends TestCase
      */
     public function testGetAccessTokenAuthorizationCode()
     {
-        $requestHandler = $this->setUpRequestHandler('authorization_code', 'test.com/callback');
+        $requestHandler = $this->setUpRequestHandler(
+            'authorization_code',
+            'test.com/callback',
+            [
+                "code" => self::CODE
+            ]
+        );
         $this->getAccessToken($requestHandler);
     }
 
@@ -141,7 +147,7 @@ class BynderClientTest extends TestCase
      * 
      * @return RequestHandler An instance of the requestHandler.
      */
-    private function setUpRequestHandler($grantType, $redirectUri = null)
+    private function setUpRequestHandler($grantType, $redirectUri = null, $options = [])
     {
         $oauthProvider = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\BynderOauthProvider')
         ->disableOriginalConstructor()
@@ -151,7 +157,7 @@ class BynderClientTest extends TestCase
         $oauthProvider
             ->expects($this->at(0))
             ->method('getAccessToken')
-            ->with($grantType)
+            ->with($grantType, $options)
             ->will($this->returnValue(self::getAccessTokenResponse()));
 
         $configuration = new OAuth2\Configuration(
