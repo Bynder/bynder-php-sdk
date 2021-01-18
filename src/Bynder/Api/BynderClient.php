@@ -16,14 +16,9 @@ class BynderClient
      */
     private $assetBankManager;
 
-    public function __construct($configuration)
+    public function __construct(OAuth2\Configuration $configuration)
     {
-        if ($configuration instanceof OAuth2\Configuration) {
-            $this->requestHandler = new OAuth2\RequestHandler($configuration);
-        } else {
-            throw new \Exception('Invalid configuration passed. Note: You can only use OAuth2 configuration.');
-        }
-
+        $this->requestHandler = new OAuth2\RequestHandler($configuration);
         $this->configuration = $configuration;
     }
 

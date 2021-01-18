@@ -29,10 +29,9 @@ class RequestHandler extends AbstractRequestHandler
             'bynderDomain' => $configuration->getBynderDomain()
         ]);
         // Switch between authorization_code and client_credentials based on redirectUri
-        $this->grantType = $redirectUri === null
-            || $configuration->getRedirectUri() === '' ?
-            self::CLIENT_CREDENTIALS :
-            self::AUTHORIZATION_CODE;
+        $this->grantType = trim($redirectUri) ?
+            self::AUTHORIZATION_CODE :
+            self::CLIENT_CREDENTIALS;
     }
 
     public function getAuthorizationUrl(array $options = [])

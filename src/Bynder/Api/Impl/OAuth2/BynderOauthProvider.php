@@ -22,13 +22,16 @@ class BynderOauthProvider extends AbstractProvider
 
     public function __construct(array $options = [], array $collaborators = [])
     {
-        if(isset($options['bynderDomain'])) 
-        {
+        if (
+            isset($options['bynderDomain']) &&
+            trim($options['bynderDomain'])
+        ) {
             $this->bynderDomain = 'https://' . $options['bynderDomain'];
             unset($options['bynderDomain']);
+            return parent::__construct($options, $collaborators);
         }
 
-        return parent::__construct($options, $collaborators);
+        throw new \InvalidArgumentException("Invalid or empty bynderDomain.");
     }
 
     /**

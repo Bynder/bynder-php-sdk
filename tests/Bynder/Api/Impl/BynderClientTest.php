@@ -34,11 +34,16 @@ class BynderClientTest extends TestCase
     {
         self::assertInstanceOf(
             'Bynder\Api\BynderClient',
-            new BynderClient(new OAuth2\Configuration('', '', '', '', ''))
+            new BynderClient(
+                new OAuth2\Configuration(
+                    self::BYNDER_DOMAIN,
+                    '',
+                    '',
+                    '',
+                    ''
+                )
+            )
         );
-
-        self::setExpectedException('\Exception');
-        new BynderClient(null);
     }
 
     public function testGetAssetBankManager()
@@ -92,6 +97,11 @@ class BynderClientTest extends TestCase
      */
     public function testGetAccessTokenClientCredentials()
     {
+        // This should follow client_credentials flow as redirectUri is invalid
+        $requestHandler = $this->setUpRequestHandler('client_credentials', ' ');
+        $this->getAccessToken($requestHandler);
+        
+        // This should follow client_credentials flow as redirectUri is missing
         $requestHandler = $this->setUpRequestHandler('client_credentials');
         $this->getAccessToken($requestHandler);
     }
@@ -134,6 +144,7 @@ class BynderClientTest extends TestCase
     private function setUpRequestHandler($grantType, $redirectUri = null)
     {
         $oauthProvider = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\BynderOauthProvider')
+        ->disableOriginalConstructor()
             ->setMethods(array('getAccessToken'))
             ->getMock();
 
