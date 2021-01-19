@@ -47,13 +47,11 @@ class RequestHandler extends AbstractRequestHandler
                 throw new \InvalidArgumentException('\'code\' cannot be empty or null when 
                 using authorization_code grant type.');
             }
-            echo "\n Using authorization_code flow";
             return $this->oauthProvider->getAccessToken(
                 self::AUTHORIZATION_CODE,
                 ['code' => $code]
             );
         }
-        echo "\n Using client_credentials flow";
         return $this->oauthProvider->getAccessToken(
             self::CLIENT_CREDENTIALS
         );
