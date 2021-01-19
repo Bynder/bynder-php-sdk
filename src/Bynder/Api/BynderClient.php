@@ -3,7 +3,6 @@ namespace Bynder\Api;
 
 use Bynder\Api\Impl\AssetBankManager;
 use Bynder\Api\Impl\OAuth2;
-use Bynder\Api\Impl\PermanentTokens;
 
 class BynderClient
 {
@@ -17,16 +16,9 @@ class BynderClient
      */
     private $assetBankManager;
 
-    public function __construct($configuration)
+    public function __construct(OAuth2\Configuration $configuration)
     {
-        if ($configuration instanceof PermanentTokens\Configuration) {
-            $this->requestHandler = new PermanentTokens\RequestHandler($configuration);
-        } else if($configuration instanceof OAuth2\Configuration) {
-            $this->requestHandler = new OAuth2\RequestHandler($configuration);
-        } else {
-            throw new \Exception('Invalid configuration passed');
-        }
-
+        $this->requestHandler = new OAuth2\RequestHandler($configuration);
         $this->configuration = $configuration;
     }
 

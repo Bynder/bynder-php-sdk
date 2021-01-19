@@ -35,10 +35,11 @@ class FileUploaderTest extends TestCase
     private function initMockRequestHandler()
     {
         $mockCredentials = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\Configuration')
-            ->disableOriginalConstructor()
+        ->disableOriginalConstructor()
             ->getMock();
         $mockRequestHandler = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\RequestHandler')
-            ->setConstructorArgs([$mockCredentials])
+        ->setConstructorArgs([$mockCredentials])
+            ->disableOriginalConstructor()
             ->getMock();
 
         return $mockRequestHandler;
