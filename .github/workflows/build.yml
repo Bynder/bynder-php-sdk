@@ -23,3 +23,8 @@ jobs:
           command: install
       - name: Run test suite
         run: composer run-script test
+      - name: Collect code coverage
+        env:
+          COVERALLS_REPO_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        if: success()
+        run: composer run coverage
