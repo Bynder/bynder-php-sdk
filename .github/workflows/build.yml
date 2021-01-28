@@ -23,6 +23,12 @@ jobs:
           command: install
       - name: Run test suite
         run: composer run-script test
+        
+      - name: Send code coverage report to coveralls.io
+        run: vendor/bin/php-coveralls -c .coveralls.github-actions.yml -v
+        env:
+          COVERALLS_RUN_LOCALLY: 1
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       - name: Upload coverage results to Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
