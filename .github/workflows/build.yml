@@ -23,16 +23,11 @@ jobs:
           command: install
       - name: Run test suite
         run: composer run-script test
-        
-      - name: Send code coverage report to coveralls.io
-        run: vendor/bin/php-coveralls -c .coveralls.github-actions.yml -v
-        env:
-          COVERALLS_RUN_LOCALLY: 1
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+      
       - name: Upload coverage results to Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          composer require --dev php-coveralls/php-coveralls
           composer global require php-coveralls/php-coveralls
-          php-coveralls --coverage_clover=build/logs/clover.xml -v
+          phpunit --coverage-clover build/logs/clover.xml
+          php vendor/bin/coveralls -v
