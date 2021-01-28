@@ -24,8 +24,7 @@
     "phpunit/phpunit": "^5",
     "mikey179/vfsstream": "~1",
     "phpdocumentor/phpdocumentor": "2.*",
-    "php-coveralls/php-coveralls": "^2.1",
-    "satooshi/php-coveralls": "dev-master"
+    "php-coveralls/php-coveralls": "^2.1"
   },
   "autoload": {
     "psr-4": {
