@@ -28,6 +28,6 @@ jobs:
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          php vendor/bin/phpcov.php merge --clover build/logs/clover.xml build/cov
           composer global require php-coveralls/php-coveralls
-          phpunit --coverage-clover build/logs/clover.xml
           php-coveralls --coverage_clover=build/logs/clover.xml -v
