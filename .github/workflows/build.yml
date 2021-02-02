@@ -22,7 +22,7 @@ jobs:
           php_version: ${{ matrix.php }}
           command: install
       - name: Run test suite
-        run: composer run-script test
+        run: composer run test
       - run: composer require --dev php-coveralls/php-coveralls
 
       - name: Upload coverage results to Coveralls
