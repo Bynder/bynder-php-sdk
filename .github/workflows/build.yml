@@ -24,7 +24,7 @@ jobs:
           coverage: "pcov"
 
       - name: Run test suite
-        run: XDEBUG_MODE=coverage vendor/bin/phpunit tests --coverage-clover=coverage.xml
+        run: composer run-script test
 
       - run: composer require --dev php-coveralls/php-coveralls
 
