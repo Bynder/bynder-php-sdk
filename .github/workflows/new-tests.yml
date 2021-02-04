@@ -1,0 +1,91 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  release:
+    types: [ published ]
+
+jobs:
+
+  type-checker:
+    name: "Type Checker"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP with extensions"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "7.4"
+          coverage: "pcov"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php7.4-composer-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "php7.4-composer-"
+
+      - name: "Update dependencies with composer"
+        run: "./tools/composer update --no-ansi --no-interaction --no-progress"
+
+      - name: "Run vimeo/psalm"
+        run: "./tools/psalm --config=.psalm/config.xml --no-progress --shepherd --show-info=false --stats"
+
+  tests:
+    name: "Tests"
+
+    runs-on: "ubuntu-latest"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - "7.4"
+          - "8.0"
+          - "8.1"
+
+        coverage-driver:
+          - "pcov"
+          - "xdebug"
+          - "xdebug3"
+
+        exclude:
+          - php-version: "8.0"
+            coverage-driver: "xdebug"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: "${{ matrix.coverage-driver }}"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v2"
+        with:
+          path: "~/.composer/cache"
+          key: "php${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-${{ hashFiles('**/composer.json') }}"
+          restore-keys: "php${{ matrix.php-version }}-composer-${{ matrix.dependencies }}-"
+
+      - name: "Install dependencies with composer"
+        run: "./tools/composer update --no-ansi --no-interaction --no-progress"
+
+      - name: "Run tests with phpunit/phpunit"
+        run: "vendor/bin/phpunit --coverage-clover=coverage.xml"
+
+      - run: composer require --dev php-coveralls/php-coveralls
+
+          - name: Upload coverage results to Coveralls
+            env:
+              COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            run: |
+              composer global require php-coveralls/php-coveralls
+              php-coveralls --coverage_clover=build/logs/clover.xml -v
