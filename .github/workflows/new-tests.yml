@@ -42,7 +42,7 @@ jobs:
       - name: "Run tests with phpunit/phpunit"
         run: "XDEBUG_MODE=coverage vendor/bin/phpunit tests --coverage-clover=coverage.xml"
 
-      - run: ls
+      - run: cat coverage.xml
       - run: composer require --dev php-coveralls/php-coveralls
 
       - name: Upload coverage results to Coveralls
