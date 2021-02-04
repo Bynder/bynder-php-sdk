@@ -30,14 +30,13 @@ jobs:
           php-version: ${{ matrix.php-version }}
           coverage: xdebug
 
-      - name: Install dependencies with composer
-        run: composer update --no-ansi --no-interaction --no-progress
+      - name: Install dependencies
+        run: |
+          composer update --no-ansi --no-interaction --no-progress
+          composer require --dev php-coveralls/php-coveralls
 
-      - name: Run tests with phpunit/phpunit
+      - name: Run tests
         run: XDEBUG_MODE=coverage vendor/bin/phpunit tests --coverage-clover=build/logs/clover.xml
-
-      - name: Install coveralls
-        run: composer require --dev php-coveralls/php-coveralls
 
       - name: Upload coverage results to Coveralls
         env:
