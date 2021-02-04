@@ -24,7 +24,7 @@ jobs:
           coverage: "pcov"
 
       - name: Run test suite
-        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+        run: vendor/bin/phpunit tests --coverage-clover=coverage.xml
 
       - run: composer require --dev php-coveralls/php-coveralls
 
