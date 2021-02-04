@@ -4,7 +4,6 @@
 [![Packagist Version](https://img.shields.io/packagist/v/bynder/bynder-php-sdk)](https://packagist.org/packages/bynder/bynder-php-sdk)
 ![Packagist Downloads](https://img.shields.io/packagist/dt/bynder/bynder-php-sdk)
 
-
 The main goal of this SDK is to speed up the integration of Bynder customers who use PHP. Making it easier to connect to the Bynder API (https://bynder.docs.apiary.io) and executing requests on it.
 
 ## Requirements and dependencies
