@@ -42,13 +42,9 @@ jobs:
       - name: "Run tests with phpunit/phpunit"
         run: "XDEBUG_MODE=coverage vendor/bin/phpunit tests --coverage-clover=coverage.xml"
 
+      - run: ls
       - run: composer require --dev php-coveralls/php-coveralls
 
-      - name: Collect code coverage
-        env:
-          COVERALLS_REPO_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        run: composer run coverage
-        
       - name: Upload coverage results to Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
