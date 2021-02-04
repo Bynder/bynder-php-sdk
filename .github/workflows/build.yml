@@ -21,8 +21,14 @@ jobs:
         with:
           php_version: ${{ matrix.php }}
           command: install
+          coverage: "pcov"
+      - name: Setup PCOV
+          run: |
+            composer require pcov/clobber
+            vendor/bin/pcov clobber
       - name: Run test suite
-        run: composer run test
+        run: vendor/bin/phpunit --coverage-clover=coverage.xml
+
       - run: composer require --dev php-coveralls/php-coveralls
 
       - name: Upload coverage results to Coveralls
