@@ -33,7 +33,7 @@
     }
   },
   "scripts": {
-    "test":[
+    "test": [
       "@putenv XDEBUG_MODE=coverage",
       "vendor/bin/phpunit tests -c phpunit.xml.dist --whitelist src"
     ]
