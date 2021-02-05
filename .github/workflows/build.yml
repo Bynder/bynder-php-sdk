@@ -8,18 +8,36 @@ on:
 
 jobs:
   build:
+    name: Tests
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: [ '5.6', '7.0', '7.1', '7.2' ]
-    runs-on: ubuntu-latest
+        php-version:
+          - "5.6"
+          - "7.0"
+          - "7.1"
+          - "7.2"
+          - "7.4"
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Install composer
-        uses: php-actions/composer@v5
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
         with:
-          php_version: ${{ matrix.php }}
-          command: install
-      - name: Run test suite
-        run: composer run-script test
+          php-version: ${{ matrix.php-version }}
+          coverage: xdebug
+
+      - name: Install dependencies
+        run: |
+          composer update --no-ansi --no-interaction --no-progress
+          composer global require php-coveralls/php-coveralls
+
+      - name: Run tests
+        run: XDEBUG_MODE=coverage vendor/bin/phpunit tests --coverage-clover=build/logs/clover.xml
+
+      - name: Upload coverage results to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: php-coveralls --coverage_clover=build/logs/clover.xml -v

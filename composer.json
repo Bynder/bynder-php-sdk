@@ -32,7 +32,10 @@
     }
   },
   "scripts": {
-    "test": "XDEBUG_MODE=coverage vendor/bin/phpunit tests -c phpunit.xml.dist"
+    "test": [
+      "@putenv XDEBUG_MODE=coverage",
+      "vendor/bin/phpunit tests -c phpunit.xml.dist --whitelist src"
+    ]
   },
   "autoload-dev": {
     "psr-4": {
