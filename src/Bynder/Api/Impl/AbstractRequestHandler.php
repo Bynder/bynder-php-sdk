@@ -12,7 +12,7 @@ abstract class AbstractRequestHandler
         );
 
         if (!in_array($requestMethod, ['GET', 'POST', 'DELETE'])) {
-            throw new Exception('Invalid request method provided');
+            throw new \Exception('Invalid request method provided');
         }
 
         $request = $this->sendAuthenticatedRequest($requestMethod, $uri, $options);
@@ -28,7 +28,7 @@ abstract class AbstractRequestHandler
                     case 'text/html':
                         return $response;
                     default:
-                        throw new Exception('The response type not recognized.');
+                        throw new \Exception('The response type not recognized.');
                 }
             }
         );
