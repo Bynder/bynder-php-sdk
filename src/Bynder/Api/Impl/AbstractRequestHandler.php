@@ -19,6 +19,10 @@ abstract class AbstractRequestHandler
 
         return $request->then(
             function ($response) {
+                // Some 204 No Content responses have no content type header.
+                if ($response->getStatusCode() === 204 && !$response->hasHeader('Content-Type')) {
+                  return NULL;
+                }
                 $mimeType = explode(';', $response->getHeader('Content-Type')[0])[0];
                 switch($mimeType) {
                     case 'application/json':
@@ -26,9 +30,6 @@ abstract class AbstractRequestHandler
                     case 'text/plain':
                         return (string)$response->getBody();
                     case 'text/html':
-                        return $response;
-                    // 204 No Content responses have no content type header.
-                    case $response->getStatusCode() == 204:
                         return $response;
                     default:
                         throw new \Exception('The response type not recognized.');
