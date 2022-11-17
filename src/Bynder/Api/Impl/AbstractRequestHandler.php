@@ -27,6 +27,9 @@ abstract class AbstractRequestHandler
                         return (string)$response->getBody();
                     case 'text/html':
                         return $response;
+                    // 204 No Content responses have no content type header.
+                    case $response->getStatusCode() == 204:
+                        return $response;
                     default:
                         throw new Exception('The response type not recognized.');
                 }
