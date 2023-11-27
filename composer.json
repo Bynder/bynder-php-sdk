@@ -1,7 +1,7 @@
 {
   "name": "bynder/bynder-php-sdk",
   "description": "Bynder PHP Library",
-  "version": "2.1.5",
+  "version": "2.1.9",
   "keywords": [
     "bynder",
     "sdk",

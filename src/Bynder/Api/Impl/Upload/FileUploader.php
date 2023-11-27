@@ -114,8 +114,8 @@ class FileUploader
                         // This is where the magic happens. We create all the promises via an Iterator function.
                         $promises = $this->uploadChunkIterator($file, $data['filePath'], $uploadRequestInfo,
                             $numberOfChunks, $chunkNumber);
-                        // After that we batch them all together using each_limit_all, which will guarantee all chunks have been uploaded properly.
-                        $eachPromises = Promise\each_limit_all($promises, self::MAX_CONCURRENT_CHUNKS);
+                        // After that we batch them all together using Each::ofLimitAll, which will guarantee all chunks have been uploaded properly.
+                        $eachPromises = Promise\Each::ofLimitAll($promises, self::MAX_CONCURRENT_CHUNKS);
                         return $eachPromises->then(
                             function ($value) use ($uploadRequestInfo, $chunkNumber) {
                                 return ['requestInfo' => $uploadRequestInfo, 'chunkNumber' => $chunkNumber];
