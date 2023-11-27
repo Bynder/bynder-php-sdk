@@ -12,13 +12,17 @@ abstract class AbstractRequestHandler
         );
 
         if (!in_array($requestMethod, ['GET', 'POST', 'DELETE'])) {
-            throw new Exception('Invalid request method provided');
+            throw new \Exception('Invalid request method provided');
         }
 
         $request = $this->sendAuthenticatedRequest($requestMethod, $uri, $options);
 
         return $request->then(
             function ($response) {
+                // Some 204 No Content responses have no content type header.
+                if ($response->getStatusCode() === 204 && !$response->hasHeader('Content-Type')) {
+                  return NULL;
+                }
                 $mimeType = explode(';', $response->getHeader('Content-Type')[0])[0];
                 switch($mimeType) {
                     case 'application/json':
@@ -28,7 +32,7 @@ abstract class AbstractRequestHandler
                     case 'text/html':
                         return $response;
                     default:
-                        throw new Exception('The response type not recognized.');
+                        throw new \Exception('The response type not recognized.');
                 }
             }
         );
