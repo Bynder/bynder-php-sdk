@@ -120,12 +120,26 @@ class AssetBankManager
     /**
      * Gets a list of metaproperty options.
      *
+     * @param  array  $query  Associative array of parameters to filter the results.
+     * @return \GuzzleHttp\Promise\Promise
+     * @throws \GuzzleHttp\Exception\RequestException
+     */
+    public function getMetapropertyOptions($query)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/options/',
+            ['query' => $query]
+        );
+    }
+
+    /**
+     * Gets a list of metaproperty options.
+     *
      * @param  string  $propertyId  Metaproperty id
      * @param  array  $query  Associative array of parameters to filter the results.
      * @return \GuzzleHttp\Promise\Promise
      * @throws \GuzzleHttp\Exception\RequestException
      */
-    public function getMetapropertyOptions($propertyId, $query)
+    public function getMetapropertyOptionsById($propertyId, $query)
     {
         return $this->requestHandler->sendRequestAsync('GET', 'api/v4/metaproperties/' . $propertyId . '/options/',
             ['query' => $query]
