@@ -40,6 +40,15 @@ try {
 
     $assetBankManager = $bynder->getAssetBankManager();
 
+    // get derivatives
+    $derivativesPromise = $assetBankManager->getDerivatives();
+    $derivativesList = $derivativesPromise->wait();
+
+    if (!empty($derivativesList)) {
+        echo("Derivatives: " . "\n");
+        var_dump($derivativesList);
+    }
+
     // Get Media Items list.
     // Optional filter.
     $query = [
@@ -58,6 +67,47 @@ try {
         }
     }
 
+    // get info for single media asset
+    $mediaInfoPromise = $assetBankManager->getMediaInfo($MEDIA_ID_FOR_INFO);
+    $mediaInfo = $mediaInfoPromise->wait();
+
+    if (!empty($mediaInfo)) {
+        echo("Media Info for ID: " . $mediaInfo['id']);
+        var_dump($mediaInfo);
+    }
+
+    // get media download url
+    $mediaDownloadUrlPromise = $assetBankManager->getMediaDownloadLocation($MEDIA_ID_FOR_INFO);
+    $mediaDownloadUrl = $mediaDownloadUrlPromise->wait();
+
+    if (!empty($mediaDownloadUrl)) {
+        echo("Media Download URL for ID: " . $MEDIA_ID_FOR_INFO);
+        var_dump($mediaDownloadUrl);
+    }
+
+    // modify name of asset
+    $renameData = ['name' => 'PHP SDK Test'];
+    $modifyMediaPromise = $assetBankManager->modifyMedia($MEDIA_ID_FOR_RENAME, $renameData);
+    $modifyMediaResult = $modifyMediaPromise->wait();
+
+    if (!empty($modifyMediaResult)) {
+        echo("Modify Media for ID: " . $MEDIA_ID_FOR_RENAME);
+        var_dump($modifyMediaResult);
+
+        // get info for modified media asset
+        $mediaInfoPromise = $assetBankManager->getMediaInfo($MEDIA_ID_FOR_RENAME);
+        $mediaInfo = $mediaInfoPromise->wait();
+
+        if (!empty($mediaInfo)) {
+            echo("Media Info for ID: " . $mediaInfo['id']);
+            var_dump($mediaInfo);
+        }
+    }
+
+    // delete asset
+    echo("Deleting Media ID: " . $MEDIA_ID_FOR_REMOVAL);
+    $deleteMediaPromise = $assetBankManager->deleteMedia($MEDIA_ID_FOR_REMOVAL);
+    $deleteMediaResult = $deleteMediaPromise->wait();
 } catch (Exception $e) {
     var_dump($e);
 }
