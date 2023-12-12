@@ -51,8 +51,6 @@ try {
     $collectionListPromise = $assetBankManager->getCollections($collectionQueryFilter );
     $collectionsList = $collectionListPromise->wait();
 
-    var_dump($collectionsList);
-
     // print collection list, each collection result
     if (!empty($collectionsList) && !empty($collectionsList['collections'])) {
         foreach ($collectionsList['collections'] as $collection) {
@@ -61,8 +59,16 @@ try {
         }
     }
 
+    // get collection assets for a collection
+    $collectionsAssetPromise = $assetBankManager->getCollectionAssets($GET_COLLECTION_ASSETS_ID);
+    $collectionAssets = $collectionsAssetPromise->wait();
+
+    if (!empty($collectionAssets)) {
+        echo("Collection Asset IDs for ID: " . $GET_COLLECTION_ASSETS_ID);
+        var_dump($collectionAssets);
+    }
+
 } catch (Exception $e) {
     var_dump($e);
 }
 ?>
-
