@@ -75,7 +75,7 @@ try {
     var_dump($retrieveUsages);
 
     // Delete Asset usage and retrieve again.
-    $deleteUSages = $assetBankManager->deleteUSage(
+    $deleteUSages = $assetBankManager->deleteUsage(
         [
             'integration_id' => $INTEGRATION_ID_FOR_ASSET_USAGE,
             'asset_id' => $MEDIA_ID_FOR_ASSET_USAGE,

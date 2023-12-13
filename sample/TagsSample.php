@@ -47,8 +47,7 @@ try {
     if (!empty($tagsList)) {
         foreach ($tagsList as $tag) {
             echo("Tag ID: " . $tag['id'] . "\n");
-            echo("Tag Name: " . $tag['tag'] . "\n");
-            echo(("Media Count: " . $tag['mediaCount'] . "\n"));
+            var_dump($tag);
         }
     }
 } catch (Exception $e) {

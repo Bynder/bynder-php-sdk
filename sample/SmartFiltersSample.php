@@ -47,8 +47,7 @@ try {
     if (!empty($smartFilterList)) {
         foreach ($smartFilterList as $smartFilter) {
             echo("Smart Filter ID: " . $smartFilter['id'] . "\n");
-            echo("Smart Filter Labels: " . print_r($smartFilter['labels'], 1)) . "\n";
-            echo("Smart Filter Metaproperties: " . print_r($smartFilter['metaproperties'], 1)) . "\n";
+            var_dump($smartFilter);
         }
     }
 } catch (Exception $e) {

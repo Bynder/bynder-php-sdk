@@ -77,12 +77,30 @@ try {
     }
 
     // get media download url
-    $mediaDownloadUrlPromise = $assetBankManager->getMediaDownloadLocation($MEDIA_ID_FOR_INFO);
+    $mediaDownloadUrlPromise = $assetBankManager->getMediaDownloadLocation($MEDIA_ID_FOR_DOWNLOAD_URL);
     $mediaDownloadUrl = $mediaDownloadUrlPromise->wait();
-
     if (!empty($mediaDownloadUrl)) {
-        echo("Media Download URL for ID: " . $MEDIA_ID_FOR_INFO);
+        echo("Media Download URL for ID: " . $MEDIA_ID_FOR_DOWNLOAD_URL . "\n");
         var_dump($mediaDownloadUrl);
+    }
+
+    // get media download url by version
+    $assetVersion = 1;
+    $mediaDownloadUrlVersionPromise = $assetBankManager->getMediaDownloadLocationByVersion($MEDIA_ID_FOR_DOWNLOAD_URL, $assetVersion);
+    $mediaDownloadUrlVersion = $mediaDownloadUrlVersionPromise->wait();
+
+    if (!empty($mediaDownloadUrlVersion)) {
+        echo("Media Download URL for ID: ". $MEDIA_ID_FOR_DOWNLOAD_URL . " and Asset Version: " . $assetVersion . "\n");
+        var_dump($mediaDownloadUrlVersion);
+    }
+
+    // get media download url for asset and item id
+    $mediaDownloadUrlSpecificPromise = $assetBankManager->getMediaDownloadLocationForAssetItem($MEDIA_ID_FOR_DOWNLOAD_URL, $MEDIA_ITEM_ID_FOR_SPECIFIC_DOWNLOAD_URL);
+    $mediaDownloadUrlSpecific = $mediaDownloadUrlSpecificPromise->wait();
+
+    if (!empty($mediaDownloadUrlSpecific)) {
+        echo("Media Download URL for Specific Item ID: " . $MEDIA_ITEM_ID_FOR_SPECIFIC_DOWNLOAD_URL . "\n");
+        var_dump($mediaDownloadUrlSpecific);
     }
 
     // modify name of asset
@@ -91,7 +109,7 @@ try {
     $modifyMediaResult = $modifyMediaPromise->wait();
 
     if (!empty($modifyMediaResult)) {
-        echo("Modify Media for ID: " . $MEDIA_ID_FOR_RENAME);
+        echo("Modify Media Result for ID: " . $MEDIA_ID_FOR_RENAME);
         var_dump($modifyMediaResult);
 
         // get info for modified media asset
@@ -99,7 +117,7 @@ try {
         $mediaInfo = $mediaInfoPromise->wait();
 
         if (!empty($mediaInfo)) {
-            echo("Media Info for ID: " . $mediaInfo['id']);
+            echo("Media Info After Modifying for ID: " . $mediaInfo['id']);
             var_dump($mediaInfo);
         }
     }
