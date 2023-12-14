@@ -48,8 +48,7 @@
         if (!empty($brandsList)) {
             foreach ($brandsList as $brand) {
                 echo("Brand ID: " . $brand['id'] . "\n");
-                echo("Brand Name: " . $brand['name'] . "\n");
-                echo("Brand Description: " . $brand['description'] . "\n");
+                var_dump($brand);
             }
         }
     } catch (Exception $e) {
