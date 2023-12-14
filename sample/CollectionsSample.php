@@ -48,7 +48,7 @@ try {
         'count' => true,
         'limit' => 20
     ];
-    $collectionListPromise = $assetBankManager->getCollections($collectionQueryFilter );
+    $collectionListPromise = $assetBankManager->getCollections($collectionQueryFilter);
     $collectionsList = $collectionListPromise->wait();
 
     // print collection list, each collection result
