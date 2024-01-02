@@ -49,10 +49,10 @@ try {
 
     // get brand to upload to
     if (!empty($brandsList)) {
-        echo("Updating asset to brand id: " . $brandsList[0]['id']);
+        echo("Uploading asset to brand id: " . $brandsList[0]['id']);
         $data = [
             // Will need to create this file for successful test call
-            'filePath' => 'image.png',
+            'filePath' => __DIR__  . '/image.png',
             'brandId' => $brandsList[0]['id'],
             'name' => 'Image name',
             'description' => 'Image description'
