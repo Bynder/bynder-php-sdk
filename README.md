@@ -144,7 +144,7 @@ Media management.
 
 Build the Docker image and tag it:
 ```bash
-docker build -t bynder-php-sdk-tests
+docker build . -t bynder-php-sdk-tests
 ```
 
 Run the tests:
