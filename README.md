@@ -144,7 +144,7 @@ Media management.
 
 Build the Docker image and tag it:
 ```bash
-docker build -t bynder-php-sdk-tests
+docker build . -t bynder-php-sdk-tests
 ```
 
 Run the tests:
@@ -164,4 +164,174 @@ Or to run an individual test file:
 
 ```bash
 ./vendor/bin/phpunit tests/UtilTest.php
+```
+
+### Sample Files Functionality Testing
+
+Scripts within `sample` contain code to execute corresponding functionalities. The purpose is to demonstrate how methods
+are called and provide a convenient method to execute functions.
+
+Within `sample` create a file called `sample_config.php`. This file will be referenced from sample files.
+
+Make sure all values are populated correctly before running sample files.
+
+
+Example `sample_config.php` file content:
+```php
+<?php
+    $bynderDomain = "portal.bynder.com";
+    $redirectUri = "https://google.com";
+    $clientId = <your OAuth2 client id>;
+    $clientSecret = <your OAuth2 client secret>;
+    $token = null;
+
+    // provide corresponding values to be used within API calls
+    // media id for info
+    $MEDIA_ID_FOR_INFO = "C078E8EE-C13A-4DA5-86EC8D6F335364EB";
+    // media id for download url
+    $MEDIA_ID_FOR_DOWNLOAD_URL = "C078E8EE-C13A-4DA5-86EC8D6F335364EB";
+    // media id for download url
+    $MEDIA_ITEM_ID_FOR_SPECIFIC_DOWNLOAD_URL = "C83B261D-715F-4188-809FE1214175A753";
+    // media id for renaming
+    $MEDIA_ID_FOR_RENAME = "C078E8EE-C13A-4DA5-86EC8D6F335364EB";
+    // media id for removal
+    $MEDIA_ID_FOR_REMOVAL = "C078E8EE-C13A-4DA5-86EC8D6F335364EB";
+    // collection id to get assets for
+    $GET_COLLECTION_ASSETS_ID = "615F03BB-D986-4786-B2C085D2F0718230";
+
+    // metaproperty id to get info for
+    $METAPROPERTY_ID_FOR_INFO = "0D563E99-218C-4613-86232D416EB7EA8A";
+    // metaproperty option id to get info for
+    $METAPROPERTY_OPTION_ID_FOR_INFO = "3C65AFA5-AC94-4223-A54757F373D209D6";
+    // metaproperty id to get dependency info for
+    $METAPROPERTY_ID_FOR_DEPENDENCY_INFO = "0D563E99-218C-4613-86232D416EB7EA8A";
+    // metaproperty id for specific option dependency
+    $METAPROPERTY_ID_FOR_SPECIFIC_OPTION_DEPEND = "0D563E99-218C-4613-86232D416EB7EA8A";
+    // metaproperty option id for specific option
+    $METAPROPERTY_OPTION_ID_FOR_SPECIFIC_OPTION_DEPEND = "DF1CF731-EFDF-484D-84BFD5CF8835B9D7";
+
+    // media id used for creating asset usage
+    $MEDIA_ID_FOR_ASSET_USAGE="C078E8EE-C13A-4DA5-86EC8D6F335364EB";
+    // integration id used for asset usage
+    $INTEGRATION_ID_FOR_ASSET_USAGE="0191a303-9d99-433e-ada4-d244f37e1d7d";
+?>
+```
+Within each sample file, OAuth credentials are read in from `sample_config.php`.
+Scripts will output authorization url to navigate to retrieve access code (will not open browser automatically, user must click link).
+Access code is then provided to terminal prompt to retrieve an access token for API calls afterward.
+
+### Command Line Instructions
+
+Make sure both `composer` and `php` are installed locally. From root directory run `composer install` to install packages
+form `composer.json`. Navigate to `sample` directory.
+
+#### Brands Sample
+```bash
+php BrandsSample.php
+```
+
+Methods Used:
+* getBrands()
+
+#### Collections Sample
+```bash
+php CollectionsSample.php
+```
+
+Methods Used:
+* getCollections($query)
+* getCollectionAssets($collectionId)
+
+#### Media Sample
+```bash
+php MediaSample.php
+```
+
+Methods Used:
+* getDerivatives()
+* getMediaList($query)
+* getMediaInfo($mediaId)
+* getMediaDownloadLocation($mediaId)
+* getMediaDownloadLocationByVersion($mediaId, $version)
+* getMediaDownloadLocationForAssetItem($mediaId, $itemId)
+* modifyMedia($mediaId, $data)
+* getMediaInfo($mediaId)
+* deleteMedia($mediaId)
+
+#### Metaproperties Sample
+```bash
+php MetapropertiesSample.php
+```
+
+Methods Used:
+* getMetaproperties()
+* getMetaproperty($metapropertyId)
+* getMetapropertyDependencies($metapropertyId)
+* getMetapropertyOptions($query)
+* getMetapropetryGlobalOptionDependencies()
+* getMetapropertyOptionDependencies($metapropertyId)
+* getMetapropertySpecificOptionDependencies($metapropertyId, $metapropertyOptionId, $array)
+
+#### Smart Filters Sample
+```bash
+php SmartFiltersSample.php
+```
+
+Methods Used:
+* getSmartfilters()
+
+
+#### Tags Sample
+```bash
+php TagsSample.php
+```
+
+Methods Used:
+* getTags()
+
+#### Uploads Sample
+```bash
+php UploadsSample.php
+```
+
+Methods Used:
+* uploadFileAsync($data)
+* getBrands()
+
+#### Usage Sample
+```bash
+php UsageSample.php
+```
+
+Methods Used:
+* createUsage($data)
+* getUsage($data)
+* deleteUsage($data)
+
+
+### Docker Instructions
+
+Sample files can be executed within Docker container. Makefile contains corresponding commands to run/build Docker container.
+
+`Dockerfile.dev` file is used for container.
+
+Makefile commands are executed from root directory. Run with sudo if permission is needed.
+
+If needed, pull latest `composer` Docker image `docker pull composer:latest`
+
+#### Makefile commands:
+
+Build and start up Docker container for PHP SDK using Docker Compose
+```bash
+make run-php-sdk-docker
+```
+
+Stop running Docker container for PHP SDK:
+```bash
+make stop-php-sdk-docker
+```
+
+Run sample file within Docker container (BrandsSample.php is replaced with target sample file):
+```bash
+make execute-php-sdk-sample sample-file-name=BrandsSample.php
 ```
