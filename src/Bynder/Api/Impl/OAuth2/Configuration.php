@@ -16,22 +16,46 @@ use Bynder\Api\Impl\Oauth2\BynderOauthProvider;
  */
 class Configuration
 {
+    /**
+     * @var string The Bynder domain.
+     */
     private $bynderDomain;
-    private $rootDir;
+
+    /**
+     * @var string The redirect URI.
+     */
     private $redirectUri;
 
     /**
      * @var string Client ID.
      */
     private $clientId;
+
     /**
      * @var string Client Secret.
      */
     private $clientSecret;
+
     /**
      * @var string Access token.
      */
     private $token;
+
+    /**
+     * @var array Request options.
+     */
+    private $requestOptions;
+
+    /**
+     * @var string Root directory.
+     */
+    private $rootDir;
+
+    /**
+     * @var object The package.
+     */
+    private $package;
+
     /**
      * @var string Initial access token, used for logout.
      */
