@@ -17,6 +17,11 @@ class BynderClient
      */
     private $assetBankManager;
 
+    /**
+     * @var Configuration The configuration object.
+     */
+    private $configuration;
+
     public function __construct($configuration)
     {
         if ($configuration instanceof PermanentTokens\Configuration) {
