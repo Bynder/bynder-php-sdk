@@ -154,6 +154,7 @@ class Configuration
         ]);
 
         $options = $token->jsonSerialize();
+        $options['expires'] = $options['expires'] - 30 * 60;
         if (empty($options['refresh_token'])) {
             $options['refresh_token'] = $oldRefreshToken;
         }
