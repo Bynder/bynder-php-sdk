@@ -80,6 +80,19 @@ class BynderClient
     }
 
     /**
+     * Returns the Oauth access token using client credentials grant type.
+     *
+     * @return \League\OAuth2\Client\Token\AccessToken
+     */
+    public function getAccessTokenClientCredentials()
+    {
+        $token = $this->requestHandler->getAccessTokenClientCredentials();
+        $this->configuration->setToken($token);
+
+        return $token;
+    }
+
+    /**
      * Retrieve all users.
      *
      * @param bool $includeInactive Include inactive users.
