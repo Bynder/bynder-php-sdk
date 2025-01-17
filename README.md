@@ -90,6 +90,17 @@ For instance, if we only wanted to retrieve **2 images** here is what the call w
 All the calls are **Asynchronous**, which means they will return a **Promise** object, making it a bit more flexible in order to adjust to any kind of application.
 Again, for a more thorough example there is a sample [application use case](sample/sample.php) in this repo.
 
+### Client Credentials
+
+OAuth can be used via authorization code or client credentials. To use client credentials, initialize a Bynder client 
+with OAuth2 Configuration and make call to get a token via:
+
+`$bynder->getAccessTokenClientCredentials();`
+
+Sample file found in `sample/OAuthClientCredentialsSample.php`.
+
+`php OAuthClientCredentialsSample.php`
+
 ## Methods Available
 These are the methods currently available on the **Bynder PHP SDK**, refer to the [Bynder API Docs](http://docs.bynder.apiary.io/)) for more specific details on the calls.
 
