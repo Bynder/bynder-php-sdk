@@ -126,8 +126,8 @@ class FileUploader
                 }
             )
             ->then(
-                function ($value) {
-                    return $this->finalizeUploadAsync($value['requestInfo'], $value['chunkNumber']);
+                function ($value) use ($data) {
+                    return $this->finalizeUploadAsync($value['requestInfo'], $value['chunkNumber'], $data);
                 }
             )
             ->then(
@@ -265,11 +265,12 @@ class FileUploader
      *
      * @param $uploadRequestInfo
      * @param $chunkNumber
+     * @param array $originalData
      *
      * @return Promise\Promise
      * @throws Exception
      */
-    private function finalizeUploadAsync($uploadRequestInfo, $chunkNumber)
+    private function finalizeUploadAsync($uploadRequestInfo, $chunkNumber, $originalData)
     {
         $s3Filename = sprintf("%s/p%d", $uploadRequestInfo['s3_filename'], $chunkNumber);
 
@@ -279,6 +280,11 @@ class FileUploader
             's3_filename' => $s3Filename,
             'chunks' => $chunkNumber,
         ];
+
+        if (isset($originalData['original_filename']) && $originalData['original_filename']) {
+            $data['original_filename'] = $originalData['original_filename'];
+        }
+
         return $this->requestHandler->sendRequestAsync(
             'POST',
             'api/v4/upload/',
