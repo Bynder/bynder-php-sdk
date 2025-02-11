@@ -131,6 +131,94 @@ class FileUploaderTest extends TestCase
     }
 
     /**
+     * Tests if the correct upload sequence is processed when we start a file upload with original.
+     *
+     * The order it tests is:
+     *      1. Init upload
+     *      2. Get closest s3 endpoint
+     *      3. Upload part to Amazon
+     *      4. Register chunk in Bynder
+     *      5. Finalize upload.
+     *      6. Poll status
+     *      7. Save
+     *
+     * @covers \Bynder\Api\Impl\Upload\FileUploader::uploadFile()
+     * @throws \Exception
+     */
+    public function testCorrectUploadFileSequenceWithOriginalFilename()
+    {
+        $filePath = vfsStream::url('root/tempFile.txt');
+        $originalFileName = 'tempFile.txt';
+        $this->assertFalse(file_exists($filePath));
+        file_put_contents($filePath, "test content in file");
+        $this->assertTrue(file_exists($filePath));
+
+        // Initiate the mock handlers for normal Oauth and AWS calls.
+        $mockOauthHandler = $this->initMockRequestHandler('oauth');
+        $mockAwsHandler = $this->initMockRequestHandler('aws');
+
+        // Get closest upload endpoint.
+        $mockOauthHandler
+            ->expects($this->at(0))
+            ->method('sendRequestAsync')
+            ->with(...self::getUploadEndpointRequest())
+            ->will($this->returnValue(self::getUploadEndpointResponse()));
+
+        // Initialise upload.
+        $mockOauthHandler
+            ->expects($this->at(1))
+            ->method('sendRequestAsync')
+            ->with(...self::getInitUploadRequest($filePath))
+            ->will($this->returnValue(self::getInitUploadResponse()));
+
+        // Upload chunk to Amazon.
+        $mockAwsHandler
+            ->expects($this->once())
+            ->method('uploadPartToAmazon')
+            ->will($this->returnValue(new FulfilledPromise('uploadPartToAmazonCompleted')));
+
+        // Register chunk in Bynder.
+        $mockOauthHandler
+            ->expects($this->at(2))
+            ->method('sendRequestAsync')
+            ->with(...self::getRegisterChunkRequest())
+            ->will($this->returnValue(self::getRegisterChunkResponse()));
+
+        // Finalises the upload.
+        $mockOauthHandler
+            ->expects($this->at(3))
+            ->method('sendRequestAsync')
+            ->with(...self::getFinaliseRequest($originalFileName))
+            ->will($this->returnValue(self::getFinaliseResponse()));
+
+        // Poll status of upload.
+        $mockOauthHandler
+            ->expects($this->at(4))
+            ->method('sendRequestAsync')
+            ->with(...self::getPollStatusRequest())
+            ->will($this->returnValue(self::getPollStatusResponse()));
+
+        // Save media asset.
+        $mockOauthHandler
+            ->expects($this->at(5))
+            ->method('sendRequestAsync')
+            ->with(...self::getSaveMediaRequest($filePath, $originalFileName))
+            ->will($this->returnValue(new FulfilledPromise('DONE')));
+
+        // Start a new FileUploader instance with our mockHandlers.
+        $fileUploader = new FileUploader($mockOauthHandler, $mockAwsHandler);
+        $fileUpload = $fileUploader->uploadFile(array(
+            'filePath' => $filePath,
+            'original_filename' => $originalFileName,
+        ));
+
+        $fileUploadRes = $fileUpload->wait();
+
+        $this->assertNotNull($fileUpload);
+        $this->assertEquals($fileUploadRes, 'DONE');
+    }
+
+    /**
      * Builds a valid init upload request.
      *
      * @param $filePath string Path of the file to be uploaded.
@@ -216,18 +304,19 @@ class FileUploaderTest extends TestCase
      *
      * @return array The request params.
      */
-    private static function getFinaliseRequest()
+    private static function getFinaliseRequest($originalFileName = null)
     {
         return [
             'POST',
             'api/v4/upload/',
             [
-                'form_params' => [
+                'form_params' => array_filter([
                     'id' => 'fakeUploadId',
                     'targetid' => 'fakeTargetid',
                     's3_filename' => 's3_filename/p1',
                     'chunks' => 1,
-                ]
+                    'original_filename' => $originalFileName
+                ])
             ]
         ];
     }
@@ -272,16 +361,17 @@ class FileUploaderTest extends TestCase
      * @param string $filePath The file to be uploaded
      * @return array The request params.
      */
-    private static function getSaveMediaRequest($filePath)
+    private static function getSaveMediaRequest($filePath, $originalFileName = null)
     {
         return [
             'POST',
             'api/v4/media/save/',
             [
-                'form_params' => [
+                'form_params' => array_filter([
                     'filePath' => $filePath,
-                    'importId' => 'importId'
-                ]
+                    'importId' => 'importId',
+                    'original_filename' => $originalFileName
+                ])
             ]
         ];
     }
