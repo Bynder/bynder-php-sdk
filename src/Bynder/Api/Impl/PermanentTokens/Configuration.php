@@ -11,13 +11,30 @@ namespace Bynder\Api\Impl\PermanentTokens;
 
 class Configuration
 {
+    /**
+     * @var string The Bynder domain.
+     */
     private $bynderDomain;
-    private $rootDir;
 
     /**
      * @var string Permanent token.
      */
     private $token;
+
+    /**
+     * @var array Request options.
+     */
+    private $requestOptions;
+
+    /**
+     * @var string The root dir.
+     */
+    private $rootDir;
+
+    /**
+     * @var object The package.
+     */
+    private $package;
 
     /**
      * Initialises a new instance with the specified params.
