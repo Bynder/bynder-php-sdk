@@ -486,7 +486,7 @@ class AssetBankManagerTest extends TestCase
             ->willReturn(['query']);
 
         $assetBankManager = new AssetBankManager($stub);
-        $result = $assetBankManager->getMetapropertyOptionsById($query);
+        $result = $assetBankManager->getMetapropertyOptionsById($propertyId, $query);
 
         self::assertNotNull($result);
         self::assertEquals($result, ['query']);
