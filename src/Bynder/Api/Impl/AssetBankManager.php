@@ -35,6 +35,31 @@ class AssetBankManager
     }
 
     /**
+     * Gets a list of all users, params sent in $query will filter the results.
+     *
+     * @param  array  $query
+     * @return \GuzzleHttp\Promise\Promise with a list of Users.
+     * @throws \GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function getUsers($query = null)
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/users/',
+            ['query' => $query]
+        );
+    }
+
+    /**
+     * Gets a list of all available security profiles.
+     *
+     * @return \GuzzleHttp\Promise\Promise with a list of all Profiles.
+     * @throws \GuzzleHttp\Exception\RequestException When request fails.
+     */
+    public function getProfiles()
+    {
+        return $this->requestHandler->sendRequestAsync('GET', 'api/v4/profiles/');
+    }
+
+    /**
      * Gets a list of all available brands.
      *
      * @return \GuzzleHttp\Promise\Promise with a list of all Brands.

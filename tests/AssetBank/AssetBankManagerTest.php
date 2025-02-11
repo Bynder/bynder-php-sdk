@@ -9,6 +9,62 @@ class AssetBankManagerTest extends TestCase
 {
 
     /**
+     * Test if we call getUsers it will use the correct params for the request and returns successfully.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getUsers()
+     * @throws \Exception
+     */
+    public function testGetUsers()
+    {
+        $returnedBrands = [];
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\RequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $query = [
+            'includeInActive' => true,
+            'limit' => 50,
+            'page' => 2
+        ];
+
+        $stub->expects($this->once())
+            ->method('sendRequestAsync')
+            ->with('GET', 'api/v4/users/', ['query' => $query])
+            ->willReturn([]);
+
+        $assetBankManager = new AssetBankManager($stub);
+        $brands = $assetBankManager->getUsers($query);
+
+        self::assertNotNull($brands);
+        self::assertEquals($brands, $returnedBrands);
+    }
+
+    /**
+     * Test if we call getProfiles it will use the correct params for the request and returns successfully.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getProfiles()
+     * @throws \Exception
+     */
+    public function testGetProfiles()
+    {
+        $returnedBrands = [];
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\RequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $stub->expects($this->once())
+            ->method('sendRequestAsync')
+            ->with('GET', 'api/v4/profiles/')
+            ->willReturn([]);
+
+        $assetBankManager = new AssetBankManager($stub);
+        $brands = $assetBankManager->getProfiles();
+
+        self::assertNotNull($brands);
+        self::assertEquals($brands, $returnedBrands);
+    }
+
+    /**
      * Test if we call getBrands it will use the correct params for the request and returns successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getBrands()
