@@ -17,6 +17,11 @@ class BynderClient
      */
     private $assetBankManager;
 
+    /**
+     * @var Configuration The configuration object.
+     */
+    private $configuration;
+
     public function __construct($configuration)
     {
         if ($configuration instanceof PermanentTokens\Configuration) {
@@ -69,6 +74,19 @@ class BynderClient
     public function getAccessToken($code)
     {
         $token = $this->requestHandler->getAccessToken($code);
+        $this->configuration->setToken($token);
+
+        return $token;
+    }
+
+    /**
+     * Returns the Oauth access token using client credentials grant type.
+     *
+     * @return \League\OAuth2\Client\Token\AccessToken
+     */
+    public function getAccessTokenClientCredentials()
+    {
+        $token = $this->requestHandler->getAccessTokenClientCredentials();
         $this->configuration->setToken($token);
 
         return $token;

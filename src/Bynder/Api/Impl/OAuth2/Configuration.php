@@ -10,28 +10,53 @@
 namespace Bynder\Api\Impl\OAuth2;
 
 use Bynder\Api\Impl\Oauth2\BynderOauthProvider;
+use League\OAuth2\Client\Token\AccessToken;
 
 /**
  * Class to hold Oauth2 tokens necessary for every API request.
  */
 class Configuration
 {
+    /**
+     * @var string The Bynder domain.
+     */
     private $bynderDomain;
-    private $rootDir;
+
+    /**
+     * @var string The redirect URI.
+     */
     private $redirectUri;
 
     /**
      * @var string Client ID.
      */
     private $clientId;
+
     /**
      * @var string Client Secret.
      */
     private $clientSecret;
+
     /**
      * @var string Access token.
      */
     private $token;
+
+    /**
+     * @var array Request options.
+     */
+    private $requestOptions;
+
+    /**
+     * @var string Root directory.
+     */
+    private $rootDir;
+
+    /**
+     * @var object The package.
+     */
+    private $package;
+
     /**
      * @var string Initial access token, used for logout.
      */
@@ -122,11 +147,18 @@ class Configuration
             return;
         }
 
-        $this->setToken(
-            $oauthProvider->getAccessToken('refresh_token', [
-                'refresh_token' => $this->getToken()->getRefreshToken()
-            ])
-        );
+        $oldRefreshToken =  $this->getToken()->getRefreshToken();
+
+        $token = $oauthProvider->getAccessToken('refresh_token', [
+            'refresh_token' => $oldRefreshToken
+        ]);
+
+        $options = $token->jsonSerialize();
+        if (empty($options['refresh_token'])) {
+            $options['refresh_token'] = $oldRefreshToken;
+        }
+
+        $this->setToken(new AccessToken($options));
     }
 
     public function getRequestOptions()

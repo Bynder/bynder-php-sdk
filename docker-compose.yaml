@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+  bynder-php-sdk:
+    container_name: bynder-php-sdk
+    build:
+      dockerfile: Dockerfile.dev
+    command: sh -c "tail -f /dev/null"
+    volumes:
+      - .:/app
