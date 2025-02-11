@@ -35,6 +35,13 @@ class RequestHandler extends AbstractRequestHandler
         );
     }
 
+    public function getAccessTokenClientCredentials()
+    {
+        return $this->oauthProvider->getAccessToken(
+            'client_credentials'
+        );
+    }
+
     protected function sendAuthenticatedRequest($requestMethod, $uri, $options = [])
     {
         $this->configuration->refreshToken($this->oauthProvider);
