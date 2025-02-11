@@ -464,6 +464,35 @@ class AssetBankManagerTest extends TestCase
     }
 
     /**
+     * Test if we call getMetapropertyOptionsById it will use the correct params for the request and returns successfully.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getMetapropertyOptionsById()
+     * @throws \Exception
+     */
+    public function testGetMetapropertyOptionsById()
+    {
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\RequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $propertyId = '00000000-0000-0000-0000000000000000';
+        $optionId = '00000000-0000-0000-0000000000000001';
+        $query = ['ids' => $optionId];
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', 'api/v4/metaproperties/' . $propertyId . '/options/', [
+                    'query' => $query
+            ])
+            ->willReturn(['query']);
+
+        $assetBankManager = new AssetBankManager($stub);
+        $result = $assetBankManager->getMetapropertyOptionsById($propertyId, $query);
+
+        self::assertNotNull($result);
+        self::assertEquals($result, ['query']);
+    }
+
+    /**
      * Test if we call getMetapropetryGlobalOptionDependencies it will use the correct params for the request and
      * returns successfully.
      *
