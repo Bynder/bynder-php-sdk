@@ -144,11 +144,16 @@ class FileUploader
             )
             ->then(
                 function ($value) use ($data) {
-                    if ($value['pollStatus'] != false) {
-                        $data['importId'] = $value['finalizeData']['importId'];
-                        return $this->saveMediaAsync($data);
+                    $originalFilename = isset($value['finalizeData']['originalFilename']) ? $value['finalizeData']['originalFilename'] : 'unknown';
+                    if (!empty($value['pollStatus']) && is_array($value['pollStatus'])) {
+                        if (isset($value['finalizeData']['importId'])) {
+                            $data['importId'] = $value['finalizeData']['importId'];
+                            return $this->saveMediaAsync($data);
+                        } else {
+                            throw new Exception("Missing importId in finalizeData for file: $originalFilename.");
+                        }
                     } else {
-                        throw new Exception("Converter did not finish. Upload failed.");
+                        throw new Exception("Converter did not finish. Upload failed for file: $originalFilename.");
                     }
                 }
             );
