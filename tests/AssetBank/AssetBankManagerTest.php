@@ -65,6 +65,48 @@ class AssetBankManagerTest extends TestCase
     }
 
     /**
+     * Test if we call getAccount it will use the correct params for the request and returns successfully.
+     *
+     * @group  collections
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::getCollections()
+     * @throws \Exception
+     */
+    public function testGetAccount()
+    {
+        $returnedAccount = [
+            "availableLanguages" => [
+                "nl_NL",
+                "en_GB",
+                "en_US",
+                "fr_FR",
+                "de_DE",
+                "it_IT",
+                "es_ES",
+                "pl_PL",
+            ],
+            "defaultLanguage"    => "en_US",
+            "name"               => "Bynder",
+            "timeZone"           => "Europe/Amsterdam",
+            "isOpenImageBank"    => false,
+        ];
+
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\RequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $stub->method('sendRequestAsync')
+            ->with('GET', "api/v4/account/")
+            ->willReturn($returnedAccount);
+
+        $assetBankManager = new AssetBankManager($stub);
+        $account          = $assetBankManager->getAccount();
+
+        self::assertNotNull($account);
+        self::assertEquals($account, $returnedAccount);
+    }
+
+    /**
      * Test if we call getBrands it will use the correct params for the request and returns successfully.
      *
      * @covers \Bynder\Api\Impl\AssetBankManager::getBrands()
@@ -549,6 +591,72 @@ class AssetBankManagerTest extends TestCase
     }
 
     /**
+     * Tests the createMetaPropertyOption function.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::createMetaPropertyOption()
+     * @throws \Exception
+     */
+    public function testCreateMetaPropertyOption()
+    {
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\RequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $queryData = [
+            'name'              => 'TEST_NAME',
+            'externalReference' => 'TEST_EXTERNAL_REFERENCE',
+            'label'             => 'TEST_EXTERNAL_LABEL',
+        ];
+
+        $stub->method('sendRequestAsync')
+            ->with('POST', 'api/v4/metaproperties/TEST_METAPROPERTY_ID/options/', [
+                'form_params' => ['data' => json_encode($queryData)],
+            ])
+            ->willReturn([]);
+
+        $assetBankManager = new AssetBankManager($stub);
+        $result           = $assetBankManager->createMetaPropertyOption('TEST_METAPROPERTY_ID', $queryData);
+
+        self::assertNotNull($result);
+        self::assertEquals($result, []);
+    }
+
+    /**
+     * Tests the modifyMetaPropertyOption function.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::createMetaPropertyOption()
+     * @throws \Exception
+     */
+    public function testModifyMetaPropertyOption()
+    {
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\RequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $queryData = [
+            'name'              => 'TEST_NAME',
+            'externalReference' => 'TEST_EXTERNAL_REFERENCE',
+            'label'             => 'TEST_EXTERNAL_LABEL',
+        ];
+
+        $stub->method('sendRequestAsync')
+            ->with('POST', 'api/v4/metaproperties/TEST_METAPROPERTY_ID/options/TEST_OPTION_ID/', [
+                'form_params' => ['data' => json_encode($queryData)],
+            ])
+            ->willReturn([]);
+
+        $assetBankManager = new AssetBankManager($stub);
+        $result           = $assetBankManager->modifyMetaPropertyOption(
+            'TEST_METAPROPERTY_ID',
+            'TEST_OPTION_ID',
+            $queryData
+        );
+
+        self::assertNotNull($result);
+        self::assertEquals($result, []);
+    }
+
+    /**
      * Test if we call getMetapropetryGlobalOptionDependencies it will use the correct params for the request and
      * returns successfully.
      *
@@ -718,6 +826,50 @@ class AssetBankManagerTest extends TestCase
 
         self::assertNotNull($result);
         self::assertEquals($result, array());
+    }
+
+    /**
+     * Tests the syncAssetUsage function.
+     *
+     * @covers \Bynder\Api\Impl\AssetBankManager::deleteUsage()
+     * @throws \Exception
+     */
+    public function testSyncAssetUsage()
+    {
+        $stub = $this->getMockBuilder('Bynder\Api\Impl\OAuth2\RequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $queryData = [
+            'integration_id' => 'TEST_INTEGRATION_ID',
+            'uris'           => ['TEST_URI_1', 'TEST_URI_2', 'TEST_URI_TO_DELETE_1'],
+            'usages'         => [
+                'integration_id' => 'TEST_INTEGRATION_ID',
+                'asset_id'       => 'TEST_ASSET_ID_1',
+                'timestamp'      => (new \Datetime())->format('Y-m-d\TH:i:s\Z'),
+                'additional'     => 'TEST_ADDITIONAL_DATA_1',
+                'uri'            => 'TEST_URI_1',
+            ],
+            [
+                'integration_id' => 'TEST_INTEGRATION_ID',
+                'asset_id'       => 'TEST_ASSET_ID_2',
+                'timestamp'      => (new \Datetime())->format('Y-m-d\TH:i:s\Z'),
+                'additional'     => 'TEST_ADDITIONAL_DATA_2',
+                'uri'            => 'TEST_URI_2',
+            ],
+        ];
+
+        $stub->method('sendRequestAsync')
+            ->with('POST', 'api/media/usage/sync', [
+                'json' => $queryData,
+            ])
+            ->willReturn([]);
+
+        $assetBankManager = new AssetBankManager($stub);
+        $result           = $assetBankManager->syncAssetUsage($queryData);
+
+        self::assertNotNull($result);
+        self::assertEquals($result, []);
     }
 
     /**
