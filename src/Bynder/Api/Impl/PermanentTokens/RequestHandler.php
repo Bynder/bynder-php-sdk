@@ -31,16 +31,20 @@ class RequestHandler extends AbstractRequestHandler
             $options['form_params'] = $formParams;
         }
 
-        return $this->httpClient->sendAsync(
-            $request,
-            array_merge(
-                $options,
-                $this->configuration->getRequestOptions(),
-                ['headers'=> [
-                    'User-Agent' => 'bynder-php-sdk/' . $this->configuration->getSdkVersion(),
-                    'Authorization' => 'Bearer ' . $this->configuration->getToken()
-                ]]
-            )
+        $requestOptions = array_merge(
+            $options,
+            $this->configuration->getRequestOptions(),
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->configuration->getToken(),
+                ],
+            ]
         );
+
+        if (!isset($requestOptions['headers']['User-Agent'])) {
+            $requestOptions['headers']['User-Agent'] = 'bynder-php-sdk/' . $this->configuration->getSdkVersion();
+        }
+
+        return $this->httpClient->sendAsync($request, $requestOptions);
     }
 }
