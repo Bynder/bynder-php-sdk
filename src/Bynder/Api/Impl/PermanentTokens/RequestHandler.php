@@ -19,17 +19,13 @@ class RequestHandler extends AbstractRequestHandler
 
     protected function sendAuthenticatedRequest($requestMethod, $uri, $options = [])
     {
-        $formParams = false;
-        if (isset($options['form_params'])) {
-            $formParams = $options['form_params'];
-            unset($options['form_params']);
-        }
-
-        $request = new \GuzzleHttp\Psr7\Request($requestMethod, $uri, $options);
-
-        if ($formParams) {
-            $options['form_params'] = $formParams;
-        }
+        $request = new \GuzzleHttp\Psr7\Request($requestMethod, $uri, array_filter(
+            $options,
+            function ($key) {
+                return !in_array($key, ['form_params', 'json']);
+            },
+            ARRAY_FILTER_USE_KEY
+        ));
 
         return $this->httpClient->sendAsync(
             $request,
