@@ -38,5 +38,19 @@ abstract class AbstractRequestHandler
         );
     }
 
+    protected function getRequestOptions($options = [])
+    {
+        $requestOptions = array_merge(
+            $options,
+            $this->configuration->getRequestOptions()
+        );
+
+        if (!isset($requestOptions['headers']) || !isset($requestOptions['headers']['User-Agent'])) {
+            $requestOptions['headers']['User-Agent'] = 'bynder-php-sdk/' . $this->configuration->getSdkVersion();
+        }
+
+        return $requestOptions;
+    }
+
     abstract protected function sendAuthenticatedRequest($requestMethod, $uri, $options = []);
 }
