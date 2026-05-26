@@ -8,7 +8,7 @@ use Bynder\Api\Impl\PermanentTokens;
 
 class BynderClientTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->configuration = new OAuth2\Configuration(
             'test.getbynder.com',
@@ -27,7 +27,7 @@ class BynderClientTest extends TestCase
             new BynderClient(new PermanentTokens\Configuration('', ''))
         );
 
-        self::setExpectedException('\Exception');
+        $this->expectException(\Exception::class);
         new BynderClient(null);
     }
 

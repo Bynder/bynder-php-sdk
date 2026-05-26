@@ -13,7 +13,7 @@ class FileUploaderTest extends TestCase
     /**
      * Sets up VFS root directory.
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->root = vfsStream::setup("root");
     }
