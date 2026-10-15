@@ -228,7 +228,7 @@ class FileUploaderTest extends TestCase
     {
         return [
             'POST',
-            'api/upload/init',
+            'api/upload/init/',
             ['form_params' => ['filename' => $filePath]]
         ];
     }

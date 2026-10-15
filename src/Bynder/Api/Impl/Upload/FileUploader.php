@@ -99,25 +99,31 @@ class FileUploader
     {
         $uploadedFilePromise = $this->getClosestUploadEndpoint()
             ->then(
-                function () use ($data) {
-                    return $this->requestUploadInformationAsync($data['filePath']);
+                function ($awsBucket) use ($data) {
+                    return $this->requestUploadInformationAsync($data['filePath'])
+                        ->then(
+                            function ($uploadRequestInfo) use ($awsBucket) {
+                                return ['awsBucket' => $awsBucket, 'uploadRequestInfo' => $uploadRequestInfo];
+                            });
                 })
             ->then(
-                function ($uploadRequestInfo) use ($data) {
+                function ($value) use ($data) {
+                    $awsBucket = $value['awsBucket'];
+                    $uploadRequestInfo = $value['uploadRequestInfo'];
                     if ($file = fopen($data['filePath'], 'rb')) {
 
                         $fileSize = filesize($data['filePath']);
 
-                        $numberOfChunks = round(($fileSize + self::CHUNK_SIZE - 1) / self::CHUNK_SIZE);
+                        $numberOfChunks = (int) (($fileSize - 1) / self::CHUNK_SIZE + 1);
                         $chunkNumber = 0;
 
                         // This is where the magic happens. We create all the promises via an Iterator function.
                         $promises = $this->uploadChunkIterator($file, $data['filePath'], $uploadRequestInfo,
-                            $numberOfChunks, $chunkNumber);
+                            $numberOfChunks, $chunkNumber, $awsBucket);
                         // After that we batch them all together using Each::ofLimitAll, which will guarantee all chunks have been uploaded properly.
                         $eachPromises = Promise\Each::ofLimitAll($promises, self::MAX_CONCURRENT_CHUNKS);
                         return $eachPromises->then(
-                            function ($value) use ($uploadRequestInfo, $chunkNumber) {
+                            function ($value) use ($uploadRequestInfo, &$chunkNumber) {
                                 return ['requestInfo' => $uploadRequestInfo, 'chunkNumber' => $chunkNumber];
                             });
                     } else {
@@ -164,13 +170,14 @@ class FileUploader
      * @param $uploadRequestInfo
      * @param $numberOfChunks
      * @param $chunkNumber
+     * @param $awsBucket Endpoint returned from getClosestUploadEndpoint().
      * @return \Generator A promise representing a chunk file upload.
      */
-    public function uploadChunkIterator($file, $filePath, $uploadRequestInfo, $numberOfChunks, &$chunkNumber)
+    public function uploadChunkIterator($file, $filePath, $uploadRequestInfo, $numberOfChunks, &$chunkNumber, $awsBucket)
     {
         while ($chunk = fread($file, self::CHUNK_SIZE)) {
             $chunkNumber++;
-            yield $this->uploadChunkAsync($filePath, $chunk, $uploadRequestInfo, $numberOfChunks, $chunkNumber);
+            yield $this->uploadChunkAsync($filePath, $chunk, $uploadRequestInfo, $numberOfChunks, $chunkNumber, $awsBucket);
         }
     }
 
@@ -185,7 +192,7 @@ class FileUploader
      */
     private function requestUploadInformationAsync($filePath)
     {
-        return $this->requestHandler->sendRequestAsync('POST', 'api/upload/init',
+        return $this->requestHandler->sendRequestAsync('POST', 'api/upload/init/',
             [
                 'form_params' => ['filename' => $filePath]
             ]
@@ -201,11 +208,12 @@ class FileUploader
      * @param $uploadRequestInfo
      * @param $numberOfChunks
      * @param $chunkNumber
+     * @param $awsBucket Endpoint returned from getClosestUploadEndpoint().
      * @return Promise\PromiseInterface|Promise\FulfilledPromise Value returned not used for next steps, just need to make sure it works.
      */
-    private function uploadChunkAsync($filePath, $chunk, $uploadRequestInfo, $numberOfChunks, $chunkNumber)
+    private function uploadChunkAsync($filePath, $chunk, $uploadRequestInfo, $numberOfChunks, $chunkNumber, $awsBucket)
     {
-        return $this->amazonApi->uploadPartToAmazon($filePath, $this->awsBucket, $uploadRequestInfo,
+        return $this->amazonApi->uploadPartToAmazon($filePath, $awsBucket, $uploadRequestInfo,
             $chunkNumber, $chunk, $numberOfChunks)
             ->then(
                 function () use ($uploadRequestInfo, $chunkNumber) {
