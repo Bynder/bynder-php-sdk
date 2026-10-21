@@ -1,7 +1,7 @@
 {
   "name": "bynder/bynder-php-sdk",
   "description": "Bynder PHP Library",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "keywords": [
     "bynder",
     "sdk",
@@ -16,7 +16,7 @@
     }
   ],
   "require": {
-    "php": ">= 8.1",
+    "php": ">= 8.2",
     "guzzlehttp/guzzle": "~6.0|~7.0",
     "league/oauth2-client": "^2.6"
   },
